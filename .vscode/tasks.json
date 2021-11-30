@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "minecraft_client",
+      "type": "shell",
+      "command": "./gradlew runClient --debug-jvm",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": "\\b\\B",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^.*To honour the JVM settings for this build a new JVM will be forked.*",
+            "endsPattern": "^.*Listening for transport dt_socket at address.*"
+          }
+        }
+      ]
+    },
+    {
+      "label": "minecraft_server",
+      "type": "shell",
+      "command": "./gradlew runServer --debug-jvm",
+      "isBackground": true,
+      "problemMatcher": [
+        {
+          "pattern": [
+            {
+              "regexp": "\\b\\B",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^.*To honour the JVM settings for this build a new JVM will be forked.*",
+            "endsPattern": "^.*Listening for transport dt_socket at address.*"
+          }
+        }
+      ]
+    }
+  ]
+}

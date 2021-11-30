@@ -1,0 +1,16 @@
+[
+{
+  "modid": "livingchest",
+  "name": "Living Chest",
+  "description": "A mod that adds Chester (from Don't Starve) to Minecraft.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Syllient"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
