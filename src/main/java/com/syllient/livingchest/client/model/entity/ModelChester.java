@@ -9,7 +9,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class ModelChester extends AnimatedGeoModel<EntityChester> {
   @Override
   public ResourceLocation getAnimationFileLocation(EntityChester animatable) {
-    return null;
+    return new ResourceLocation(LivingChest.MODID, "animations/chester.animation.json");
   }
 
   @Override

@@ -1,0 +1,38 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.chester.open_mouth": {
+			"animation_length": 0.29167,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2917": {
+							"vector": [-55, 0, 0],
+							"easing": "easeOutCubic"
+						}
+					}
+				}
+			}
+		},
+		"animation.chester.close_mouth": {
+			"animation_length": 0.29167,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [-55, 0, 0]
+						},
+						"0.2917": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutCirc"
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
