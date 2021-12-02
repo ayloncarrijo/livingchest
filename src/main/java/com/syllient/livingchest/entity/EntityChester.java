@@ -1,5 +1,7 @@
 package com.syllient.livingchest.entity;
 
+import java.util.Optional;
+
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -7,7 +9,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -17,10 +18,16 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class EntityChester extends EntityCow implements IAnimatable {
+  private static final String ANIMATION_IDLE_MOUTH = "animation.chester.idle_mouth";
+  private static final String ANIMATION_OPEN_MOUTH = "animation.chester.open_mouth";
+  private static final String ANIMATION_CLOSE_MOUTH = "animation.chester.close_mouth";
+
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.<Boolean>createKey(EntityChester.class,
       DataSerializers.BOOLEAN);
 
   private AnimationFactory factory = new AnimationFactory(this);
+
+  private int lastMouthInteract = 0;
 
   public EntityChester(World worldIn) {
     super(worldIn);
@@ -30,18 +37,17 @@ public class EntityChester extends EntityCow implements IAnimatable {
   private <E extends IAnimatable> PlayState mouthPredicate(AnimationEvent<E> event) {
     if (this.isMouthOpen()) {
       event.getController().setAnimation(
-          new AnimationBuilder().addAnimation("animation.chester.open_mouth"));
-
-      if (event.getController().getAnimationState() == AnimationState.Stopped) {
-        event.getController().setAnimation(
-            new AnimationBuilder().addAnimation("animation.chester.close_mouth"));
-      }
+          new AnimationBuilder()
+              .addAnimation(ANIMATION_OPEN_MOUTH)
+              .addAnimation(ANIMATION_IDLE_MOUTH, true));
+    } else {
+      Optional.ofNullable(event.getController().getCurrentAnimation()).ifPresent((animation) -> {
+        if (animation.animationName.equals(ANIMATION_IDLE_MOUTH)) {
+          event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIMATION_CLOSE_MOUTH));
+        }
+      });
+      ;
     }
-
-    // event.getController().setAnimation(
-    // new AnimationBuilder().addAnimation(
-    // this.isMouthOpen() ? "animation.chester.open_mouth" :
-    // "animation.chester.close_mouth"));
 
     return PlayState.CONTINUE;
   }
@@ -67,20 +73,28 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return this.dataManager.get(IS_MOUTH_OPEN);
   }
 
+  public void setIsMouthOpen(boolean value) {
+    if (this.ticksExisted - this.lastMouthInteract > 10) {
+      this.dataManager.set(IS_MOUTH_OPEN, value);
+      this.lastMouthInteract = this.ticksExisted;
+    }
+  }
+
   public void openMouth() {
-    this.dataManager.set(IS_MOUTH_OPEN, true);
+    this.setIsMouthOpen(true);
   }
 
   public void closeMouth() {
-    this.dataManager.set(IS_MOUTH_OPEN, false);
+    this.setIsMouthOpen(false);
   }
 
   public void toggleMouth() {
-    this.dataManager.set(IS_MOUTH_OPEN, !this.isMouthOpen());
+    this.setIsMouthOpen(!this.isMouthOpen());
   }
 
   @Override
   public void onEntityUpdate() {
+    System.out.println(this.ticksExisted);
     super.onEntityUpdate();
   }
 
