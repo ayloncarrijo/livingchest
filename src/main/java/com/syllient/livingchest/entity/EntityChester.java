@@ -2,6 +2,7 @@ package com.syllient.livingchest.entity;
 
 import java.util.Optional;
 
+import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
@@ -31,6 +32,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   public EntityChester(World worldIn) {
     super(worldIn);
+    this.moveHelper = new EntityChester.ChesterMoveHelper(this);
     this.ignoreFrustumCheck = true;
   }
 
@@ -92,10 +94,18 @@ public class EntityChester extends EntityCow implements IAnimatable {
     this.setIsMouthOpen(!this.isMouthOpen());
   }
 
+  public void setMovementSpeed(double speed) {
+    this.getNavigator().setSpeed(speed);
+    this.moveHelper.setMoveTo(this.moveHelper.getX(), this.moveHelper.getY(), this.moveHelper.getZ(), speed);
+  }
+
   @Override
-  public void onEntityUpdate() {
-    System.out.println(this.ticksExisted);
-    super.onEntityUpdate();
+  protected float getJumpUpwardsMotion() {
+    return 0.5F;
+  }
+
+  public int getJumpDelay() {
+    return 10;
   }
 
   @Override
@@ -104,8 +114,36 @@ public class EntityChester extends EntityCow implements IAnimatable {
       this.toggleMouth();
 
       return true;
-    } else {
-      return false;
+    }
+
+    return false;
+  }
+
+  static class ChesterMoveHelper extends EntityMoveHelper {
+    private final EntityChester chester;
+    private int jumpDelay;
+
+    public ChesterMoveHelper(EntityChester chester) {
+      super(chester);
+      this.chester = chester;
+      this.jumpDelay = chester.getJumpDelay();
+    }
+
+    @Override
+    public void onUpdateMoveHelper() {
+      if (!this.isUpdating()) {
+        this.chester.setMovementSpeed(0.0D);
+      } else {
+        if (this.chester.onGround && this.jumpDelay-- <= 0) {
+          this.jumpDelay = this.chester.getJumpDelay();
+          this.chester.setMovementSpeed(6.0D);
+          this.chester.getJumpHelper().setJumping();
+        } else {
+          this.chester.setMovementSpeed(0.0D);
+        }
+      }
+
+      super.onUpdateMoveHelper();
     }
   }
 }
