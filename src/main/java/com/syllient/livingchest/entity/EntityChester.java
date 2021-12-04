@@ -9,6 +9,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -101,11 +102,16 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   @Override
   protected float getJumpUpwardsMotion() {
-    return 0.5F;
+    return 0.42F;
   }
 
   public int getJumpDelay() {
-    return 10;
+    return 5;
+  }
+
+  @Override
+  public int getMaxFallHeight() {
+    return 64;
   }
 
   @Override
@@ -123,27 +129,38 @@ public class EntityChester extends EntityCow implements IAnimatable {
     private final EntityChester chester;
     private int jumpDelay;
 
-    public ChesterMoveHelper(EntityChester chester) {
-      super(chester);
-      this.chester = chester;
-      this.jumpDelay = chester.getJumpDelay();
+    public ChesterMoveHelper(EntityChester chesterIn) {
+      super(chesterIn);
+      this.chester = chesterIn;
     }
 
     @Override
     public void onUpdateMoveHelper() {
-      if (!this.isUpdating()) {
-        this.chester.setMovementSpeed(0.0D);
+      float sourceAngle = this.chester.rotationYaw;
+      float targetAngle = (float) (MathHelper.atan2(
+          this.posZ - this.chester.posZ,
+          this.posX - this.chester.posX)
+          * (180D / Math.PI)) - 90.0F;
+
+      this.chester.rotationYaw = this.limitAngle(sourceAngle, targetAngle, this.chester.onGround ? 90.0F : 15.0F);
+      this.chester.rotationYawHead = this.chester.rotationYaw;
+      this.chester.renderYawOffset = this.chester.rotationYaw;
+
+      if (this.action != EntityMoveHelper.Action.MOVE_TO) {
+        this.chester.setAIMoveSpeed(0.0F);
       } else {
+        this.action = EntityMoveHelper.Action.WAIT;
+
         if (this.chester.onGround && this.jumpDelay-- <= 0) {
-          this.jumpDelay = this.chester.getJumpDelay();
-          this.chester.setMovementSpeed(6.0D);
+          this.chester.setAIMoveSpeed(0.8F);
           this.chester.getJumpHelper().setJumping();
+          this.jumpDelay = this.chester.getJumpDelay();
+
+          System.out.println("pulou"); // start jump animation. sound jump animation
         } else {
-          this.chester.setMovementSpeed(0.0D);
+          this.chester.setAIMoveSpeed(0.0F);
         }
       }
-
-      super.onUpdateMoveHelper();
     }
   }
 }
