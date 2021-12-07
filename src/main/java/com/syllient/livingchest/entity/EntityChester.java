@@ -11,6 +11,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -23,18 +24,70 @@ public class EntityChester extends EntityCow implements IAnimatable {
   private static final String ANIMATION_IDLE_MOUTH = "animation.chester.idle_mouth";
   private static final String ANIMATION_OPEN_MOUTH = "animation.chester.open_mouth";
   private static final String ANIMATION_CLOSE_MOUTH = "animation.chester.close_mouth";
+  private static final String ANIMATION_IDLE = "animation.chester.idle";
+  private static final String ANIMATION_JUMP = "animation.chester.jump";
+  private static final String ANIMATION_FALL = "animation.chester.fall";
+  private static final String ANIMATION_ON_AIR = "animation.chester.on_air";
 
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.<Boolean>createKey(EntityChester.class,
       DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> WILL_JUMP = EntityDataManager.<Boolean>createKey(
+      EntityChester.class,
+      DataSerializers.BOOLEAN);
 
   private AnimationFactory factory = new AnimationFactory(this);
+  private AnimationController<EntityChester> idleController;
+  private AnimationController<EntityChester> jumpController;
+  private AnimationController<EntityChester> mouthController;
 
-  private int lastMouthInteract = 0;
+  private boolean wasOnGround = true;
+  private boolean isFalling = false;
+  private int ticksOfLastMouthInteract = 0;
 
   public EntityChester(World worldIn) {
     super(worldIn);
     this.moveHelper = new EntityChester.ChesterMoveHelper(this);
     this.ignoreFrustumCheck = true;
+  }
+
+  private <E extends IAnimatable> PlayState idlePredicate(AnimationEvent<E> event) {
+    boolean isIdling = this.jumpController.getAnimationState() == AnimationState.Stopped;
+
+    if (!isIdling) {
+      return PlayState.STOP;
+    }
+
+    event.getController()
+        .setAnimation(
+            new AnimationBuilder()
+                .addAnimation(ANIMATION_IDLE, true));
+
+    return PlayState.CONTINUE;
+  }
+
+  private <E extends IAnimatable> PlayState jumpPredicate(AnimationEvent<E> event) {
+    if (this.isFalling
+        && event.getController().getCurrentAnimation() != null
+        && event.getController().getCurrentAnimation().animationName.equals(ANIMATION_ON_AIR)) {
+      event.getController()
+          .setAnimation(
+              new AnimationBuilder()
+                  .addAnimation(ANIMATION_FALL));
+
+      return PlayState.CONTINUE;
+    }
+
+    if (this.willJump()) {
+      event.getController()
+          .setAnimation(
+              new AnimationBuilder()
+                  .addAnimation(ANIMATION_JUMP)
+                  .addAnimation(ANIMATION_ON_AIR, true));
+
+      return PlayState.CONTINUE;
+    }
+
+    return PlayState.CONTINUE;
   }
 
   private <E extends IAnimatable> PlayState mouthPredicate(AnimationEvent<E> event) {
@@ -57,8 +110,13 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   @Override
   public void registerControllers(AnimationData data) {
-    data.addAnimationController(
-        new AnimationController<EntityChester>(this, "mouth_controller", 0, this::mouthPredicate));
+    this.idleController = new AnimationController<EntityChester>(this, "idle_controller", 0, this::idlePredicate);
+    this.jumpController = new AnimationController<EntityChester>(this, "jump_controller", 0, this::jumpPredicate);
+    this.mouthController = new AnimationController<EntityChester>(this, "mouth_controller", 0, this::mouthPredicate);
+
+    data.addAnimationController(this.idleController);
+    data.addAnimationController(this.jumpController);
+    data.addAnimationController(this.mouthController);
   }
 
   @Override
@@ -70,6 +128,15 @@ public class EntityChester extends EntityCow implements IAnimatable {
   protected void entityInit() {
     super.entityInit();
     this.dataManager.register(IS_MOUTH_OPEN, false);
+    this.dataManager.register(WILL_JUMP, false);
+  }
+
+  public boolean willJump() {
+    return this.dataManager.get(WILL_JUMP);
+  }
+
+  public void setWillJump(boolean value) {
+    this.dataManager.set(WILL_JUMP, value);
   }
 
   public boolean isMouthOpen() {
@@ -77,9 +144,9 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   public void setIsMouthOpen(boolean value) {
-    if (this.ticksExisted - this.lastMouthInteract > 10) {
+    if (this.ticksExisted - this.ticksOfLastMouthInteract > 10) {
       this.dataManager.set(IS_MOUTH_OPEN, value);
-      this.lastMouthInteract = this.ticksExisted;
+      this.ticksOfLastMouthInteract = this.ticksExisted;
     }
   }
 
@@ -95,11 +162,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
     this.setIsMouthOpen(!this.isMouthOpen());
   }
 
-  public void setMovementSpeed(double speed) {
-    this.getNavigator().setSpeed(speed);
-    this.moveHelper.setMoveTo(this.moveHelper.getX(), this.moveHelper.getY(), this.moveHelper.getZ(), speed);
-  }
-
   @Override
   protected float getJumpUpwardsMotion() {
     return 0.42F;
@@ -109,9 +171,16 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return 5;
   }
 
+  public float getMoveSpeed() {
+    return 0.85F;
+  }
+
   @Override
-  public int getMaxFallHeight() {
-    return 64;
+  public void onUpdate() {
+    super.onUpdate();
+
+    this.isFalling = this.onGround && !this.wasOnGround;
+    this.wasOnGround = this.onGround;
   }
 
   @Override
@@ -136,6 +205,11 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
     @Override
     public void onUpdateMoveHelper() {
+      if (this.chester.isMouthOpen()) {
+        this.chester.setAIMoveSpeed(0.0F);
+        return;
+      }
+
       float sourceAngle = this.chester.rotationYaw;
       float targetAngle = (float) (MathHelper.atan2(
           this.posZ - this.chester.posZ,
@@ -151,15 +225,21 @@ public class EntityChester extends EntityCow implements IAnimatable {
       } else {
         this.action = EntityMoveHelper.Action.WAIT;
 
-        if (this.chester.onGround && this.jumpDelay-- <= 0) {
-          this.chester.setAIMoveSpeed(0.8F);
+        if (this.chester.willJump()) {
+          this.chester.setWillJump(false);
+          this.chester.setAIMoveSpeed(this.chester.getMoveSpeed());
           this.chester.getJumpHelper().setJumping();
-          this.jumpDelay = this.chester.getJumpDelay();
-
-          System.out.println("pulou"); // start jump animation. sound jump animation
-        } else {
-          this.chester.setAIMoveSpeed(0.0F);
+          return;
         }
+
+        if (this.chester.onGround && this.jumpDelay-- <= 0) {
+          this.chester.setWillJump(true);
+          this.chester.setAIMoveSpeed(0.0F);
+          this.jumpDelay = this.chester.getJumpDelay();
+          return;
+        }
+
+        this.chester.setAIMoveSpeed(0.0F);
       }
     }
   }
