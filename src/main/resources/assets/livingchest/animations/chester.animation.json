@@ -117,13 +117,9 @@
 						"0.0": {
 							"vector": [1, 1, 1]
 						},
-						"0.25": {
+						"0.5": {
 							"vector": [1, 0.75, 1],
 							"easing": "easeOutExpo"
-						},
-						"0.5": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
 						}
 					}
 				},
@@ -132,13 +128,9 @@
 						"0.0": {
 							"vector": [1, 1, 1]
 						},
-						"0.25": {
+						"0.5": {
 							"vector": [1, 0.75, 1],
 							"easing": "easeOutExpo"
-						},
-						"0.5": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
 						}
 					}
 				},
@@ -147,13 +139,9 @@
 						"0.0": {
 							"vector": [1, 1, 1]
 						},
-						"0.25": {
+						"0.5": {
 							"vector": [1, 1.5, 1],
 							"easing": "easeOutExpo"
-						},
-						"0.5": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
 						}
 					}
 				},
@@ -214,21 +202,6 @@
 						"0.5": {
 							"vector": [-35, 0, 0],
 							"easing": "easeOutCirc"
-						}
-					}
-				},
-				"head": {
-					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
-						"0.25": {
-							"vector": [4, 0, 0],
-							"easing": "easeOutExpo"
-						},
-						"0.5": {
-							"vector": [0, 0, 0],
-							"easing": "easeInBack"
 						}
 					}
 				}
@@ -255,6 +228,21 @@
 				"left_back_leg": {
 					"rotation": {
 						"vector": [-35, 0, 0]
+					}
+				},
+				"tongue_3": {
+					"scale": {
+						"vector": [1, 0.75, 1]
+					}
+				},
+				"tongue_4": {
+					"scale": {
+						"vector": [1, 0.75, 1]
+					}
+				},
+				"tongue_6": {
+					"scale": {
+						"vector": [1, 1.5, 1]
 					}
 				}
 			}
@@ -321,6 +309,39 @@
 						"0.5": {
 							"vector": [0, 0, 0],
 							"easing": "easeInExpo"
+						}
+					}
+				},
+				"tongue_3": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 0.75, 1]
+						},
+						"0.5": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutCirc"
+						}
+					}
+				},
+				"tongue_4": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 0.75, 1]
+						},
+						"0.5": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutCirc"
+						}
+					}
+				},
+				"tongue_6": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1.5, 1]
+						},
+						"0.5": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutCirc"
 						}
 					}
 				}
