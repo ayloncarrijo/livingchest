@@ -25,9 +25,9 @@ public class EntityChester extends EntityCow implements IAnimatable {
   private static final String ANIMATION_OPEN_MOUTH = "animation.chester.open_mouth";
   private static final String ANIMATION_CLOSE_MOUTH = "animation.chester.close_mouth";
   private static final String ANIMATION_IDLE = "animation.chester.idle";
+  private static final String ANIMATION_START_JUMP = "animation.chester.start_jump";
   private static final String ANIMATION_JUMP = "animation.chester.jump";
-  private static final String ANIMATION_FALL = "animation.chester.fall";
-  private static final String ANIMATION_ON_AIR = "animation.chester.on_air";
+  private static final String ANIMATION_STOP_JUMP = "animation.chester.stop_jump";
 
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.<Boolean>createKey(EntityChester.class,
       DataSerializers.BOOLEAN);
@@ -40,13 +40,10 @@ public class EntityChester extends EntityCow implements IAnimatable {
   private AnimationController<EntityChester> jumpController;
   private AnimationController<EntityChester> mouthController;
 
-  private boolean wasOnGround = true;
-  private boolean isFalling = false;
   private int ticksOfLastMouthInteract = 0;
 
   public EntityChester(World worldIn) {
     super(worldIn);
-    this.moveHelper = new EntityChester.ChesterMoveHelper(this);
     this.ignoreFrustumCheck = true;
   }
 
@@ -66,25 +63,20 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   private <E extends IAnimatable> PlayState jumpPredicate(AnimationEvent<E> event) {
-    if (this.isFalling
-        && event.getController().getCurrentAnimation() != null
-        && event.getController().getCurrentAnimation().animationName.equals(ANIMATION_ON_AIR)) {
-      event.getController()
-          .setAnimation(
-              new AnimationBuilder()
-                  .addAnimation(ANIMATION_FALL));
-
-      return PlayState.CONTINUE;
-    }
-
-    if (this.willJump()) {
-      event.getController()
-          .setAnimation(
-              new AnimationBuilder()
-                  .addAnimation(ANIMATION_JUMP)
-                  .addAnimation(ANIMATION_ON_AIR, true));
-
-      return PlayState.CONTINUE;
+    if (event.isMoving()) {
+      event.getController().setAnimation(
+          new AnimationBuilder().addAnimation(ANIMATION_START_JUMP).addAnimation(ANIMATION_JUMP,
+              true));
+    } else {
+      event.getController().clearAnimationCache();
+      return PlayState.STOP;
+      // Optional.ofNullable(event.getController().getCurrentAnimation()).ifPresent((animation)
+      // -> {
+      // if (animation.animationName.equals(ANIMATION_JUMP)) {
+      // event.getController().setAnimation(new
+      // AnimationBuilder().addAnimation(ANIMATION_STOP_JUMP));
+      // }
+      // });
     }
 
     return PlayState.CONTINUE;
@@ -114,9 +106,9 @@ public class EntityChester extends EntityCow implements IAnimatable {
     this.jumpController = new AnimationController<EntityChester>(this, "jump_controller", 0, this::jumpPredicate);
     this.mouthController = new AnimationController<EntityChester>(this, "mouth_controller", 0, this::mouthPredicate);
 
-    data.addAnimationController(this.idleController);
+    // data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
-    data.addAnimationController(this.mouthController);
+    // data.addAnimationController(this.mouthController);
   }
 
   @Override
@@ -178,9 +170,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   public void onUpdate() {
     super.onUpdate();
-
-    this.isFalling = this.onGround && !this.wasOnGround;
-    this.wasOnGround = this.onGround;
   }
 
   @Override
