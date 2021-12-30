@@ -1,6 +1,8 @@
 package com.syllient.livingchest.utils;
 
+import net.minecraft.entity.Entity;
 import software.bernie.geckolib3.core.AnimationState;
+import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 
 @SuppressWarnings("rawtypes")
@@ -35,5 +37,15 @@ public class AnimationUtil {
         .filter((keyFrame) -> keyFrame.getEventData().equals(keyFrameName))
         .findAny()
         .get().hasExecuted;
+  }
+
+  public static <T extends Entity & IAnimatable> AnimationController getEntityController(
+      T entity,
+      String controllerName) {
+    return entity
+        .getFactory()
+        .getOrCreateAnimationData(entity.getUniqueID().hashCode())
+        .getAnimationControllers()
+        .get(controllerName);
   }
 }

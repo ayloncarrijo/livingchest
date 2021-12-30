@@ -1,12 +1,39 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.chester.idle_mouth": {
+		"animation.chester.idle": {
 			"loop": true,
+			"animation_length": 0.33333,
 			"bones": {
+				"root": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.1667": {
+							"vector": [1.0075, 1.0075, 1.0075],
+							"easing": "easeInCubic"
+						},
+						"0.3333": {
+							"vector": [1, 1, 1],
+							"easing": "easeInCubic"
+						}
+					}
+				},
 				"head": {
 					"rotation": {
-						"vector": [-55, 0, 0]
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [-25, 0, 0]
+						},
+						"0.25": {
+							"vector": [-20.80463, 22.08098, -16.8198]
+						},
+						"0.3333": {
+							"vector": [0, 0, 0]
+						}
 					}
 				}
 			}
@@ -27,6 +54,16 @@
 				}
 			}
 		},
+		"animation.chester.idle_mouth": {
+			"loop": true,
+			"bones": {
+				"head": {
+					"rotation": {
+						"vector": [-55, 0, 0]
+					}
+				}
+			}
+		},
 		"animation.chester.close_mouth": {
 			"animation_length": 0.33333,
 			"bones": {
@@ -43,73 +80,7 @@
 				}
 			}
 		},
-		"animation.chester.idle": {
-			"loop": true,
-			"animation_length": 0.33333,
-			"bones": {
-				"root": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1.0075, 1.0075, 1.0075],
-							"easing": "easeInCubic"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInCubic"
-						}
-					}
-				},
-				"tongue_3": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1, 0.75, 1],
-							"easing": "easeOutExpo"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
-						}
-					}
-				},
-				"tongue_4": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1, 0.75, 1],
-							"easing": "easeOutExpo"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
-						}
-					}
-				},
-				"tongue_6": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1, 1.5, 1],
-							"easing": "easeOutExpo"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInExpo"
-						}
-					}
-				}
-			}
-		},
-		"animation.chester.start_jump": {
+		"animation.chester.init_jump": {
 			"animation_length": 0.25,
 			"bones": {
 				"root": {
