@@ -17,11 +17,14 @@ public class LivingChest implements IProxy {
   @SidedProxy(clientSide = "com.syllient.livingchest.client.ClientProxy", serverSide = "com.syllient.livingchest.server.ServerProxy")
   public static IProxy proxy;
 
+  public LivingChest() {
+    GeckoLib.initialize();
+  }
+
   @Override
   @EventHandler
   public void onPreInit(FMLPreInitializationEvent event) {
     LivingChest.proxy.onPreInit(event);
-    GeckoLib.initialize();
   }
 
   @Override
