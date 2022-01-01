@@ -1,6 +1,11 @@
 package com.syllient.livingchest.entity;
 
+import java.util.HashMap;
+import java.util.List;
+
 import com.syllient.livingchest.utils.AnimationUtil;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
@@ -19,6 +24,23 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.shadowed.eliotlash.molang.MolangParser;
+
+class AnimationControllerTest<T extends IAnimatable> extends AnimationController<T> {
+  public AnimationControllerTest(T animatable, String name, float transitionLengthTicks,
+      IAnimationPredicate<T> animationPredicate) {
+    super(animatable, name, transitionLengthTicks, animationPredicate);
+  }
+
+  @Override
+  public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
+      HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
+      boolean crashWhenCantFindBone) {
+    super.process(tick, event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);
+  }
+}
 
 public class EntityChester extends EntityCow implements IAnimatable {
   private static final String ANIMATION_IDLE = "animation.chester.idle";
@@ -33,7 +55,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
       DataSerializers.BOOLEAN);
 
   private AnimationFactory factory = new AnimationFactory(this);
-  private int ticksSinceLastMouthInteract = 0;
   private int ticksIdling = 0;
 
   public EntityChester(World worldIn) {
@@ -50,7 +71,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(48.0D);
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.27D);
   }
@@ -79,7 +99,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   @Override
   public void onUpdate() {
-    this.ticksSinceLastMouthInteract += 1;
     super.onUpdate();
   }
 
@@ -159,6 +178,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   private void jumpKeyframes(SoundKeyframeEvent<? extends IAnimatable> event) {
+    System.out.println("aaaaa");
   }
 
   public boolean isMouthOpen() {
@@ -166,10 +186,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   public void setIsMouthOpen(boolean value) {
-    if (this.ticksSinceLastMouthInteract > 10) {
-      this.ticksSinceLastMouthInteract = 0;
-      this.dataManager.set(IS_MOUTH_OPEN, value);
-    }
+    this.dataManager.set(IS_MOUTH_OPEN, value);
   }
 
   public void openMouth() {
@@ -181,7 +198,11 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   public void toggleMouth() {
-    this.setIsMouthOpen(!this.isMouthOpen());
+    if (this.isMouthOpen()) {
+      this.closeMouth();
+    } else {
+      this.openMouth();
+    }
   }
 
   @Override
