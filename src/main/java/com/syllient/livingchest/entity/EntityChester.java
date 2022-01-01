@@ -1,6 +1,6 @@
 package com.syllient.livingchest.entity;
 
-import com.syllient.livingchest.utils.AnimationControllerMC;
+import com.syllient.livingchest.geckolib.AnimationControllerExtended;
 import com.syllient.livingchest.utils.AnimationUtil;
 
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -63,7 +63,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
     AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this,
         "idle_controller", 0, this::idlePredicate);
 
-    AnimationController<EntityChester> jumpController = new AnimationControllerMC<EntityChester>(this,
+    AnimationController<EntityChester> jumpController = new AnimationControllerExtended<EntityChester>(this,
         "jump_controller", 0, this::jumpPredicate);
 
     AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this,
@@ -131,7 +131,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
             new AnimationBuilder()
                 .addAnimation(ANIMATION_INIT_JUMP));
       }
-    } else if (isJumping && ((AnimationControllerMC) event.getController()).hasJustFinishedAnimation()) {
+    } else if (isJumping && ((AnimationControllerExtended) event.getController()).isAnimationFinished()) {
       event.getController().setAnimation(
           new AnimationBuilder()
               .addAnimation(ANIMATION_STOP_JUMP));
