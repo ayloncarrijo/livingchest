@@ -33,7 +33,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
       DataSerializers.BOOLEAN);
 
   private AnimationFactory factory = new AnimationFactory(this);
-  private int ticksOfLastMouthInteract = 0;
+  private int ticksSinceLastMouthInteract = 0;
   private int ticksIdling = 0;
 
   public EntityChester(World worldIn) {
@@ -79,6 +79,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   @Override
   public void onUpdate() {
+    this.ticksSinceLastMouthInteract += 1;
     super.onUpdate();
   }
 
@@ -102,7 +103,9 @@ public class EntityChester extends EntityCow implements IAnimatable {
       return PlayState.STOP;
     }
 
-    if (this.ticksIdling++ < 20) {
+    this.ticksIdling += 1;
+
+    if (this.ticksIdling < 10) {
       return PlayState.STOP;
     }
 
@@ -163,9 +166,9 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   public void setIsMouthOpen(boolean value) {
-    if (this.ticksExisted - this.ticksOfLastMouthInteract > 10) {
+    if (this.ticksSinceLastMouthInteract > 10) {
+      this.ticksSinceLastMouthInteract = 0;
       this.dataManager.set(IS_MOUTH_OPEN, value);
-      this.ticksOfLastMouthInteract = this.ticksExisted;
     }
   }
 
