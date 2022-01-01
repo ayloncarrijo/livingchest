@@ -27,18 +27,6 @@ public class AnimationUtil {
         && controller.getCurrentAnimation().animationName.equals(animationName);
   }
 
-  public static boolean hasReachedKeyframe(String keyFrameName, AnimationController controller) {
-    if (controller.getCurrentAnimation() == null) {
-      return false;
-    }
-
-    return controller.getCurrentAnimation().soundKeyFrames
-        .stream()
-        .filter((keyFrame) -> keyFrame.getEventData().equals(keyFrameName))
-        .findAny()
-        .get().hasExecuted;
-  }
-
   public static <T extends Entity & IAnimatable> AnimationController getEntityController(
       T entity,
       String controllerName) {

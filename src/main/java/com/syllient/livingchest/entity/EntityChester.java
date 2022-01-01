@@ -1,11 +1,7 @@
 package com.syllient.livingchest.entity;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.syllient.livingchest.utils.AnimationControllerMC;
 import com.syllient.livingchest.utils.AnimationUtil;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
@@ -20,27 +16,9 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
-import software.bernie.shadowed.eliotlash.molang.MolangParser;
-
-class AnimationControllerTest<T extends IAnimatable> extends AnimationController<T> {
-  public AnimationControllerTest(T animatable, String name, float transitionLengthTicks,
-      IAnimationPredicate<T> animationPredicate) {
-    super(animatable, name, transitionLengthTicks, animationPredicate);
-  }
-
-  @Override
-  public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
-      HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
-      boolean crashWhenCantFindBone) {
-    super.process(tick, event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);
-  }
-}
 
 public class EntityChester extends EntityCow implements IAnimatable {
   private static final String ANIMATION_IDLE = "animation.chester.idle";
@@ -85,9 +63,8 @@ public class EntityChester extends EntityCow implements IAnimatable {
     AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this,
         "idle_controller", 0, this::idlePredicate);
 
-    AnimationController<EntityChester> jumpController = new AnimationController<EntityChester>(this,
+    AnimationController<EntityChester> jumpController = new AnimationControllerMC<EntityChester>(this,
         "jump_controller", 0, this::jumpPredicate);
-    jumpController.registerSoundListener(this::jumpKeyframes);
 
     AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this,
         "mouth_controller", 0, this::mouthPredicate);
@@ -136,6 +113,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return PlayState.CONTINUE;
   }
 
+  @SuppressWarnings("rawtypes")
   private PlayState jumpPredicate(AnimationEvent<? extends IAnimatable> event) {
     if (AnimationUtil.isAnimationStopped(ANIMATION_INIT_JUMP, event.getController())) {
       event.getController().setAnimation(
@@ -153,7 +131,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
             new AnimationBuilder()
                 .addAnimation(ANIMATION_INIT_JUMP));
       }
-    } else if (isJumping && AnimationUtil.hasReachedKeyframe("query.anim_end", event.getController())) {
+    } else if (isJumping && ((AnimationControllerMC) event.getController()).hasJustFinishedAnimation()) {
       event.getController().setAnimation(
           new AnimationBuilder()
               .addAnimation(ANIMATION_STOP_JUMP));
@@ -175,10 +153,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
     }
 
     return PlayState.CONTINUE;
-  }
-
-  private void jumpKeyframes(SoundKeyframeEvent<? extends IAnimatable> event) {
-    System.out.println("aaaaa");
   }
 
   public boolean isMouthOpen() {
