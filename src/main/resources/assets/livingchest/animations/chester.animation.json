@@ -406,11 +406,6 @@
 						}
 					}
 				}
-			},
-			"sound_effects": {
-				"0.7083": {
-					"effect": "query.anim_end"
-				}
 			}
 		},
 		"animation.chester.stop_jump": {

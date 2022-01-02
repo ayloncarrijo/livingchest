@@ -6,9 +6,11 @@ import com.syllient.livingchest.utils.AnimationUtil;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.AnimationState;
@@ -49,6 +51,13 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
+    this.addPotionEffect(
+        new PotionEffect(
+            MobEffects.REGENERATION,
+            Integer.MAX_VALUE,
+            2,
+            false,
+            false));
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.27D);
   }
