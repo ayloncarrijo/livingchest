@@ -11,6 +11,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.AnimationState;
@@ -58,8 +59,10 @@ public class EntityChester extends EntityCow implements IAnimatable {
             2,
             false,
             false));
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
+    this.setMoveSpeed(this.getDefaultMoveSpeed());
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+        .setBaseValue(450.0D);
+
   }
 
   @Override
@@ -89,9 +92,20 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   @Override
+  protected void damageEntity(DamageSource damageSrc, float damageAmount) {
+    this.closeMouth();
+    super.damageEntity(damageSrc, damageAmount);
+  }
+
+  @Override
   public boolean processInteract(EntityPlayer player, EnumHand hand) {
-    if (!player.world.isRemote && hand == EnumHand.MAIN_HAND) {
-      this.toggleMouth();
+    if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
+      if (this.isMouthOpen()) {
+        this.closeMouth();
+      } else {
+        this.openMouth();
+      }
+
       return true;
     }
 
@@ -168,24 +182,27 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return this.dataManager.get(IS_MOUTH_OPEN);
   }
 
-  public void setIsMouthOpen(boolean value) {
+  private void setIsMouthOpen(boolean value) {
     this.dataManager.set(IS_MOUTH_OPEN, value);
   }
 
   public void openMouth() {
     this.setIsMouthOpen(true);
+    this.setMoveSpeed(0);
   }
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
+    this.setMoveSpeed(this.getDefaultMoveSpeed());
   }
 
-  public void toggleMouth() {
-    if (this.isMouthOpen()) {
-      this.closeMouth();
-    } else {
-      this.openMouth();
-    }
+  public void setMoveSpeed(double value) {
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+        .setBaseValue(value);
+  }
+
+  public double getDefaultMoveSpeed() {
+    return 0.25D;
   }
 
   @Override
