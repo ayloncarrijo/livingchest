@@ -1,4 +1,4 @@
-package com.syllient.livingchest.geckolib;
+package com.syllient.livingchest.gecko;
 
 import java.util.HashMap;
 import java.util.List;

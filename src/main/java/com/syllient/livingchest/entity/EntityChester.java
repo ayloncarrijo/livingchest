@@ -1,6 +1,9 @@
 package com.syllient.livingchest.entity;
 
-import com.syllient.livingchest.geckolib.AnimationControllerExtended;
+import com.syllient.livingchest.GuiHandler;
+import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.gecko.AnimationControllerExtended;
+import com.syllient.livingchest.inventory.InventoryChester;
 import com.syllient.livingchest.util.AnimationUtil;
 
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -32,13 +35,16 @@ public class EntityChester extends EntityCow implements IAnimatable {
   private static final String ANIMATION_JUMP = "animation.chester.jump";
   private static final String ANIMATION_STOP_JUMP = "animation.chester.stop_jump";
 
-  private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.<Boolean>createKey(EntityChester.class,
+  private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(EntityChester.class,
       DataSerializers.BOOLEAN);
 
-  private AnimationFactory factory = new AnimationFactory(this);
+  private final InventoryChester inventory = new InventoryChester(this, 27);
+  private final AnimationFactory factory = new AnimationFactory(this);
+
+  private int moveSpeedResetTimer = 0;
   private int ticksIdling = 0;
 
-  public EntityChester(World worldIn) {
+  public EntityChester(final World worldIn) {
     super(worldIn);
     this.ignoreFrustumCheck = true;
   }
@@ -71,14 +77,14 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   @Override
-  public void registerControllers(AnimationData data) {
-    AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this,
+  public void registerControllers(final AnimationData data) {
+    final AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this,
         "idle_controller", 0, this::idlePredicate);
 
-    AnimationController<EntityChester> jumpController = new AnimationControllerExtended<EntityChester>(this,
+    final AnimationController<EntityChester> jumpController = new AnimationControllerExtended<EntityChester>(this,
         "jump_controller", 0, this::jumpPredicate);
 
-    AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this,
+    final AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this,
         "mouth_controller", 0, this::mouthPredicate);
 
     data.addAnimationController(idleController);
@@ -88,23 +94,32 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   @Override
   public void onUpdate() {
+    if (!this.world.isRemote) {
+      if (!this.isMouthOpen()
+          && this.moveSpeedResetTimer > 0
+          && --this.moveSpeedResetTimer == 0) {
+        this.setMoveSpeed(this.getDefaultMoveSpeed());
+      }
+    }
+
     super.onUpdate();
   }
 
   @Override
-  protected void damageEntity(DamageSource damageSrc, float damageAmount) {
-    this.closeMouth();
+  protected void damageEntity(final DamageSource damageSrc, final float damageAmount) {
     super.damageEntity(damageSrc, damageAmount);
   }
 
   @Override
-  public boolean processInteract(EntityPlayer player, EnumHand hand) {
+  public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
     if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
-      if (this.isMouthOpen()) {
-        this.closeMouth();
-      } else {
-        this.openMouth();
-      }
+      player.openGui(
+          LivingChest.instance,
+          GuiHandler.ID_GUI_CHESTER,
+          this.world,
+          this.getEntityId(),
+          0,
+          0);
 
       return true;
     }
@@ -112,17 +127,16 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return false;
   }
 
-  private PlayState idlePredicate(AnimationEvent<? extends IAnimatable> event) {
-    boolean isIdling = AnimationUtil
+  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
+    final boolean isIdling = AnimationUtil
         .getEntityController(this, "jump_controller")
         .getAnimationState() == AnimationState.Stopped;
 
-    if (!isIdling) {
+    if (isIdling) {
+      this.ticksIdling += 1;
+    } else {
       this.ticksIdling = 0;
-      return PlayState.STOP;
     }
-
-    this.ticksIdling += 1;
 
     if (this.ticksIdling < 10) {
       return PlayState.STOP;
@@ -137,7 +151,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   @SuppressWarnings("rawtypes")
-  private PlayState jumpPredicate(AnimationEvent<? extends IAnimatable> event) {
+  private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
     if (AnimationUtil.isAnimationStopped(ANIMATION_INIT_JUMP, event.getController())) {
       event.getController().setAnimation(
           new AnimationBuilder()
@@ -146,7 +160,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
       return PlayState.CONTINUE;
     }
 
-    boolean isJumping = AnimationUtil.isCurrentAnimation(ANIMATION_JUMP, event.getController());
+    final boolean isJumping = AnimationUtil.isCurrentAnimation(ANIMATION_JUMP, event.getController());
 
     if (event.isMoving()) {
       if (!isJumping) {
@@ -163,7 +177,11 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return PlayState.CONTINUE;
   }
 
-  private PlayState mouthPredicate(AnimationEvent<? extends IAnimatable> event) {
+  private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
+    if (this.ticksIdling < 10) {
+      return PlayState.STOP;
+    }
+
     if (this.isMouthOpen()) {
       event.getController().setAnimation(
           new AnimationBuilder()
@@ -182,7 +200,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return this.dataManager.get(IS_MOUTH_OPEN);
   }
 
-  private void setIsMouthOpen(boolean value) {
+  private void setIsMouthOpen(final boolean value) {
     this.dataManager.set(IS_MOUTH_OPEN, value);
   }
 
@@ -193,10 +211,14 @@ public class EntityChester extends EntityCow implements IAnimatable {
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
-    this.setMoveSpeed(this.getDefaultMoveSpeed());
+    this.moveSpeedResetTimer = 10;
   }
 
-  public void setMoveSpeed(double value) {
+  public InventoryChester getInventory() {
+    return this.inventory;
+  }
+
+  public void setMoveSpeed(final double value) {
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
         .setBaseValue(value);
   }
