@@ -1,4 +1,4 @@
-package com.syllient.livingchest.utils;
+package com.syllient.livingchest.util;
 
 import net.minecraft.entity.Entity;
 import software.bernie.geckolib3.core.AnimationState;

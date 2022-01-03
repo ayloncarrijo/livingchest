@@ -1,7 +1,7 @@
 package com.syllient.livingchest.entity;
 
 import com.syllient.livingchest.geckolib.AnimationControllerExtended;
-import com.syllient.livingchest.utils.AnimationUtil;
+import com.syllient.livingchest.util.AnimationUtil;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
