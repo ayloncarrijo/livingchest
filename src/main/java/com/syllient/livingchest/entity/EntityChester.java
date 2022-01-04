@@ -1,7 +1,7 @@
 package com.syllient.livingchest.entity;
 
-import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.ModGuiHandler;
 import com.syllient.livingchest.gecko.AnimationControllerExtended;
 import com.syllient.livingchest.inventory.InventoryChester;
 import com.syllient.livingchest.util.AnimationUtil;
@@ -115,7 +115,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
     if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
       player.openGui(
           LivingChest.instance,
-          GuiHandler.ID_GUI_CHESTER,
+          ModGuiHandler.Gui.CHESTER.ordinal(),
           this.world,
           this.getEntityId(),
           0,
@@ -138,7 +138,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
       this.ticksIdling = 0;
     }
 
-    if (this.ticksIdling < 10) {
+    if (this.ticksIdling < 5) {
       return PlayState.STOP;
     }
 
@@ -178,7 +178,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
   }
 
   private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    if (this.ticksIdling < 10) {
+    if (this.ticksIdling < 5) {
       return PlayState.STOP;
     }
 

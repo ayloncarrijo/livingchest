@@ -9,8 +9,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-public class GuiHandler implements IGuiHandler {
-  public static final int ID_GUI_CHESTER = 0;
+public class ModGuiHandler implements IGuiHandler {
+  public static enum Gui {
+    CHESTER
+  }
 
   @Override
   public Object getServerGuiElement(
@@ -20,7 +22,7 @@ public class GuiHandler implements IGuiHandler {
       final int x,
       final int y,
       final int z) {
-    if (ID == ID_GUI_CHESTER) {
+    if (ID == ModGuiHandler.Gui.CHESTER.ordinal()) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof EntityChester) {
@@ -41,7 +43,7 @@ public class GuiHandler implements IGuiHandler {
       final int x,
       final int y,
       final int z) {
-    if (ID == ID_GUI_CHESTER) {
+    if (ID == ModGuiHandler.Gui.CHESTER.ordinal()) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof EntityChester) {

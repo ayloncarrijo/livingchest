@@ -7,10 +7,18 @@ import com.syllient.livingchest.entity.EntityChester;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerChester extends Container {
   private final EntityChester chester;
+
+  private final int invTotalSlots;
+  private final int invCols;
+  private final int invRows;
+  private final int xOffset;
+  private final int yOffset;
+  private final int yOffsetPlayer;
 
   public ContainerChester(
       final EntityPlayer player,
@@ -18,14 +26,15 @@ public class ContainerChester extends Container {
     this.chester = chester;
     this.chester.getInventory().onOpenInventory(player);
 
-    final int inventoryCols = 9;
-    final int inventoryRows = this.chester.getInventory().getSlots() / inventoryCols;
-    final int xOffset = 8;
-    final int yOffset = 18;
-    final int yOffsetPlayerInventory = (inventoryRows - 4) * 18;
+    this.invTotalSlots = this.chester.getInventory().getSlots();
+    this.invCols = 9;
+    this.invRows = this.invTotalSlots / this.invCols;
+    this.xOffset = 8;
+    this.yOffset = 18;
+    this.yOffsetPlayer = (invRows - 4) * 18;
 
-    IntStream.range(0, inventoryRows).forEach((row) -> {
-      IntStream.range(0, inventoryCols).forEach((col) -> {
+    IntStream.range(0, invRows).forEach((row) -> {
+      IntStream.range(0, invCols).forEach((col) -> {
         final int index = row * 9 + col;
         final int xPos = col * 18 + xOffset;
         final int yPos = row * 18 + yOffset;
@@ -42,7 +51,7 @@ public class ContainerChester extends Container {
     IntStream.range(0, 9).forEach((col) -> {
       final int index = col;
       final int xPos = col * 18 + xOffset;
-      final int yPos = 161 + yOffsetPlayerInventory;
+      final int yPos = 161 + yOffsetPlayer;
 
       this.addSlotToContainer(new Slot(
           player.inventory,
@@ -55,7 +64,7 @@ public class ContainerChester extends Container {
       IntStream.range(0, 9).forEach((col) -> {
         final int index = row * 9 + col + 9;
         final int xPos = col * 18 + xOffset;
-        final int yPos = row * 18 + 103 + yOffsetPlayerInventory;
+        final int yPos = row * 18 + 103 + yOffsetPlayer;
 
         this.addSlotToContainer(new Slot(
             player.inventory,
@@ -77,40 +86,38 @@ public class ContainerChester extends Container {
     this.chester.getInventory().onCloseInventory(playerIn);
   }
 
-  // @Override
-  // public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
-  // {
-  // ItemStack itemstack = ItemStack.EMPTY;
-  // Slot slot = this.inventorySlots.get(index);
+  @Override
+  public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index) {
+    final Slot invSlot = this.inventorySlots.get(index);
+    ItemStack itemStack = ItemStack.EMPTY;
 
-  // if (slot != null && slot.getHasStack())
-  // {
-  // ItemStack itemstack1 = slot.getStack();
-  // itemstack = itemstack1.copy();
+    if (invSlot != null && invSlot.getHasStack()) {
+      final ItemStack itemStackInSlot = invSlot.getStack();
+      itemStack = itemStackInSlot.copy();
 
-  // if (index < this.numRows * 9)
-  // {
-  // if (!this.mergeItemStack(itemstack1, this.numRows * 9,
-  // this.inventorySlots.size(), true))
-  // {
-  // return ItemStack.EMPTY;
-  // }
-  // }
-  // else if (!this.mergeItemStack(itemstack1, 0, this.numRows * 9, false))
-  // {
-  // return ItemStack.EMPTY;
-  // }
+      if (index < this.invTotalSlots) {
+        if (!this.mergeItemStack(
+            itemStackInSlot,
+            this.invTotalSlots,
+            this.inventorySlots.size(),
+            true)) {
+          return ItemStack.EMPTY;
+        }
+      } else if (!this.mergeItemStack(
+          itemStackInSlot,
+          0,
+          this.invTotalSlots,
+          false)) {
+        return ItemStack.EMPTY;
+      }
 
-  // if (itemstack1.isEmpty())
-  // {
-  // slot.putStack(ItemStack.EMPTY);
-  // }
-  // else
-  // {
-  // slot.onSlotChanged();
-  // }
-  // }
+      if (itemStackInSlot.isEmpty()) {
+        invSlot.putStack(ItemStack.EMPTY);
+      } else {
+        invSlot.onSlotChanged();
+      }
+    }
 
-  // return itemstack;
-  // }
+    return itemStack;
+  }
 }

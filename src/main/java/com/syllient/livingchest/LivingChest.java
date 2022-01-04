@@ -28,7 +28,7 @@ public class LivingChest implements IProxy {
   @Override
   @EventHandler
   public void onPreInit(final FMLPreInitializationEvent event) {
-    NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+    NetworkRegistry.INSTANCE.registerGuiHandler(this, new ModGuiHandler());
     LivingChest.proxy.onPreInit(event);
   }
 
