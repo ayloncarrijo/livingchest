@@ -1,5 +1,7 @@
 package com.syllient.livingchest.entity;
 
+import java.util.HashMap;
+
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.ModGuiHandler;
 import com.syllient.livingchest.gecko.AnimationControllerExtended;
@@ -27,13 +29,27 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class EntityChester extends EntityCow implements IAnimatable {
-  private static final String ANIMATION_IDLE = "animation.chester.idle";
-  private static final String ANIMATION_OPEN_MOUTH = "animation.chester.open_mouth";
-  private static final String ANIMATION_IDLE_MOUTH = "animation.chester.idle_mouth";
-  private static final String ANIMATION_CLOSE_MOUTH = "animation.chester.close_mouth";
-  private static final String ANIMATION_INIT_JUMP = "animation.chester.init_jump";
-  private static final String ANIMATION_JUMP = "animation.chester.jump";
-  private static final String ANIMATION_STOP_JUMP = "animation.chester.stop_jump";
+  private static class Animations {
+    private static final String IDLE = "animation.chester.idle";
+
+    private static final String INIT_JUMP = "animation.chester.init_jump";
+    private static final String JUMP = "animation.chester.jump";
+    private static final String STOP_JUMP = "animation.chester.stop_jump";
+
+    private static final String INIT_JUMP_MOUTH = "animation.chester.init_jump_mouth";
+    private static final String JUMP_MOUTH = "animation.chester.jump_mouth";
+    private static final String STOP_JUMP_MOUTH = "animation.chester.stop_jump_mouth";
+
+    private static final String OPEN_MOUTH = "animation.chester.open_mouth";
+    private static final String IDLE_MOUTH = "animation.chester.idle_mouth";
+    private static final String CLOSE_MOUTH = "animation.chester.close_mouth";
+  }
+
+  private static class Controllers {
+    private static final String IDLE = "idle_controller";
+    private static final String JUMP = "jump_controller";
+    private static final String MOUTH = "mouth_controller";
+  }
 
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(EntityChester.class,
       DataSerializers.BOOLEAN);
@@ -58,6 +74,8 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
+        .setBaseValue(450.0D);
     this.addPotionEffect(
         new PotionEffect(
             MobEffects.REGENERATION,
@@ -66,9 +84,6 @@ public class EntityChester extends EntityCow implements IAnimatable {
             false,
             false));
     this.setMoveSpeed(this.getDefaultMoveSpeed());
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-        .setBaseValue(450.0D);
-
   }
 
   @Override
@@ -79,13 +94,13 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   public void registerControllers(final AnimationData data) {
     final AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this,
-        "idle_controller", 0, this::idlePredicate);
+        Controllers.IDLE, 0, this::idlePredicate);
 
     final AnimationController<EntityChester> jumpController = new AnimationControllerExtended<EntityChester>(this,
-        "jump_controller", 0, this::jumpPredicate);
+        Controllers.JUMP, 0, this::jumpPredicate);
 
     final AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this,
-        "mouth_controller", 0, this::mouthPredicate);
+        Controllers.MOUTH, 0, this::mouthPredicate);
 
     data.addAnimationController(idleController);
     data.addAnimationController(jumpController);
@@ -113,87 +128,11 @@ public class EntityChester extends EntityCow implements IAnimatable {
   @Override
   public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
     if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
-      player.openGui(
-          LivingChest.instance,
-          ModGuiHandler.Gui.CHESTER.ordinal(),
-          this.world,
-          this.getEntityId(),
-          0,
-          0);
-
+      this.openGuiTo(player);
       return true;
     }
 
     return false;
-  }
-
-  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
-    final boolean isIdling = AnimationUtil
-        .getEntityController(this, "jump_controller")
-        .getAnimationState() == AnimationState.Stopped;
-
-    if (isIdling) {
-      this.ticksIdling += 1;
-    } else {
-      this.ticksIdling = 0;
-    }
-
-    if (this.ticksIdling < 5) {
-      return PlayState.STOP;
-    }
-
-    event.getController()
-        .setAnimation(
-            new AnimationBuilder()
-                .addAnimation(ANIMATION_IDLE, true));
-
-    return PlayState.CONTINUE;
-  }
-
-  @SuppressWarnings("rawtypes")
-  private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    if (AnimationUtil.isAnimationStopped(ANIMATION_INIT_JUMP, event.getController())) {
-      event.getController().setAnimation(
-          new AnimationBuilder()
-              .addAnimation(ANIMATION_JUMP, true));
-
-      return PlayState.CONTINUE;
-    }
-
-    final boolean isJumping = AnimationUtil.isCurrentAnimation(ANIMATION_JUMP, event.getController());
-
-    if (event.isMoving()) {
-      if (!isJumping) {
-        event.getController().setAnimation(
-            new AnimationBuilder()
-                .addAnimation(ANIMATION_INIT_JUMP));
-      }
-    } else if (isJumping && ((AnimationControllerExtended) event.getController()).isAnimationFinished()) {
-      event.getController().setAnimation(
-          new AnimationBuilder()
-              .addAnimation(ANIMATION_STOP_JUMP));
-    }
-
-    return PlayState.CONTINUE;
-  }
-
-  private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    if (this.ticksIdling < 5) {
-      return PlayState.STOP;
-    }
-
-    if (this.isMouthOpen()) {
-      event.getController().setAnimation(
-          new AnimationBuilder()
-              .addAnimation(ANIMATION_OPEN_MOUTH)
-              .addAnimation(ANIMATION_IDLE_MOUTH, true));
-    } else if (AnimationUtil.isCurrentAnimation(ANIMATION_IDLE_MOUTH, event.getController())) {
-      event.getController().setAnimation(
-          new AnimationBuilder()
-              .addAnimation(ANIMATION_CLOSE_MOUTH));
-    }
-
-    return PlayState.CONTINUE;
   }
 
   public boolean isMouthOpen() {
@@ -214,8 +153,18 @@ public class EntityChester extends EntityCow implements IAnimatable {
     this.moveSpeedResetTimer = 10;
   }
 
-  public InventoryChester getInventory() {
-    return this.inventory;
+  public void openGuiTo(final EntityPlayer player) {
+    player.openGui(
+        LivingChest.instance,
+        ModGuiHandler.Gui.CHESTER,
+        this.world,
+        this.getEntityId(),
+        0,
+        0);
+  }
+
+  public double getDefaultMoveSpeed() {
+    return 0.25D;
   }
 
   public void setMoveSpeed(final double value) {
@@ -223,12 +172,114 @@ public class EntityChester extends EntityCow implements IAnimatable {
         .setBaseValue(value);
   }
 
-  public double getDefaultMoveSpeed() {
-    return 0.25D;
-  }
-
   @Override
   protected float getJumpUpwardsMotion() {
     return 0.5F;
+  }
+
+  public InventoryChester getInventory() {
+    return this.inventory;
+  }
+
+  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
+    final boolean isIdling = AnimationUtil
+        .getEntityController(this, Controllers.JUMP)
+        .getAnimationState() == AnimationState.Stopped;
+
+    if (isIdling) {
+      this.ticksIdling += 1;
+    } else {
+      this.ticksIdling = 0;
+    }
+
+    if (this.ticksIdling < 5) {
+      return PlayState.STOP;
+    }
+
+    event.getController()
+        .setAnimation(
+            new AnimationBuilder()
+                .addAnimation(Animations.IDLE, true));
+
+    return PlayState.CONTINUE;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
+    if (AnimationUtil.isAnimationStopped(Animations.INIT_JUMP, event.getController())) {
+      event.getController().setAnimation(
+          new AnimationBuilder()
+              .addAnimation(Animations.JUMP, true));
+
+      return PlayState.CONTINUE;
+    }
+
+    final boolean isJumping = AnimationUtil.isCurrentAnimation(Animations.JUMP, event.getController());
+
+    if (event.isMoving()) {
+      if (!isJumping) {
+        event.getController().setAnimation(
+            new AnimationBuilder()
+                .addAnimation(Animations.INIT_JUMP));
+      }
+
+      return PlayState.CONTINUE;
+    }
+
+    if (isJumping && ((AnimationControllerExtended) event.getController()).isAnimationFinished()) {
+      event.getController().setAnimation(
+          new AnimationBuilder()
+              .addAnimation(Animations.STOP_JUMP));
+
+      return PlayState.CONTINUE;
+    }
+
+    return PlayState.CONTINUE;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
+    // if (this.ticksIdling < 5) {
+    // return PlayState.STOP;
+    // }
+
+    if (this.isMouthOpen()) {
+      event.getController().setAnimation(
+          new AnimationBuilder()
+              .addAnimation(Animations.OPEN_MOUTH)
+              .addAnimation(Animations.IDLE_MOUTH, true));
+
+      return PlayState.CONTINUE;
+    }
+
+    if (AnimationUtil.isCurrentAnimation(Animations.IDLE_MOUTH, event.getController())) {
+      event.getController().setAnimation(
+          new AnimationBuilder()
+              .addAnimation(Animations.CLOSE_MOUTH));
+
+      return PlayState.CONTINUE;
+    }
+
+    final AnimationController jumpController = AnimationUtil
+        .getEntityController(this, Controllers.JUMP);
+
+    final HashMap<String, String> hash = new HashMap<String, String>();
+
+    hash.put(Animations.INIT_JUMP, Animations.INIT_JUMP_MOUTH);
+    hash.put(Animations.JUMP, Animations.JUMP_MOUTH);
+    hash.put(Animations.STOP_JUMP, Animations.STOP_JUMP_MOUTH);
+
+    if (jumpController.getCurrentAnimation() != null
+        && jumpController.getAnimationState() == AnimationState.Running) {
+      event.getController().setAnimation(
+          new AnimationBuilder()
+              .addAnimation(
+                  hash.get(jumpController.getCurrentAnimation().animationName),
+                  jumpController.getCurrentAnimation().loop));
+
+      return PlayState.CONTINUE;
+    }
+
+    return PlayState.CONTINUE;
   }
 }

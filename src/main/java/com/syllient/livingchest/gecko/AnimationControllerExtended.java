@@ -17,25 +17,26 @@ import software.bernie.shadowed.eliotlash.molang.MolangParser;
 public class AnimationControllerExtended<T extends IAnimatable> extends AnimationController<T> {
   private boolean isAnimationFinished = false;
 
-  public AnimationControllerExtended(T animatable, String name, float transitionLengthTicks,
-      IAnimationPredicate<T> animationPredicate) {
+  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+      final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, animationPredicate);
   }
 
-  public AnimationControllerExtended(T animatable, String name, float transitionLengthTicks,
-      Function<Double, Double> customEasingMethod, IAnimationPredicate<T> animationPredicate) {
+  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+      final Function<Double, Double> customEasingMethod, final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, customEasingMethod, animationPredicate);
   }
 
-  public AnimationControllerExtended(T animatable, String name, float transitionLengthTicks, EasingType easingtype,
-      IAnimationPredicate<T> animationPredicate) {
+  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+      final EasingType easingtype,
+      final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, easingtype, animationPredicate);
   }
 
   @Override
-  public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
-      HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
-      boolean crashWhenCantFindBone) {
+  public void process(final double tick, final AnimationEvent<T> event, final List<IBone> modelRendererList,
+      final HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, final MolangParser parser,
+      final boolean crashWhenCantFindBone) {
     this.isAnimationFinished = this.currentAnimation != null
         ? adjustTick(tick) >= this.currentAnimation.animationLength
         : false;

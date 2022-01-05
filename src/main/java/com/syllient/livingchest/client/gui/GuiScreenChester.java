@@ -37,7 +37,7 @@ public class GuiScreenChester extends GuiContainer {
       final float partialTicks,
       final int mouseX,
       final int mouseY) {
-    Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+    // Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
     this.drawTexturedModalRect(
