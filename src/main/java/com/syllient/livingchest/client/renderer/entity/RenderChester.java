@@ -7,8 +7,9 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class RenderChester extends GeoEntityRenderer<EntityChester> {
-  public RenderChester(RenderManager renderManager) {
+  public RenderChester(final RenderManager renderManager) {
     super(renderManager, new ModelChester());
-    this.shadowSize = 0.7F;
+    this.shadowSize = 0.6F;
+
   }
 }

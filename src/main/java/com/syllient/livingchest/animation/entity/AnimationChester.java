@@ -29,15 +29,15 @@ public class AnimationChester {
     private static final String IDLE_MOUTH = "animation.chester.idle_mouth";
     private static final String CLOSE_MOUTH = "animation.chester.close_mouth";
 
-    private static final Map<String, String> ANIM_JUMP_TO_MOUTH = new HashMap<String, String>();
-
     private static final Set<String> OPEN_MOUTH_STATES = new HashSet<String>(
         Arrays.asList(OPEN_MOUTH, IDLE_MOUTH, CLOSE_MOUTH));
 
+    private static final Map<String, String> MOUTH_FROM_JUMP = new HashMap<String, String>();
+
     static {
-      ANIM_JUMP_TO_MOUTH.put(Animation.INIT_JUMP, "animation.chester.mouth.init_jump");
-      ANIM_JUMP_TO_MOUTH.put(Animation.JUMP, "animation.chester.mouth.jump");
-      ANIM_JUMP_TO_MOUTH.put(Animation.STOP_JUMP, "animation.chester.mouth.stop_jump");
+      MOUTH_FROM_JUMP.put(Animation.INIT_JUMP, "animation.chester.mouth.init_jump");
+      MOUTH_FROM_JUMP.put(Animation.JUMP, "animation.chester.mouth.jump");
+      MOUTH_FROM_JUMP.put(Animation.STOP_JUMP, "animation.chester.mouth.stop_jump");
     }
   }
 
@@ -154,7 +154,7 @@ public class AnimationChester {
     if (jumpController.getAnimationState() == AnimationState.Transitioning) {
       event.getController().setAnimation(
           new AnimationBuilder().addAnimation(
-              Animation.ANIM_JUMP_TO_MOUTH
+              Animation.MOUTH_FROM_JUMP
                   .get(jumpController.getCurrentAnimation().animationName)));
 
       return PlayState.CONTINUE;
