@@ -6,30 +6,30 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 
 @SuppressWarnings("rawtypes")
-public class AnimationUtil {
-  public static boolean isAnimationRunning(String animationName, AnimationController controller) {
-    return AnimationUtil.isCurrentAnimation(animationName, controller)
+public class AnimationUtils {
+  public static boolean isAnimationRunning(final String animationName, final AnimationController controller) {
+    return AnimationUtils.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Running;
   }
 
-  public static boolean isAnimationTransitioning(String animationName, AnimationController controller) {
-    return AnimationUtil.isCurrentAnimation(animationName, controller)
+  public static boolean isAnimationTransitioning(final String animationName, final AnimationController controller) {
+    return AnimationUtils.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Transitioning;
   }
 
-  public static boolean isAnimationStopped(String animationName, AnimationController controller) {
-    return AnimationUtil.isCurrentAnimation(animationName, controller)
+  public static boolean isAnimationStopped(final String animationName, final AnimationController controller) {
+    return AnimationUtils.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Stopped;
   }
 
-  public static boolean isCurrentAnimation(String animationName, AnimationController controller) {
+  public static boolean isCurrentAnimation(final String animationName, final AnimationController controller) {
     return controller.getCurrentAnimation() != null
         && controller.getCurrentAnimation().animationName.equals(animationName);
   }
 
   public static <T extends Entity & IAnimatable> AnimationController getEntityController(
-      T entity,
-      String controllerName) {
+      final T entity,
+      final String controllerName) {
     return entity
         .getFactory()
         .getOrCreateAnimationData(entity.getUniqueID().hashCode())
