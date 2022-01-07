@@ -1,4 +1,4 @@
-package com.syllient.livingchest.animation.entity;
+package com.syllient.livingchest.animation;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.syllient.livingchest.entity.EntityChester;
-import com.syllient.livingchest.gecko.AnimationControllerExtended;
-import com.syllient.livingchest.util.AnimationUtils;
+import com.syllient.livingchest.entity.ChesterEntity;
+import com.syllient.livingchest.geckolib.controller.ExtendedAnimationController;
+import com.syllient.livingchest.util.GeckoLibUtil;
 
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -19,7 +19,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
 @SuppressWarnings("rawtypes")
-public class AnimationChester {
+public class ChesterAnimation {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
     private static final String INIT_JUMP = "animation.chester.init_jump";
@@ -47,22 +47,24 @@ public class AnimationChester {
     private static final String MOUTH = "mouth_controller";
   }
 
-  private final EntityChester chester;
+  private final ChesterEntity chester;
   private int ticksIdling = 0;
 
-  public AnimationChester(final EntityChester chester) {
+  public ChesterAnimation(final ChesterEntity chester) {
     this.chester = chester;
   }
 
   public void registerControllers(final AnimationData data) {
-    final AnimationController<EntityChester> idleController = new AnimationController<EntityChester>(this.chester,
+    final AnimationController<ChesterEntity> idleController = new ExtendedAnimationController<ChesterEntity>(
+        this.chester,
         Controller.IDLE, 0, this::idlePredicate);
 
-    final AnimationController<EntityChester> jumpController = new AnimationControllerExtended<EntityChester>(
+    final AnimationController<ChesterEntity> jumpController = new ExtendedAnimationController<ChesterEntity>(
         this.chester,
         Controller.JUMP, 0, this::jumpPredicate);
 
-    final AnimationController<EntityChester> mouthController = new AnimationController<EntityChester>(this.chester,
+    final AnimationController<ChesterEntity> mouthController = new ExtendedAnimationController<ChesterEntity>(
+        this.chester,
         Controller.MOUTH, 0, this::mouthPredicate);
 
     data.addAnimationController(idleController);
@@ -71,7 +73,7 @@ public class AnimationChester {
   }
 
   private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
-    final boolean isIdling = AnimationUtils
+    final boolean isIdling = GeckoLibUtil
         .getEntityController(this.chester, Controller.JUMP)
         .getAnimationState() == AnimationState.Stopped;
 
@@ -94,7 +96,7 @@ public class AnimationChester {
   }
 
   private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    if (AnimationUtils.isAnimationStopped(Animation.INIT_JUMP, event.getController())) {
+    if (GeckoLibUtil.isAnimationStopped(Animation.INIT_JUMP, event.getController())) {
       event.getController().setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.JUMP, true));
@@ -102,7 +104,7 @@ public class AnimationChester {
       return PlayState.CONTINUE;
     }
 
-    final boolean isJumping = AnimationUtils.isCurrentAnimation(Animation.JUMP, event.getController());
+    final boolean isJumping = GeckoLibUtil.isCurrentAnimation(Animation.JUMP, event.getController());
 
     if (event.isMoving()) {
       if (!isJumping) {
@@ -114,7 +116,7 @@ public class AnimationChester {
       return PlayState.CONTINUE;
     }
 
-    if (isJumping && ((AnimationControllerExtended) event.getController()).isAnimationFinished()) {
+    if (isJumping && ((ExtendedAnimationController) event.getController()).isAnimationFinished()) {
       event.getController().setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.STOP_JUMP));
@@ -135,7 +137,7 @@ public class AnimationChester {
       return PlayState.CONTINUE;
     }
 
-    if (AnimationUtils.isCurrentAnimation(Animation.IDLE_MOUTH, event.getController())) {
+    if (GeckoLibUtil.isCurrentAnimation(Animation.IDLE_MOUTH, event.getController())) {
       event.getController().setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.CLOSE_MOUTH));
@@ -148,7 +150,7 @@ public class AnimationChester {
       return PlayState.CONTINUE;
     }
 
-    final AnimationController jumpController = AnimationUtils
+    final AnimationController jumpController = GeckoLibUtil
         .getEntityController(this.chester, Controller.JUMP);
 
     if (jumpController.getAnimationState() == AnimationState.Transitioning) {

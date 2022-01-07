@@ -8,17 +8,17 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class ServerProxy implements IProxy {
   @Override
-  public void onPreInit(FMLPreInitializationEvent event) {
+  public void onPreInit(final FMLPreInitializationEvent event) {
 
   }
 
   @Override
-  public void onInit(FMLInitializationEvent event) {
+  public void onInit(final FMLInitializationEvent event) {
 
   }
 
   @Override
-  public void onPostInit(FMLPostInitializationEvent event) {
+  public void onPostInit(final FMLPostInitializationEvent event) {
 
   }
 }

@@ -6,19 +6,19 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 
 @SuppressWarnings("rawtypes")
-public class AnimationUtils {
+public class GeckoLibUtil {
   public static boolean isAnimationRunning(final String animationName, final AnimationController controller) {
-    return AnimationUtils.isCurrentAnimation(animationName, controller)
+    return GeckoLibUtil.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Running;
   }
 
   public static boolean isAnimationTransitioning(final String animationName, final AnimationController controller) {
-    return AnimationUtils.isCurrentAnimation(animationName, controller)
+    return GeckoLibUtil.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Transitioning;
   }
 
   public static boolean isAnimationStopped(final String animationName, final AnimationController controller) {
-    return AnimationUtils.isCurrentAnimation(animationName, controller)
+    return GeckoLibUtil.isCurrentAnimation(animationName, controller)
         && controller.getAnimationState() == AnimationState.Stopped;
   }
 

@@ -1,7 +1,6 @@
 package com.syllient.livingchest;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -26,20 +25,20 @@ public class LivingChest implements IProxy {
   }
 
   @Override
-  @EventHandler
+  @Mod.EventHandler
   public void onPreInit(final FMLPreInitializationEvent event) {
-    NetworkRegistry.INSTANCE.registerGuiHandler(this, new ModGuiHandler());
+    NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
     LivingChest.proxy.onPreInit(event);
   }
 
   @Override
-  @EventHandler
+  @Mod.EventHandler
   public void onInit(final FMLInitializationEvent event) {
     LivingChest.proxy.onInit(event);
   }
 
   @Override
-  @EventHandler
+  @Mod.EventHandler
   public void onPostInit(final FMLPostInitializationEvent event) {
     LivingChest.proxy.onPostInit(event);
   }

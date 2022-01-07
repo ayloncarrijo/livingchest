@@ -1,6 +1,6 @@
 package com.syllient.livingchest;
 
-import com.syllient.livingchest.entity.EntityChester;
+import com.syllient.livingchest.entity.ChesterEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -16,13 +16,13 @@ public class EventHandler {
   private static int entityId = 0;
 
   @SubscribeEvent
-  public static void onRegisterEntities(RegistryEvent.Register<EntityEntry> event) {
+  public static void onRegisterEntities(final RegistryEvent.Register<EntityEntry> event) {
     event.getRegistry()
         .registerAll(
-            EventHandler.createEntityEntry(EntityChester.class, "chester"));
+            EventHandler.createEntityEntry(ChesterEntity.class, "chester"));
   }
 
-  private static EntityEntry createEntityEntry(Class<? extends Entity> clazz, String name) {
+  private static EntityEntry createEntityEntry(final Class<? extends Entity> clazz, final String name) {
     return EntityEntryBuilder
         .create()
         .entity(clazz)

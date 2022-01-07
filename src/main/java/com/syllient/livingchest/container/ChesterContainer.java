@@ -1,8 +1,8 @@
-package com.syllient.livingchest.inventory;
+package com.syllient.livingchest.container;
 
 import java.util.stream.IntStream;
 
-import com.syllient.livingchest.entity.EntityChester;
+import com.syllient.livingchest.entity.ChesterEntity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -10,28 +10,26 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerChester extends Container {
-  private final EntityChester chester;
+public class ChesterContainer extends Container {
+  private final ChesterEntity chester;
 
-  private final int invTotalSlots;
   private final int invCols;
   private final int invRows;
+  private final int yPosPlayerInv;
   private final int xOffset;
   private final int yOffset;
-  private final int yOffsetPlayer;
 
-  public ContainerChester(
+  public ChesterContainer(
       final EntityPlayer player,
-      final EntityChester chester) {
+      final ChesterEntity chester) {
     this.chester = chester;
     this.chester.getInventory().onOpenInventory(player);
 
-    this.invTotalSlots = this.chester.getInventory().getSlots();
     this.invCols = 9;
-    this.invRows = this.invTotalSlots / this.invCols;
+    this.invRows = this.chester.getInventory().getSlots() / this.invCols;
+    this.yPosPlayerInv = (invRows - 4) * 18;
     this.xOffset = 8;
     this.yOffset = 18;
-    this.yOffsetPlayer = (invRows - 4) * 18;
 
     IntStream.range(0, invRows).forEach((row) -> {
       IntStream.range(0, invCols).forEach((col) -> {
@@ -48,23 +46,11 @@ public class ContainerChester extends Container {
       });
     });
 
-    IntStream.range(0, 9).forEach((col) -> {
-      final int index = col;
-      final int xPos = col * 18 + xOffset;
-      final int yPos = 161 + yOffsetPlayer;
-
-      this.addSlotToContainer(new Slot(
-          player.inventory,
-          index,
-          xPos,
-          yPos));
-    });
-
     IntStream.range(0, 3).forEach((row) -> {
       IntStream.range(0, 9).forEach((col) -> {
         final int index = row * 9 + col + 9;
         final int xPos = col * 18 + xOffset;
-        final int yPos = row * 18 + 103 + yOffsetPlayer;
+        final int yPos = row * 18 + 103 + yPosPlayerInv;
 
         this.addSlotToContainer(new Slot(
             player.inventory,
@@ -72,6 +58,18 @@ public class ContainerChester extends Container {
             xPos,
             yPos));
       });
+    });
+
+    IntStream.range(0, 9).forEach((col) -> {
+      final int index = col;
+      final int xPos = col * 18 + xOffset;
+      final int yPos = 161 + yPosPlayerInv;
+
+      this.addSlotToContainer(new Slot(
+          player.inventory,
+          index,
+          xPos,
+          yPos));
     });
   }
 
@@ -95,10 +93,10 @@ public class ContainerChester extends Container {
       final ItemStack itemStackInSlot = invSlot.getStack();
       itemStack = itemStackInSlot.copy();
 
-      if (index < this.invTotalSlots) {
+      if (index < this.chester.getInventory().getSlots()) {
         if (!this.mergeItemStack(
             itemStackInSlot,
-            this.invTotalSlots,
+            this.chester.getInventory().getSlots(),
             this.inventorySlots.size(),
             true)) {
           return ItemStack.EMPTY;
@@ -106,7 +104,7 @@ public class ContainerChester extends Container {
       } else if (!this.mergeItemStack(
           itemStackInSlot,
           0,
-          this.invTotalSlots,
+          this.chester.getInventory().getSlots(),
           false)) {
         return ItemStack.EMPTY;
       }

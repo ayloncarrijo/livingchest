@@ -1,15 +1,15 @@
 package com.syllient.livingchest.inventory;
 
-import com.syllient.livingchest.entity.EntityChester;
+import com.syllient.livingchest.entity.ChesterEntity;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class InventoryChester extends ItemStackHandler {
-  private final EntityChester chester;
+public class ChesterInventory extends ItemStackHandler {
+  private final ChesterEntity chester;
   private int openCount = 0;
 
-  public InventoryChester(final EntityChester chester, final int size) {
+  public ChesterInventory(final ChesterEntity chester, final int size) {
     super(size);
     this.chester = chester;
   }

@@ -1,9 +1,9 @@
 package com.syllient.livingchest.entity;
 
+import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
-import com.syllient.livingchest.ModGuiHandler;
-import com.syllient.livingchest.animation.entity.AnimationChester;
-import com.syllient.livingchest.inventory.InventoryChester;
+import com.syllient.livingchest.animation.ChesterAnimation;
+import com.syllient.livingchest.inventory.ChesterInventory;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
@@ -20,17 +20,17 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class EntityChester extends EntityCow implements IAnimatable {
-  private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(EntityChester.class,
+public class ChesterEntity extends EntityCow implements IAnimatable {
+  private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(ChesterEntity.class,
       DataSerializers.BOOLEAN);
 
-  private final InventoryChester inventory = new InventoryChester(this, 27);
+  private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final AnimationFactory factory = new AnimationFactory(this);
-  private final AnimationChester animation = new AnimationChester(this);
+  private final ChesterAnimation animation = new ChesterAnimation(this);
 
   private int ticksUntilResetMoveSpeed = 0;
 
-  public EntityChester(final World worldIn) {
+  public ChesterEntity(final World worldIn) {
     super(worldIn);
     this.ignoreFrustumCheck = true;
   }
@@ -105,7 +105,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
   public void openGuiTo(final EntityPlayer player) {
     player.openGui(
         LivingChest.instance,
-        ModGuiHandler.Gui.CHESTER,
+        GuiHandler.Gui.CHESTER,
         this.world,
         this.getEntityId(),
         0,
@@ -126,7 +126,7 @@ public class EntityChester extends EntityCow implements IAnimatable {
     return 0.5F;
   }
 
-  public InventoryChester getInventory() {
+  public ChesterInventory getInventory() {
     return this.inventory;
   }
 

@@ -1,4 +1,4 @@
-package com.syllient.livingchest.gecko;
+package com.syllient.livingchest.geckolib.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,20 +14,20 @@ import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
-public class AnimationControllerExtended<T extends IAnimatable> extends AnimationController<T> {
+public class ExtendedAnimationController<T extends IAnimatable> extends AnimationController<T> {
   private boolean isAnimationFinished = false;
 
-  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+  public ExtendedAnimationController(final T animatable, final String name, final float transitionLengthTicks,
       final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, animationPredicate);
   }
 
-  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+  public ExtendedAnimationController(final T animatable, final String name, final float transitionLengthTicks,
       final Function<Double, Double> customEasingMethod, final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, customEasingMethod, animationPredicate);
   }
 
-  public AnimationControllerExtended(final T animatable, final String name, final float transitionLengthTicks,
+  public ExtendedAnimationController(final T animatable, final String name, final float transitionLengthTicks,
       final EasingType easingtype,
       final IAnimationPredicate<T> animationPredicate) {
     super(animatable, name, transitionLengthTicks, easingtype, animationPredicate);
