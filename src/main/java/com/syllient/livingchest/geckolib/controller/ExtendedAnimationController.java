@@ -2,10 +2,12 @@ package com.syllient.livingchest.geckolib.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.easing.EasingType;
@@ -46,5 +48,39 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
 
   public boolean isAnimationFinished() {
     return this.isAnimationFinished;
+  }
+
+  public boolean isAnimationTransitioning() {
+    return this.getAnimationState() == AnimationState.Transitioning;
+  }
+
+  public boolean isAnimationTransitioning(final String animationName) {
+    return this.isCurrentAnimation(animationName) && this.isAnimationTransitioning();
+  }
+
+  public boolean isAnimationRunning() {
+    return this.getAnimationState() == AnimationState.Running;
+  }
+
+  public boolean isAnimationRunning(final String animationName) {
+    return this.isCurrentAnimation(animationName) && this.isAnimationRunning();
+  }
+
+  public boolean isAnimationStopped() {
+    return this.getAnimationState() == AnimationState.Stopped;
+  }
+
+  public boolean isAnimationStopped(final String animationName) {
+    return this.isCurrentAnimation(animationName) && this.isAnimationStopped();
+  }
+
+  public boolean isCurrentAnimation(final String animationName) {
+    return this.getCurrentAnimation() != null
+        && this.getCurrentAnimation().animationName.equals(animationName);
+  }
+
+  public boolean isCurrentAnimation(final Set<String> animationNames) {
+    return this.getCurrentAnimation() != null
+        && animationNames.contains(this.getCurrentAnimation().animationName);
   }
 }
