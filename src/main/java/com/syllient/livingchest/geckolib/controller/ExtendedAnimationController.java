@@ -17,7 +17,7 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 public class ExtendedAnimationController<T extends IAnimatable> extends AnimationController<T> {
-  private boolean isAnimationFinished = false;
+  private boolean isAnimationJustFinished = false;
 
   public ExtendedAnimationController(final T animatable, final String name, final float transitionLengthTicks,
       final IAnimationPredicate<T> animationPredicate) {
@@ -39,15 +39,11 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
   public void process(final double tick, final AnimationEvent<T> event, final List<IBone> modelRendererList,
       final HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, final MolangParser parser,
       final boolean crashWhenCantFindBone) {
-    this.isAnimationFinished = this.currentAnimation != null
+    this.isAnimationJustFinished = !this.isAnimationStopped()
         ? adjustTick(tick) >= this.currentAnimation.animationLength
         : false;
 
     super.process(tick, event, modelRendererList, boneSnapshotCollection, parser, crashWhenCantFindBone);
-  }
-
-  public boolean isAnimationFinished() {
-    return this.isAnimationFinished;
   }
 
   public boolean isAnimationTransitioning() {
@@ -74,6 +70,10 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
     return this.isCurrentAnimation(animationName) && this.isAnimationStopped();
   }
 
+  public boolean isAnimationLooping() {
+    return this.getCurrentAnimation() != null && this.getCurrentAnimation().loop;
+  }
+
   public boolean isCurrentAnimation(final String animationName) {
     return this.getCurrentAnimation() != null
         && this.getCurrentAnimation().animationName.equals(animationName);
@@ -82,5 +82,9 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
   public boolean isCurrentAnimation(final Set<String> animationNames) {
     return this.getCurrentAnimation() != null
         && animationNames.contains(this.getCurrentAnimation().animationName);
+  }
+
+  public boolean isAnimationJustFinished() {
+    return this.isAnimationJustFinished;
   }
 }

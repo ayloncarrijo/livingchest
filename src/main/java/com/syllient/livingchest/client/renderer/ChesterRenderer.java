@@ -10,6 +10,5 @@ public class ChesterRenderer extends GeoEntityRenderer<ChesterEntity> {
   public ChesterRenderer(final RenderManager renderManager) {
     super(renderManager, new ChesterModel());
     this.shadowSize = 0.6F;
-
   }
 }

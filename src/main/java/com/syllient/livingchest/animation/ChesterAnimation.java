@@ -8,16 +8,13 @@ import java.util.Set;
 
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.geckolib.controller.ExtendedAnimationController;
-import com.syllient.livingchest.util.GeckoLibUtil;
 
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
-@SuppressWarnings("unchecked")
 public class ChesterAnimation {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
@@ -28,9 +25,13 @@ public class ChesterAnimation {
     private static final String IDLE_MOUTH = "animation.chester.idle_mouth";
     private static final String CLOSE_MOUTH = "animation.chester.close_mouth";
 
+    private static final Set<String> ALL_MOUTH_STEPS = new HashSet<>(
+        Arrays.asList(
+            Animation.OPEN_MOUTH,
+            Animation.IDLE_MOUTH,
+            Animation.CLOSE_MOUTH));
+
     private static final Map<String, String> MOUTH_FROM_JUMP = new HashMap<>();
-    private static final Set<String> MOUTH_STATES = new HashSet<>(
-        Arrays.asList(OPEN_MOUTH, IDLE_MOUTH, CLOSE_MOUTH));
 
     static {
       Animation.MOUTH_FROM_JUMP.put(Animation.INIT_JUMP, "animation.chester.mouth.init_jump");
@@ -45,39 +46,36 @@ public class ChesterAnimation {
     private static final String MOUTH = "mouth_controller";
   }
 
+  private final ExtendedAnimationController<ChesterEntity> idleController;
+  private final ExtendedAnimationController<ChesterEntity> jumpController;
+  private final ExtendedAnimationController<ChesterEntity> mouthController;
   private final ChesterEntity chester;
   private int ticksIdling = 0;
 
   public ChesterAnimation(final ChesterEntity chester) {
     this.chester = chester;
-  }
 
-  public void registerControllers(final AnimationData data) {
-    final AnimationController<ChesterEntity> idleController = new ExtendedAnimationController<ChesterEntity>(
+    this.idleController = new ExtendedAnimationController<>(
         this.chester,
         Controller.IDLE, 0, this::idlePredicate);
 
-    final AnimationController<ChesterEntity> jumpController = new ExtendedAnimationController<ChesterEntity>(
+    this.jumpController = new ExtendedAnimationController<>(
         this.chester,
         Controller.JUMP, 0, this::jumpPredicate);
 
-    final AnimationController<ChesterEntity> mouthController = new ExtendedAnimationController<ChesterEntity>(
+    this.mouthController = new ExtendedAnimationController<>(
         this.chester,
         Controller.MOUTH, 0, this::mouthPredicate);
+  }
 
-    data.addAnimationController(idleController);
-    data.addAnimationController(jumpController);
-    data.addAnimationController(mouthController);
+  public void registerControllers(final AnimationData data) {
+    data.addAnimationController(this.idleController);
+    data.addAnimationController(this.jumpController);
+    data.addAnimationController(this.mouthController);
   }
 
   private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
-    final ExtendedAnimationController<ChesterEntity> idleController = (ExtendedAnimationController<ChesterEntity>) event
-        .getController();
-
-    final ExtendedAnimationController<ChesterEntity> jumpController = (ExtendedAnimationController<ChesterEntity>) GeckoLibUtil
-        .getEntityController(this.chester, Controller.JUMP);
-
-    final boolean isIdling = jumpController.isAnimationStopped();
+    final boolean isIdling = this.jumpController.isAnimationStopped();
 
     if (isIdling) {
       this.ticksIdling += 1;
@@ -89,28 +87,25 @@ public class ChesterAnimation {
       return PlayState.STOP;
     }
 
-    idleController.setAnimation(
+    this.idleController.setAnimation(
         new AnimationBuilder().addAnimation(Animation.IDLE, true));
 
     return PlayState.CONTINUE;
   }
 
   private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    final ExtendedAnimationController<ChesterEntity> jumpController = (ExtendedAnimationController<ChesterEntity>) event
-        .getController();
-
-    if (jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
-      jumpController.setAnimation(
+    if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
+      this.jumpController.setAnimation(
           new AnimationBuilder().addAnimation(Animation.JUMP));
 
       return PlayState.CONTINUE;
     }
 
-    final boolean isJumping = jumpController.isCurrentAnimation(Animation.JUMP);
+    final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
     if (event.isMoving()) {
       if (!isJumping) {
-        jumpController.setAnimation(
+        this.jumpController.setAnimation(
             new AnimationBuilder()
                 .addAnimation(Animation.INIT_JUMP));
       }
@@ -118,8 +113,8 @@ public class ChesterAnimation {
       return PlayState.CONTINUE;
     }
 
-    if (isJumping && jumpController.isAnimationFinished()) {
-      jumpController.setAnimation(
+    if (isJumping && this.jumpController.isAnimationJustFinished()) {
+      this.jumpController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.STOP_JUMP));
 
@@ -130,11 +125,8 @@ public class ChesterAnimation {
   }
 
   private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    final ExtendedAnimationController<ChesterEntity> mouthController = (ExtendedAnimationController<ChesterEntity>) event
-        .getController();
-
     if (this.chester.isMouthOpen()) {
-      mouthController.setAnimation(
+      this.mouthController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.OPEN_MOUTH)
               .addAnimation(Animation.IDLE_MOUTH));
@@ -142,26 +134,25 @@ public class ChesterAnimation {
       return PlayState.CONTINUE;
     }
 
-    if (mouthController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
-      mouthController.setAnimation(
+    if (this.mouthController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
+      this.mouthController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.CLOSE_MOUTH));
 
       return PlayState.CONTINUE;
     }
 
-    if (mouthController.isCurrentAnimation(Animation.MOUTH_STATES) && !mouthController.isAnimationStopped()) {
+    if (this.mouthController.isCurrentAnimation(Animation.ALL_MOUTH_STEPS)
+        && !this.mouthController.isAnimationStopped()) {
       return PlayState.CONTINUE;
     }
 
-    final ExtendedAnimationController<ChesterEntity> jumpController = (ExtendedAnimationController<ChesterEntity>) GeckoLibUtil
-        .getEntityController(this.chester, Controller.JUMP);
-
-    if (jumpController.isAnimationTransitioning()) {
-      mouthController.setAnimation(
+    if (this.jumpController.isAnimationTransitioning()) {
+      this.mouthController.setAnimation(
           new AnimationBuilder()
-              .addAnimation(Animation.MOUTH_FROM_JUMP
-                  .get(jumpController.getCurrentAnimation().animationName)));
+              .addAnimation(
+                  Animation.MOUTH_FROM_JUMP.get(
+                      this.jumpController.getCurrentAnimation().animationName)));
 
       return PlayState.CONTINUE;
     }

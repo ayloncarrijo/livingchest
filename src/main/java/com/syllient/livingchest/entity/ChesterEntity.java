@@ -99,7 +99,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
-    this.ticksUntilResetMoveSpeed = 10;
+    this.ticksUntilResetMoveSpeed = 15;
   }
 
   public void openGuiTo(final EntityPlayer player) {
