@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class ChesterGui extends GuiContainer {
   private static final ResourceLocation TEXTURE = new ResourceLocation(
-      LivingChest.MODID,
+      LivingChest.MOD_ID,
       "textures/gui/chester.png");
 
   private final int invCols;
@@ -27,9 +27,9 @@ public class ChesterGui extends GuiContainer {
 
   @Override
   public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-    this.drawDefaultBackground();
-    super.drawScreen(mouseX, mouseY, partialTicks);
-    this.renderHoveredToolTip(mouseX, mouseY);
+    // this.drawDefaultBackground();
+    // super.drawScreen(mouseX, mouseY, partialTicks);
+    // this.renderHoveredToolTip(mouseX, mouseY);
   }
 
   @Override
@@ -37,7 +37,7 @@ public class ChesterGui extends GuiContainer {
       final float partialTicks,
       final int mouseX,
       final int mouseY) {
-    Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+    // Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
     this.drawTexturedModalRect(

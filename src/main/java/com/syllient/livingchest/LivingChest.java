@@ -8,17 +8,17 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
-@Mod(modid = LivingChest.MODID, name = LivingChest.NAME, version = LivingChest.VERSION)
+@Mod(modid = LivingChest.MOD_ID, name = LivingChest.NAME, version = LivingChest.VERSION)
 public class LivingChest implements IProxy {
-  public static final String MODID = "livingchest";
+  public static final String MOD_ID = "livingchest";
   public static final String NAME = "LivingChest";
   public static final String VERSION = "1.0";
 
+  @Mod.Instance(LivingChest.MOD_ID)
+  public static LivingChest instance;
+
   @SidedProxy(clientSide = "com.syllient.livingchest.client.ClientProxy", serverSide = "com.syllient.livingchest.server.ServerProxy")
   public static IProxy proxy;
-
-  @Mod.Instance(LivingChest.MODID)
-  public static LivingChest instance;
 
   public LivingChest() {
     GeckoLib.initialize();

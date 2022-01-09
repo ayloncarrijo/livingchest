@@ -27,7 +27,6 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final AnimationFactory factory = new AnimationFactory(this);
   private final ChesterAnimation animation = new ChesterAnimation(this);
-
   private int ticksUntilResetMoveSpeed = 0;
 
   public ChesterEntity(final World worldIn) {
@@ -46,6 +45,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
         .setBaseValue(450.0D);
+    this.setMoveSpeed(this.getDefaultMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(
             MobEffects.REGENERATION,
@@ -53,20 +53,28 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
             2,
             false,
             false));
-    this.setMoveSpeed(this.getDefaultMoveSpeed());
   }
 
   @Override
   public void onUpdate() {
-    if (!this.world.isRemote) {
-      if (!this.isMouthOpen()
-          && this.ticksUntilResetMoveSpeed > 0
-          && --this.ticksUntilResetMoveSpeed <= 0) {
-        this.setMoveSpeed(this.getDefaultMoveSpeed());
-      }
-    }
-
     super.onUpdate();
+
+    if (!this.world.isRemote) {
+      this.onServerUpdate();
+    } else {
+      this.onClientUpdate();
+    }
+  }
+
+  public void onServerUpdate() {
+    if (!this.isMouthOpen() && this.onGround
+        && this.ticksUntilResetMoveSpeed > 0
+        && --this.ticksUntilResetMoveSpeed <= 0) {
+      this.setMoveSpeed(this.getDefaultMoveSpeed());
+    }
+  }
+
+  public void onClientUpdate() {
   }
 
   @Override

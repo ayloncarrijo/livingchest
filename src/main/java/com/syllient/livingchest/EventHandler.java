@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber(modid = LivingChest.MODID, value = { Side.CLIENT, Side.SERVER })
+@Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, value = { Side.CLIENT, Side.SERVER })
 public class EventHandler {
   private static int entityId = 0;
 
@@ -27,8 +27,8 @@ public class EventHandler {
         .create()
         .entity(clazz)
         .tracker(64, 1, true)
-        .name(LivingChest.MODID + "." + name)
-        .id(new ResourceLocation(LivingChest.MODID, name), EventHandler.entityId++)
+        .name(LivingChest.MOD_ID + "." + name)
+        .id(new ResourceLocation(LivingChest.MOD_ID, name), EventHandler.entityId++)
         .egg(0xFF000000, 0xFF000000)
         .build();
   }

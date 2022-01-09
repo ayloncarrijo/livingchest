@@ -91,6 +91,10 @@ public class ChesterAnimation {
   }
 
   private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
+    if (!this.chester.onGround) {
+      return PlayState.CONTINUE;
+    }
+
     if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
       this.jumpController.setAnimation(
           new AnimationBuilder().addAnimation(Animation.JUMP));
