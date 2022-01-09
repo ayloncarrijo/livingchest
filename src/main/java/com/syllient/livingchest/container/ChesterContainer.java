@@ -11,25 +11,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ChesterContainer extends Container {
-  private final ChesterEntity chester;
-
   private final int invCols;
   private final int invRows;
-  private final int yPosPlayerInv;
   private final int xOffset;
   private final int yOffset;
+  private final int yPlayer;
+  private final ChesterEntity chester;
 
   public ChesterContainer(
       final EntityPlayer player,
       final ChesterEntity chester) {
-    this.chester = chester;
-    this.chester.getInventory().onOpenInventory(player);
-
     this.invCols = 9;
-    this.invRows = this.chester.getInventory().getSlots() / this.invCols;
-    this.yPosPlayerInv = (invRows - 4) * 18;
+    this.invRows = chester.getInventory().getSlots() / this.invCols;
     this.xOffset = 8;
     this.yOffset = 18;
+    this.yPlayer = (invRows - 4) * 18;
+    this.chester = chester;
+    this.chester.getInventory().onOpenInventory(player);
 
     IntStream.range(0, invRows).forEach((row) -> {
       IntStream.range(0, invCols).forEach((col) -> {
@@ -50,7 +48,7 @@ public class ChesterContainer extends Container {
       IntStream.range(0, 9).forEach((col) -> {
         final int index = row * 9 + col + 9;
         final int xPos = col * 18 + xOffset;
-        final int yPos = row * 18 + 103 + yPosPlayerInv;
+        final int yPos = row * 18 + 103 + yPlayer;
 
         this.addSlotToContainer(new Slot(
             player.inventory,
@@ -63,7 +61,7 @@ public class ChesterContainer extends Container {
     IntStream.range(0, 9).forEach((col) -> {
       final int index = col;
       final int xPos = col * 18 + xOffset;
-      final int yPos = 161 + yPosPlayerInv;
+      final int yPos = 161 + yPlayer;
 
       this.addSlotToContainer(new Slot(
           player.inventory,

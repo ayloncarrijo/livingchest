@@ -53,19 +53,16 @@ public class ChesterAnimation {
   private int ticksIdling = 0;
 
   public ChesterAnimation(final ChesterEntity chester) {
-    this.chester = chester;
-
     this.idleController = new ExtendedAnimationController<>(
-        this.chester,
+        chester,
         Controller.IDLE, 0, this::idlePredicate);
-
     this.jumpController = new ExtendedAnimationController<>(
-        this.chester,
+        chester,
         Controller.JUMP, 0, this::jumpPredicate);
-
     this.mouthController = new ExtendedAnimationController<>(
-        this.chester,
+        chester,
         Controller.MOUTH, 0, this::mouthPredicate);
+    this.chester = chester;
   }
 
   public void registerControllers(final AnimationData data) {
