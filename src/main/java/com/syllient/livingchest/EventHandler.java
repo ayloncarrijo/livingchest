@@ -1,9 +1,11 @@
 package com.syllient.livingchest;
 
 import com.syllient.livingchest.entity.ChesterEntity;
+import com.syllient.livingchest.registry.SoundRegistry;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -16,10 +18,16 @@ public class EventHandler {
   private static int entityId = 0;
 
   @SubscribeEvent
-  public static void onRegisterEntities(final RegistryEvent.Register<EntityEntry> event) {
-    event.getRegistry()
-        .registerAll(
-            EventHandler.createEntityEntry(ChesterEntity.class, "chester"));
+  public static void onRegisterEntity(final RegistryEvent.Register<EntityEntry> event) {
+    event.getRegistry().registerAll(
+        EventHandler.createEntityEntry(ChesterEntity.class, "chester"));
+  }
+
+  @SubscribeEvent
+  public static void onRegisterSound(final RegistryEvent.Register<SoundEvent> event) {
+    event.getRegistry().registerAll(
+        SoundRegistry.Chester.OPEN_MOUTH,
+        SoundRegistry.Chester.CLOSE_MOUTH);
   }
 
   private static EntityEntry createEntityEntry(final Class<? extends Entity> clazz, final String name) {

@@ -1,11 +1,5 @@
 package com.syllient.livingchest.animation;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.geckolib.controller.ExtendedAnimationController;
 
@@ -24,20 +18,6 @@ public class ChesterAnimation {
     private static final String OPEN_MOUTH = "animation.chester.open_mouth";
     private static final String IDLE_MOUTH = "animation.chester.idle_mouth";
     private static final String CLOSE_MOUTH = "animation.chester.close_mouth";
-
-    private static final Set<String> ALL_MOUTH_STEPS = new HashSet<>(
-        Arrays.asList(
-            Animation.OPEN_MOUTH,
-            Animation.IDLE_MOUTH,
-            Animation.CLOSE_MOUTH));
-
-    private static final Map<String, String> MOUTH_FROM_JUMP = new HashMap<>();
-
-    static {
-      Animation.MOUTH_FROM_JUMP.put(Animation.INIT_JUMP, "animation.chester.mouth.init_jump");
-      Animation.MOUTH_FROM_JUMP.put(Animation.JUMP, "animation.chester.mouth.jump");
-      Animation.MOUTH_FROM_JUMP.put(Animation.STOP_JUMP, "animation.chester.mouth.stop_jump");
-    }
   }
 
   private static class Controller {
@@ -48,7 +28,7 @@ public class ChesterAnimation {
 
   private final ExtendedAnimationController<ChesterEntity> idleController;
   private final ExtendedAnimationController<ChesterEntity> jumpController;
-  private final ExtendedAnimationController<ChesterEntity> mouthController;
+  private final ExtendedAnimationController<ChesterEntity> openController;
   private final ChesterEntity chester;
   private int ticksIdling = 0;
 
@@ -59,16 +39,16 @@ public class ChesterAnimation {
     this.jumpController = new ExtendedAnimationController<>(
         chester,
         Controller.JUMP, 0, this::jumpPredicate);
-    this.mouthController = new ExtendedAnimationController<>(
+    this.openController = new ExtendedAnimationController<>(
         chester,
-        Controller.MOUTH, 0, this::mouthPredicate);
+        Controller.MOUTH, 0, this::openPredicate);
     this.chester = chester;
   }
 
   public void registerControllers(final AnimationData data) {
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
-    data.addAnimationController(this.mouthController);
+    data.addAnimationController(this.openController);
   }
 
   private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
@@ -91,10 +71,6 @@ public class ChesterAnimation {
   }
 
   private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
-    if (!this.chester.onGround) {
-      return PlayState.CONTINUE;
-    }
-
     if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
       this.jumpController.setAnimation(
           new AnimationBuilder().addAnimation(Animation.JUMP));
@@ -104,7 +80,7 @@ public class ChesterAnimation {
 
     final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
-    if (event.isMoving()) {
+    if (event.isMoving() && this.chester.onGround && !this.chester.isMouthOpen()) {
       if (!isJumping) {
         this.jumpController.setAnimation(
             new AnimationBuilder()
@@ -125,9 +101,13 @@ public class ChesterAnimation {
     return PlayState.CONTINUE;
   }
 
-  private PlayState mouthPredicate(final AnimationEvent<? extends IAnimatable> event) {
+  private PlayState openPredicate(final AnimationEvent<? extends IAnimatable> event) {
+    if (this.ticksIdling < 5) {
+      return PlayState.STOP;
+    }
+
     if (this.chester.isMouthOpen()) {
-      this.mouthController.setAnimation(
+      this.openController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.OPEN_MOUTH)
               .addAnimation(Animation.IDLE_MOUTH));
@@ -135,25 +115,10 @@ public class ChesterAnimation {
       return PlayState.CONTINUE;
     }
 
-    if (this.mouthController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
-      this.mouthController.setAnimation(
+    if (this.openController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
+      this.openController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.CLOSE_MOUTH));
-
-      return PlayState.CONTINUE;
-    }
-
-    if (this.mouthController.isCurrentAnimation(Animation.ALL_MOUTH_STEPS)
-        && !this.mouthController.isAnimationStopped()) {
-      return PlayState.CONTINUE;
-    }
-
-    if (this.jumpController.isAnimationTransitioning()) {
-      this.mouthController.setAnimation(
-          new AnimationBuilder()
-              .addAnimation(
-                  Animation.MOUTH_FROM_JUMP.get(
-                      this.jumpController.getCurrentAnimation().animationName)));
 
       return PlayState.CONTINUE;
     }

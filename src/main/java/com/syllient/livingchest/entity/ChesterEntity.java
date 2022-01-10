@@ -4,6 +4,7 @@ import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
+import com.syllient.livingchest.registry.SoundRegistry;
 
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
@@ -13,7 +14,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -45,7 +45,8 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
         .setBaseValue(450.0D);
-    this.setMoveSpeed(this.getDefaultMoveSpeed());
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+        .setBaseValue(this.getDefaultMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(
             MobEffects.REGENERATION,
@@ -78,11 +79,6 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   @Override
-  protected void damageEntity(final DamageSource damageSrc, final float damageAmount) {
-    super.damageEntity(damageSrc, damageAmount);
-  }
-
-  @Override
   public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
     if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
       this.openGuiTo(player);
@@ -103,11 +99,13 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   public void openMouth() {
     this.setIsMouthOpen(true);
     this.setMoveSpeed(0);
+    this.playSound(SoundRegistry.Chester.OPEN_MOUTH, 1.0F, 1.0F);
   }
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
     this.ticksUntilResetMoveSpeed = 15;
+    this.playSound(SoundRegistry.Chester.CLOSE_MOUTH, 1.0F, 1.0F);
   }
 
   public void openGuiTo(final EntityPlayer player) {

@@ -1,0 +1,22 @@
+{
+  "chester.open_mouth": {
+    "category": "block",
+    "sounds": [
+      "livingchest:chester/open_mouth_1",
+      "livingchest:chester/open_mouth_2",
+      "livingchest:chester/open_mouth_3",
+      "livingchest:chester/open_mouth_4",
+      "livingchest:chester/open_mouth_5"
+    ]
+  },
+  "chester.close_mouth": {
+    "category": "block",
+    "sounds": [
+      "livingchest:chester/close_mouth_1",
+      "livingchest:chester/close_mouth_2",
+      "livingchest:chester/close_mouth_3",
+      "livingchest:chester/close_mouth_4",
+      "livingchest:chester/close_mouth_5"
+    ]
+  }
+}
