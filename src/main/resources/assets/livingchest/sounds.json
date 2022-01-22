@@ -1,6 +1,6 @@
 {
   "chester.open_mouth": {
-    "category": "block",
+    "category": "neutral",
     "sounds": [
       "livingchest:chester/open_mouth_1",
       "livingchest:chester/open_mouth_2",
@@ -10,7 +10,7 @@
     ]
   },
   "chester.close_mouth": {
-    "category": "block",
+    "category": "neutral",
     "sounds": [
       "livingchest:chester/close_mouth_1",
       "livingchest:chester/close_mouth_2",

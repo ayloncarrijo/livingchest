@@ -79,6 +79,11 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "sound.open_mouth"
+				}
 			}
 		},
 		"animation.chester.idle_mouth": {
@@ -104,6 +109,11 @@
 							"easing": "easeOutCirc"
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "sound.close_mouth"
 				}
 			}
 		},
