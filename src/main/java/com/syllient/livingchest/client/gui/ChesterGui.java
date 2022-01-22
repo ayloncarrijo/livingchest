@@ -19,7 +19,6 @@ public class ChesterGui extends GuiContainer {
 
   public ChesterGui(final ChesterEntity chester) {
     super(new ChesterContainer(Minecraft.getMinecraft().player, chester));
-
     this.invCols = 9;
     this.invRows = chester.getInventory().getSlots() / this.invCols;
     this.ySize = 114 + this.invRows * 18;

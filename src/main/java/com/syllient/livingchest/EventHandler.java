@@ -26,8 +26,8 @@ public class EventHandler {
   @SubscribeEvent
   public static void onRegisterSound(final RegistryEvent.Register<SoundEvent> event) {
     event.getRegistry().registerAll(
-        SoundRegistry.Chester.OPEN_MOUTH,
-        SoundRegistry.Chester.CLOSE_MOUTH);
+        SoundRegistry.ChesterEntity.OPEN_MOUTH,
+        SoundRegistry.ChesterEntity.CLOSE_MOUTH);
   }
 
   private static EntityEntry createEntityEntry(final Class<? extends Entity> clazz, final String name) {

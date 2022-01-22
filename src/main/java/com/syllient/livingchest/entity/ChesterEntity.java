@@ -4,10 +4,9 @@ import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
-import com.syllient.livingchest.registry.SoundRegistry;
 
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
@@ -20,7 +19,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class ChesterEntity extends EntityCow implements IAnimatable {
+public class ChesterEntity extends EntityLiving implements IAnimatable {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(ChesterEntity.class,
       DataSerializers.BOOLEAN);
 
@@ -70,7 +69,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   public void onServerUpdate() {
     if (!this.isMouthOpen() && this.onGround
         && this.ticksUntilResetMoveSpeed > 0
-        && --this.ticksUntilResetMoveSpeed <= 0) {
+        && --this.ticksUntilResetMoveSpeed == 0) {
       this.setMoveSpeed(this.getDefaultMoveSpeed());
     }
   }
@@ -99,13 +98,11 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   public void openMouth() {
     this.setIsMouthOpen(true);
     this.setMoveSpeed(0);
-    this.playSound(SoundRegistry.Chester.OPEN_MOUTH, 1.0F, 1.0F);
   }
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
     this.ticksUntilResetMoveSpeed = 15;
-    this.playSound(SoundRegistry.Chester.CLOSE_MOUTH, 1.0F, 1.0F);
   }
 
   public void openGuiTo(final EntityPlayer player) {

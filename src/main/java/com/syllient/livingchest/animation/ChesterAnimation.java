@@ -1,11 +1,15 @@
 package com.syllient.livingchest.animation;
 
 import com.syllient.livingchest.entity.ChesterEntity;
-import com.syllient.livingchest.geckolib.controller.ExtendedAnimationController;
+import com.syllient.livingchest.geckolib.ExtendedAnimationController;
+import com.syllient.livingchest.registry.SoundRegistry;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.SoundCategory;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
@@ -23,7 +27,7 @@ public class ChesterAnimation {
   private static class Controller {
     private static final String IDLE = "idle_controller";
     private static final String JUMP = "jump_controller";
-    private static final String MOUTH = "mouth_controller";
+    private static final String OPEN = "open_controller";
   }
 
   private final ExtendedAnimationController<ChesterEntity> idleController;
@@ -41,11 +45,12 @@ public class ChesterAnimation {
         Controller.JUMP, 0, this::jumpPredicate);
     this.openController = new ExtendedAnimationController<>(
         chester,
-        Controller.MOUTH, 0, this::openPredicate);
+        Controller.OPEN, 0, this::openPredicate);
     this.chester = chester;
   }
 
   public void registerControllers(final AnimationData data) {
+    this.openController.registerSoundListener(this::soundListener);
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
     data.addAnimationController(this.openController);
@@ -124,5 +129,34 @@ public class ChesterAnimation {
     }
 
     return PlayState.CONTINUE;
+  }
+
+  private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
+    switch (event.sound) {
+      case "open_mouth":
+        this.chester.world.playSound(
+            Minecraft.getMinecraft().player,
+            this.chester.posX,
+            this.chester.posY,
+            this.chester.posZ,
+            SoundRegistry.ChesterEntity.OPEN_MOUTH,
+            SoundCategory.NEUTRAL,
+            1.0F,
+            1.0F);
+
+        break;
+      case "close_mouth":
+        this.chester.world.playSound(
+            Minecraft.getMinecraft().player,
+            this.chester.posX,
+            this.chester.posY,
+            this.chester.posZ,
+            SoundRegistry.ChesterEntity.CLOSE_MOUTH,
+            SoundCategory.NEUTRAL,
+            1.0F,
+            1.0F);
+
+        break;
+    }
   }
 }

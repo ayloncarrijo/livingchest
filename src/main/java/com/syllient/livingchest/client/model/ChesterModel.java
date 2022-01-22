@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ChesterModel extends AnimatedGeoModel<ChesterEntity> {
+
   @Override
   public ResourceLocation getAnimationFileLocation(final ChesterEntity chester) {
     return new ResourceLocation(LivingChest.MOD_ID, "animations/chester.animation.json");
