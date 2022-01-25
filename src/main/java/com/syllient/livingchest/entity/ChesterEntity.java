@@ -5,8 +5,8 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
@@ -19,7 +19,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class ChesterEntity extends EntityLiving implements IAnimatable {
+public class ChesterEntity extends EntityCow implements IAnimatable {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(ChesterEntity.class,
       DataSerializers.BOOLEAN);
 
@@ -44,8 +44,7 @@ public class ChesterEntity extends EntityLiving implements IAnimatable {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
         .setBaseValue(450.0D);
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
-        .setBaseValue(this.getDefaultMoveSpeed());
+    this.setMoveSpeed(this.getDefaultMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(
             MobEffects.REGENERATION,

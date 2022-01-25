@@ -2,7 +2,6 @@ package com.syllient.livingchest.geckolib;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -77,11 +76,6 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
   public boolean isCurrentAnimation(final String animationName) {
     return this.getCurrentAnimation() != null
         && this.getCurrentAnimation().animationName.equals(animationName);
-  }
-
-  public boolean isCurrentAnimation(final Set<String> animationNames) {
-    return this.getCurrentAnimation() != null
-        && animationNames.contains(this.getCurrentAnimation().animationName);
   }
 
   public boolean isAnimationJustFinished() {

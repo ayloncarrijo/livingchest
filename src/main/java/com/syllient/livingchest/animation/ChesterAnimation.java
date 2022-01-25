@@ -133,7 +133,7 @@ public class ChesterAnimation {
 
   private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
-      case "open_mouth":
+      case "open_mouth": {
         this.chester.world.playSound(
             Minecraft.getMinecraft().player,
             this.chester.posX,
@@ -145,7 +145,8 @@ public class ChesterAnimation {
             1.0F);
 
         break;
-      case "close_mouth":
+      }
+      case "close_mouth": {
         this.chester.world.playSound(
             Minecraft.getMinecraft().player,
             this.chester.posX,
@@ -157,6 +158,7 @@ public class ChesterAnimation {
             1.0F);
 
         break;
+      }
     }
   }
 }
