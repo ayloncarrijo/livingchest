@@ -1,4 +1,34 @@
 {
+  "chester.jump": {
+    "category": "neutral",
+    "sounds": [
+      "livingchest:chester/jump_1",
+      "livingchest:chester/jump_2",
+      "livingchest:chester/jump_3",
+      "livingchest:chester/jump_4"
+    ]
+  },
+  "chester.hurt": {
+    "category": "neutral",
+    "sounds": [
+      "livingchest:chester/hurt_1",
+      "livingchest:chester/hurt_2",
+      "livingchest:chester/hurt_3",
+      "livingchest:chester/hurt_4",
+      "livingchest:chester/hurt_5",
+      "livingchest:chester/hurt_6",
+      "livingchest:chester/hurt_7",
+      "livingchest:chester/hurt_8"
+    ]
+  },
+  "chester.death": {
+    "category": "neutral",
+    "sounds": [
+      "livingchest:chester/death_1",
+      "livingchest:chester/death_2",
+      "livingchest:chester/death_3"
+    ]
+  },
   "chester.open_mouth": {
     "category": "neutral",
     "sounds": [

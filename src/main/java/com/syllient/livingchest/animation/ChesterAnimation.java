@@ -6,6 +6,7 @@ import com.syllient.livingchest.registry.SoundRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -50,6 +51,7 @@ public class ChesterAnimation {
   }
 
   public void registerControllers(final AnimationData data) {
+    this.jumpController.registerSoundListener(this::soundListener);
     this.openController.registerSoundListener(this::soundListener);
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
@@ -133,32 +135,30 @@ public class ChesterAnimation {
 
   private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
+      case "jump": {
+        this.playSound(SoundRegistry.ChesterEntity.JUMP, 0.5F);
+        break;
+      }
       case "open_mouth": {
-        this.chester.world.playSound(
-            Minecraft.getMinecraft().player,
-            this.chester.posX,
-            this.chester.posY,
-            this.chester.posZ,
-            SoundRegistry.ChesterEntity.OPEN_MOUTH,
-            SoundCategory.NEUTRAL,
-            1.0F,
-            1.0F);
-
+        this.playSound(SoundRegistry.ChesterEntity.OPEN_MOUTH, 1.0F);
         break;
       }
       case "close_mouth": {
-        this.chester.world.playSound(
-            Minecraft.getMinecraft().player,
-            this.chester.posX,
-            this.chester.posY,
-            this.chester.posZ,
-            SoundRegistry.ChesterEntity.CLOSE_MOUTH,
-            SoundCategory.NEUTRAL,
-            1.0F,
-            1.0F);
-
+        this.playSound(SoundRegistry.ChesterEntity.CLOSE_MOUTH, 1.0F);
         break;
       }
     }
+  }
+
+  private void playSound(final SoundEvent sound, final float volume) {
+    this.chester.world.playSound(
+        Minecraft.getMinecraft().player,
+        this.chester.posX,
+        this.chester.posY,
+        this.chester.posZ,
+        sound,
+        SoundCategory.NEUTRAL,
+        volume,
+        1.0F);
   }
 }
