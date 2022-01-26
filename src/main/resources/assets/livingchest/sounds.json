@@ -1,4 +1,27 @@
 {
+  "chester.idle": {
+    "category": "neutral",
+    "sounds": [
+      "livingchest:chester/idle_1",
+      "livingchest:chester/idle_2",
+      "livingchest:chester/idle_3",
+      "livingchest:chester/idle_4",
+      "livingchest:chester/idle_5",
+      "livingchest:chester/idle_6",
+      "livingchest:chester/idle_7",
+      "livingchest:chester/idle_8",
+      "livingchest:chester/idle_9",
+      "livingchest:chester/idle_10",
+      "livingchest:chester/idle_11",
+      "livingchest:chester/idle_12",
+      "livingchest:chester/idle_13",
+      "livingchest:chester/idle_14",
+      "livingchest:chester/idle_15",
+      "livingchest:chester/idle_16",
+      "livingchest:chester/idle_17",
+      "livingchest:chester/idle_18"
+    ]
+  },
   "chester.jump": {
     "category": "neutral",
     "sounds": [

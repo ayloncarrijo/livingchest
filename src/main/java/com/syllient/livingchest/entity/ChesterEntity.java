@@ -4,7 +4,9 @@ import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
+import com.syllient.livingchest.registry.SoundRegistry;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +15,10 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -119,13 +124,33 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
         .setBaseValue(value);
   }
 
-  public double getDefaultMoveSpeed() {
-    return 0.25D;
+  @Override
+  protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
+    return SoundRegistry.ChesterEntity.HURT;
+  }
+
+  @Override
+  protected SoundEvent getDeathSound() {
+    return SoundRegistry.ChesterEntity.DEATH;
+  }
+
+  @Override
+  protected void playStepSound(final BlockPos pos, final Block blockIn) {
+    // Handled by Animation class
+  }
+
+  @Override
+  public void playLivingSound() {
+    // Handled by Animation class
   }
 
   @Override
   protected float getJumpUpwardsMotion() {
     return 0.5F;
+  }
+
+  public double getDefaultMoveSpeed() {
+    return 0.25D;
   }
 
   public ChesterInventory getInventory() {

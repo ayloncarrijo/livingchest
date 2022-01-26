@@ -35,7 +35,9 @@ public class ChesterAnimation {
   private final ExtendedAnimationController<ChesterEntity> jumpController;
   private final ExtendedAnimationController<ChesterEntity> openController;
   private final ChesterEntity chester;
+  private boolean wasMouthOpen = false;
   private int ticksIdling = 0;
+  private int x = 0;
 
   public ChesterAnimation(final ChesterEntity chester) {
     this.idleController = new ExtendedAnimationController<>(
@@ -70,6 +72,21 @@ public class ChesterAnimation {
     if (this.ticksIdling < 5) {
       return PlayState.STOP;
     }
+
+    if ((this.chester.isMouthOpen() && !this.wasMouthOpen)
+        || this.ticksIdling <= 100) {
+      this.x = 0;
+    }
+
+    if (this.ticksIdling % 20 == 0) {
+      this.x += 1;
+      this.playSound(
+          SoundRegistry.ChesterEntity.IDLE,
+          this.x > 10 ? Math.max(0.03F, 0.09F / (this.x - 10)) : 0.09F,
+          1.0F);
+    }
+
+    this.wasMouthOpen = this.chester.isMouthOpen();
 
     this.idleController.setAnimation(
         new AnimationBuilder().addAnimation(Animation.IDLE, true));
@@ -136,21 +153,21 @@ public class ChesterAnimation {
   private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
       case "jump": {
-        this.playSound(SoundRegistry.ChesterEntity.JUMP, 0.5F);
+        this.playSound(SoundRegistry.ChesterEntity.JUMP, 0.15F, 1.0F);
         break;
       }
       case "open_mouth": {
-        this.playSound(SoundRegistry.ChesterEntity.OPEN_MOUTH, 1.0F);
+        this.playSound(SoundRegistry.ChesterEntity.OPEN_MOUTH, 0.5F, 1.0F);
         break;
       }
       case "close_mouth": {
-        this.playSound(SoundRegistry.ChesterEntity.CLOSE_MOUTH, 1.0F);
+        this.playSound(SoundRegistry.ChesterEntity.CLOSE_MOUTH, 0.5F, 1.0F);
         break;
       }
     }
   }
 
-  private void playSound(final SoundEvent sound, final float volume) {
+  private void playSound(final SoundEvent sound, final float volume, final float pitch) {
     this.chester.world.playSound(
         Minecraft.getMinecraft().player,
         this.chester.posX,
@@ -159,6 +176,6 @@ public class ChesterAnimation {
         sound,
         SoundCategory.NEUTRAL,
         volume,
-        1.0F);
+        pitch);
   }
 }
