@@ -50,6 +50,11 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "idle"
+				}
 			}
 		},
 		"animation.chester.init_jump": {

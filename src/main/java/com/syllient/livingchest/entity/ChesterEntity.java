@@ -125,22 +125,22 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   @Override
-  protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
-    return SoundRegistry.ChesterEntity.HURT;
-  }
-
-  @Override
   protected SoundEvent getDeathSound() {
     return SoundRegistry.ChesterEntity.DEATH;
   }
 
   @Override
-  protected void playStepSound(final BlockPos pos, final Block blockIn) {
-    // Handled by Animation class
+  protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
+    return SoundRegistry.ChesterEntity.HURT;
   }
 
   @Override
   public void playLivingSound() {
+    // Handled by Animation class
+  }
+
+  @Override
+  protected void playStepSound(final BlockPos pos, final Block blockIn) {
     // Handled by Animation class
   }
 

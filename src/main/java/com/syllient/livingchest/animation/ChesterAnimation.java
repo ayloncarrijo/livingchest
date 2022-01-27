@@ -35,9 +35,10 @@ public class ChesterAnimation {
   private final ExtendedAnimationController<ChesterEntity> jumpController;
   private final ExtendedAnimationController<ChesterEntity> openController;
   private final ChesterEntity chester;
-  private boolean wasMouthOpen = false;
+  private int idleSoundTimes = 0;
   private int ticksIdling = 0;
-  private int x = 0;
+  private boolean wasMouthOpen = false;
+  private boolean hasJustOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
     this.idleController = new ExtendedAnimationController<>(
@@ -53,6 +54,7 @@ public class ChesterAnimation {
   }
 
   public void registerControllers(final AnimationData data) {
+    this.idleController.registerSoundListener(this::soundListener);
     this.jumpController.registerSoundListener(this::soundListener);
     this.openController.registerSoundListener(this::soundListener);
     data.addAnimationController(this.idleController);
@@ -60,7 +62,10 @@ public class ChesterAnimation {
     data.addAnimationController(this.openController);
   }
 
-  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
+  private void onTick() {
+    this.hasJustOpen = this.chester.isMouthOpen() && !this.wasMouthOpen;
+    this.wasMouthOpen = this.chester.isMouthOpen();
+
     final boolean isIdling = this.jumpController.isAnimationStopped();
 
     if (isIdling) {
@@ -69,25 +74,19 @@ public class ChesterAnimation {
       this.ticksIdling = 0;
     }
 
+    if (this.hasJustOpen || this.ticksIdling < 5) {
+      this.idleSoundTimes = 0;
+    }
+  }
+
+  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
+    this.onTick();
+
     if (this.ticksIdling < 5) {
       return PlayState.STOP;
     }
 
-    if ((this.chester.isMouthOpen() && !this.wasMouthOpen)
-        || this.ticksIdling <= 100) {
-      this.x = 0;
-    }
-
-    if (this.ticksIdling % 20 == 0) {
-      this.x += 1;
-      this.playSound(
-          SoundRegistry.ChesterEntity.IDLE,
-          this.x > 10 ? Math.max(0.03F, 0.09F / (this.x - 10)) : 0.09F,
-          1.0F);
-    }
-
-    this.wasMouthOpen = this.chester.isMouthOpen();
-
+    this.idleController.setAnimationSpeed(1.15D);
     this.idleController.setAnimation(
         new AnimationBuilder().addAnimation(Animation.IDLE, true));
 
@@ -152,6 +151,14 @@ public class ChesterAnimation {
 
   private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
+      case "idle": {
+        this.idleSoundTimes += 1;
+        this.playSound(
+            SoundRegistry.ChesterEntity.IDLE,
+            Math.max(0.025F, 0.1F - this.idleSoundTimes * 0.005F),
+            1.0F);
+        break;
+      }
       case "jump": {
         this.playSound(SoundRegistry.ChesterEntity.JUMP, 0.15F, 1.0F);
         break;
