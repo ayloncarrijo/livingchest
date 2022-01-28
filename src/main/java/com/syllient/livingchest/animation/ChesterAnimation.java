@@ -37,8 +37,8 @@ public class ChesterAnimation {
   private final ChesterEntity chester;
   private int idleSoundTimes = 0;
   private int ticksIdling = 0;
+  private boolean hasJustOpenedMouth = false;
   private boolean wasMouthOpen = false;
-  private boolean hasJustOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
     this.idleController = new ExtendedAnimationController<>(
@@ -63,7 +63,7 @@ public class ChesterAnimation {
   }
 
   private void onTick() {
-    this.hasJustOpen = this.chester.isMouthOpen() && !this.wasMouthOpen;
+    this.hasJustOpenedMouth = this.chester.isMouthOpen() && !this.wasMouthOpen;
     this.wasMouthOpen = this.chester.isMouthOpen();
 
     final boolean isIdling = this.jumpController.isAnimationStopped();
@@ -74,7 +74,7 @@ public class ChesterAnimation {
       this.ticksIdling = 0;
     }
 
-    if (this.hasJustOpen || this.ticksIdling < 5) {
+    if (this.hasJustOpenedMouth || this.ticksIdling < 5) {
       this.idleSoundTimes = 0;
     }
   }
@@ -86,7 +86,7 @@ public class ChesterAnimation {
       return PlayState.STOP;
     }
 
-    this.idleController.setAnimationSpeed(1.15D);
+    this.idleController.setAnimationSpeed(1.1D);
     this.idleController.setAnimation(
         new AnimationBuilder().addAnimation(Animation.IDLE, true));
 
@@ -113,7 +113,7 @@ public class ChesterAnimation {
       return PlayState.CONTINUE;
     }
 
-    if (isJumping && this.jumpController.isAnimationJustFinished()) {
+    if (isJumping && this.jumpController.hasJustFinishedAnimation()) {
       this.jumpController.setAnimation(
           new AnimationBuilder()
               .addAnimation(Animation.STOP_JUMP));

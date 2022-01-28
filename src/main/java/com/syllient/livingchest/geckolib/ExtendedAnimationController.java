@@ -16,7 +16,7 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 public class ExtendedAnimationController<T extends IAnimatable> extends AnimationController<T> {
-  private boolean isAnimationJustFinished = false;
+  private boolean hasJustFinishedAnimation = false;
 
   public ExtendedAnimationController(final T animatable, final String name, final float transitionLengthTicks,
       final IAnimationPredicate<T> animationPredicate) {
@@ -38,7 +38,7 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
   public void process(final double tick, final AnimationEvent<T> event, final List<IBone> modelRendererList,
       final HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, final MolangParser parser,
       final boolean crashWhenCantFindBone) {
-    this.isAnimationJustFinished = !this.isAnimationStopped()
+    this.hasJustFinishedAnimation = !this.isAnimationStopped()
         ? adjustTick(tick) >= this.currentAnimation.animationLength
         : false;
 
@@ -78,7 +78,7 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
         && this.getCurrentAnimation().animationName.equals(animationName);
   }
 
-  public boolean isAnimationJustFinished() {
-    return this.isAnimationJustFinished;
+  public boolean hasJustFinishedAnimation() {
+    return this.hasJustFinishedAnimation;
   }
 }

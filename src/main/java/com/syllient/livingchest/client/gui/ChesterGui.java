@@ -26,9 +26,9 @@ public class ChesterGui extends GuiContainer {
 
   @Override
   public void drawScreen(final int mouseX, final int mouseY, final float partialTicks) {
-    // this.drawDefaultBackground();
-    // super.drawScreen(mouseX, mouseY, partialTicks);
-    // this.renderHoveredToolTip(mouseX, mouseY);
+    this.drawDefaultBackground();
+    super.drawScreen(mouseX, mouseY, partialTicks);
+    this.renderHoveredToolTip(mouseX, mouseY);
   }
 
   @Override
@@ -36,7 +36,7 @@ public class ChesterGui extends GuiContainer {
       final float partialTicks,
       final int mouseX,
       final int mouseY) {
-    // Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+    Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
     this.drawTexturedModalRect(
@@ -58,18 +58,17 @@ public class ChesterGui extends GuiContainer {
 
   @Override
   protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-    final int intColor = 4210752;
-    final int xPos = 8;
+    final int intColor = 15191721;
 
     this.fontRenderer.drawString(
         "Chester",
-        xPos,
+        8,
         6,
         intColor);
 
     this.fontRenderer.drawString(
         "Inventory",
-        xPos,
+        8,
         this.ySize - 96 + 2,
         intColor);
   }
