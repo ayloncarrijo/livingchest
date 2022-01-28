@@ -1,5 +1,5 @@
 {
-  "chester.idle": {
+  "entity.chester.idle": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/idle_1",
@@ -22,7 +22,7 @@
       "livingchest:chester/idle_18"
     ]
   },
-  "chester.jump": {
+  "entity.chester.jump": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/jump_1",
@@ -31,7 +31,7 @@
       "livingchest:chester/jump_4"
     ]
   },
-  "chester.hurt": {
+  "entity.chester.hurt": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/hurt_1",
@@ -44,7 +44,7 @@
       "livingchest:chester/hurt_8"
     ]
   },
-  "chester.death": {
+  "entity.chester.death": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/death_1",
@@ -52,7 +52,7 @@
       "livingchest:chester/death_3"
     ]
   },
-  "chester.open_mouth": {
+  "entity.chester.open_mouth": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/open_mouth_1",
@@ -62,7 +62,7 @@
       "livingchest:chester/open_mouth_5"
     ]
   },
-  "chester.close_mouth": {
+  "entity.chester.close_mouth": {
     "category": "neutral",
     "sounds": [
       "livingchest:chester/close_mouth_1",

@@ -154,21 +154,21 @@ public class ChesterAnimation {
       case "idle": {
         this.idleSoundTimes += 1;
         this.playSound(
-            SoundRegistry.ChesterEntity.IDLE,
+            SoundRegistry.Entity.Chester.IDLE,
             Math.max(0.025F, 0.1F - this.idleSoundTimes * 0.005F),
             1.0F);
         break;
       }
       case "jump": {
-        this.playSound(SoundRegistry.ChesterEntity.JUMP, 0.15F, 1.0F);
+        this.playSound(SoundRegistry.Entity.Chester.JUMP, 0.15F, 1.0F);
         break;
       }
       case "open_mouth": {
-        this.playSound(SoundRegistry.ChesterEntity.OPEN_MOUTH, 0.5F, 1.0F);
+        this.playSound(SoundRegistry.Entity.Chester.OPEN_MOUTH, 0.5F, 1.0F);
         break;
       }
       case "close_mouth": {
-        this.playSound(SoundRegistry.ChesterEntity.CLOSE_MOUTH, 0.5F, 1.0F);
+        this.playSound(SoundRegistry.Entity.Chester.CLOSE_MOUTH, 0.5F, 1.0F);
         break;
       }
     }
