@@ -6,7 +6,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 
 @SuppressWarnings("rawtypes")
 public class GeckoLibUtil {
-  public static <T extends Entity & IAnimatable> AnimationController getEntityController(
+  public static <T extends Entity & IAnimatable> AnimationController getController(
       final T entity,
       final String controllerName) {
     return entity

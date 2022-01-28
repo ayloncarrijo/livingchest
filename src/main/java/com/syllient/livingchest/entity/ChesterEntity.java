@@ -5,6 +5,7 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.SoundRegistry;
+import com.syllient.livingchest.util.InventoryUtil;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -49,7 +50,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-        .setBaseValue(450.0D);
+        .setBaseValue(1.0D); // 450.0D
     this.setMoveSpeed(this.getDefaultMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(
@@ -94,6 +95,15 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   public void onClientUpdate() {
+  }
+
+  @Override
+  public void onDeath(final DamageSource cause) {
+    if (!this.world.isRemote) {
+      InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
+    }
+
+    super.onDeath(cause);
   }
 
   @Override
