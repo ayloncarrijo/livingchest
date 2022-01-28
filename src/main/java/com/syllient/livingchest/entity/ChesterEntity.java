@@ -11,6 +11,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -57,6 +58,20 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
             2,
             false,
             false));
+  }
+
+  @Override
+  public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
+    compound.setTag("Inventory", this.inventory.serializeNBT());
+    return super.writeToNBT(compound);
+  }
+
+  @Override
+  public void readFromNBT(final NBTTagCompound compound) {
+    if (compound.hasKey("Inventory")) {
+      this.inventory.deserializeNBT(compound.getCompoundTag("Inventory"));
+    }
+    super.readFromNBT(compound);
   }
 
   @Override
