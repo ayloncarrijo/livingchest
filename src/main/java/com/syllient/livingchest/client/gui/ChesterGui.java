@@ -7,6 +7,7 @@ import com.syllient.livingchest.entity.ChesterEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 public class ChesterGui extends GuiContainer {
@@ -17,8 +18,8 @@ public class ChesterGui extends GuiContainer {
   private final int invCols;
   private final int invRows;
 
-  public ChesterGui(final ChesterEntity chester) {
-    super(new ChesterContainer(Minecraft.getMinecraft().player, chester));
+  public ChesterGui(final EntityPlayer player, final ChesterEntity chester) {
+    super(new ChesterContainer(player, chester));
     this.invCols = 9;
     this.invRows = chester.getInventory().getSlots() / this.invCols;
     this.ySize = 114 + this.invRows * 18;

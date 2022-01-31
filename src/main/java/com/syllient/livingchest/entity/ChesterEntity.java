@@ -95,6 +95,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   public void onClientUpdate() {
+
   }
 
   @Override
@@ -108,7 +109,11 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
 
   @Override
   public boolean processInteract(final EntityPlayer player, final EnumHand hand) {
-    if (!this.world.isRemote && hand == EnumHand.MAIN_HAND) {
+    if (this.world.isRemote) {
+      return true;
+    }
+
+    if (hand == EnumHand.MAIN_HAND) {
       this.openGuiTo(player);
       return true;
     }

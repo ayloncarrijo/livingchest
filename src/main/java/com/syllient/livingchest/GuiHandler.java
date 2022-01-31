@@ -16,13 +16,13 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getServerGuiElement(
-      final int ID,
+      final int id,
       final EntityPlayer player,
       final World world,
       final int x,
       final int y,
       final int z) {
-    if (ID == Gui.CHESTER) {
+    if (id == Gui.CHESTER) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof ChesterEntity) {
@@ -37,17 +37,19 @@ public class GuiHandler implements IGuiHandler {
 
   @Override
   public Object getClientGuiElement(
-      final int ID,
+      final int id,
       final EntityPlayer player,
       final World world,
       final int x,
       final int y,
       final int z) {
-    if (ID == Gui.CHESTER) {
+    if (id == Gui.CHESTER) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof ChesterEntity) {
-        return new ChesterGui((ChesterEntity) entity);
+        return new ChesterGui(
+            player,
+            (ChesterEntity) entity);
       }
     }
 

@@ -1,17 +1,12 @@
-package com.syllient.livingchest.item;
+package com.syllient.livingchest.tileentity;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class EyeBoneItem extends ItemBlock implements IAnimatable {
+public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
   private final AnimationFactory factory = new AnimationFactory(this);
-
-  public EyeBoneItem(final Block block) {
-    super(block);
-  }
 
   @Override
   public void registerControllers(final AnimationData data) {

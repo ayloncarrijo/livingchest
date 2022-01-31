@@ -24,21 +24,21 @@ public class LivingChest implements IProxy {
     GeckoLib.initialize();
   }
 
-  @Override
   @Mod.EventHandler
+  @Override
   public void onPreInit(final FMLPreInitializationEvent event) {
     NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
     LivingChest.proxy.onPreInit(event);
   }
 
-  @Override
   @Mod.EventHandler
+  @Override
   public void onInit(final FMLInitializationEvent event) {
     LivingChest.proxy.onInit(event);
   }
 
-  @Override
   @Mod.EventHandler
+  @Override
   public void onPostInit(final FMLPostInitializationEvent event) {
     LivingChest.proxy.onPostInit(event);
   }
