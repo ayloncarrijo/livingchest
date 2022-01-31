@@ -7,18 +7,25 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class EyeBoneItemModel extends AnimatedGeoModel<EyeBoneItem> {
+  public static final ResourceLocation ANIMATION = null;
+  public static final ResourceLocation MODEL = new ResourceLocation(LivingChest.MOD_ID, "geo/eye_bone.geo.json");
+  public static final ResourceLocation TEXTURE_OPENED = new ResourceLocation(LivingChest.MOD_ID,
+      "textures/eye_bone_opened.png");
+  public static final ResourceLocation TEXTURE_CLOSED = new ResourceLocation(LivingChest.MOD_ID,
+      "textures/eye_bone_closed.png");
+
   @Override
   public ResourceLocation getAnimationFileLocation(final EyeBoneItem eyeBone) {
-    return null;
+    return EyeBoneItemModel.ANIMATION;
   }
 
   @Override
   public ResourceLocation getModelLocation(final EyeBoneItem eyeBone) {
-    return new ResourceLocation(LivingChest.MOD_ID, "geo/eye_bone.geo.json");
+    return EyeBoneItemModel.MODEL;
   }
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneItem eyeBone) {
-    return new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_opened.png");
+    return EyeBoneItemModel.TEXTURE_OPENED;
   }
 }
