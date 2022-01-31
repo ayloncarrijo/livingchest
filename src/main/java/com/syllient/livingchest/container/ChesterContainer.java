@@ -84,8 +84,8 @@ public class ChesterContainer extends Container {
 
   @Override
   public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index) {
-    final Slot invSlot = this.inventorySlots.get(index);
     ItemStack itemStack = ItemStack.EMPTY;
+    final Slot invSlot = this.inventorySlots.get(index);
 
     if (invSlot != null && invSlot.getHasStack()) {
       final ItemStack itemStackInSlot = invSlot.getStack();

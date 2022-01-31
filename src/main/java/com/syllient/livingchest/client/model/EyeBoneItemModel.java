@@ -19,6 +19,6 @@ public class EyeBoneItemModel extends AnimatedGeoModel<EyeBoneItem> {
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneItem eyeBone) {
-    return new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone.opened.png");
+    return new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_opened.png");
   }
 }
