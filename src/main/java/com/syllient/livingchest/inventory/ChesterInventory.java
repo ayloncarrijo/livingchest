@@ -1,7 +1,6 @@
 package com.syllient.livingchest.inventory;
 
 import com.syllient.livingchest.entity.ChesterEntity;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.ItemStackHandler;
 

@@ -2,7 +2,6 @@ package com.syllient.livingchest.registry;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.block.EyeBoneBlock;
-
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -17,13 +16,11 @@ public class BlockRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Block> event) {
-    event.getRegistry().registerAll(
-        BlockRegistry.buildEntry(new EyeBoneBlock(), "eye_bone"));
+    event.getRegistry().registerAll(BlockRegistry.buildEntry(new EyeBoneBlock(), "eye_bone"));
   }
 
   private static Block buildEntry(final Block block, final String name) {
-    return block
-        .setUnlocalizedName(LivingChest.MOD_ID + "." + name)
+    return block.setUnlocalizedName(LivingChest.MOD_ID + "." + name)
         .setRegistryName(new ResourceLocation(LivingChest.MOD_ID, name));
   }
 }

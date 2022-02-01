@@ -2,7 +2,6 @@ package com.syllient.livingchest.registry;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.item.EyeBoneItem;
-
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -17,13 +16,12 @@ public class ItemRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Item> event) {
-    event.getRegistry().registerAll(
-        ItemRegistry.buildEntry(new EyeBoneItem(BlockRegistry.EYE_BONE), "eye_bone"));
+    event.getRegistry()
+        .registerAll(ItemRegistry.buildEntry(new EyeBoneItem(BlockRegistry.EYE_BONE), "eye_bone"));
   }
 
   private static Item buildEntry(final Item item, final String name) {
-    return item
-        .setUnlocalizedName(LivingChest.MOD_ID + "." + name)
+    return item.setUnlocalizedName(LivingChest.MOD_ID + "." + name)
         .setRegistryName(new ResourceLocation(LivingChest.MOD_ID, name));
   }
 }

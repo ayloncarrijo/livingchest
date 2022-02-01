@@ -3,7 +3,6 @@ package com.syllient.livingchest.client.gui;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ChesterEntity;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,9 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 public class ChesterGui extends GuiContainer {
-  private static final ResourceLocation TEXTURE = new ResourceLocation(
-      LivingChest.MOD_ID,
-      "textures/gui/chester.png");
+  private static final ResourceLocation TEXTURE =
+      new ResourceLocation(LivingChest.MOD_ID, "textures/gui/chester.png");
 
   private final int invCols;
   private final int invRows;
@@ -33,44 +31,19 @@ public class ChesterGui extends GuiContainer {
   }
 
   @Override
-  protected void drawGuiContainerBackgroundLayer(
-      final float partialTicks,
-      final int mouseX,
+  protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX,
       final int mouseY) {
     Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-    this.drawTexturedModalRect(
-        this.guiLeft,
-        this.guiTop,
-        0,
-        0,
-        this.xSize,
-        this.invRows * 18 + 17);
-
-    this.drawTexturedModalRect(
-        this.guiLeft,
-        this.guiTop + this.invRows * 18 + 17,
-        0,
-        126,
-        this.xSize,
-        96);
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.invRows * 18 + 17);
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop + this.invRows * 18 + 17, 0, 126,
+        this.xSize, 96);
   }
 
   @Override
   protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
     final int intColor = 15191721;
-
-    this.fontRenderer.drawString(
-        "Chester",
-        8,
-        6,
-        intColor);
-
-    this.fontRenderer.drawString(
-        "Inventory",
-        8,
-        this.ySize - 96 + 2,
-        intColor);
+    this.fontRenderer.drawString("Chester", 8, 6, intColor);
+    this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, intColor);
   }
 }

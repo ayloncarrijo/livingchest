@@ -3,7 +3,6 @@ package com.syllient.livingchest.animation;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.geckolib.ExtendedAnimationController;
 import com.syllient.livingchest.registry.SoundRegistry;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -41,15 +40,12 @@ public class ChesterAnimation {
   private boolean wasMouthOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
-    this.idleController = new ExtendedAnimationController<>(
-        chester,
-        Controller.IDLE, 0, this::idlePredicate);
-    this.jumpController = new ExtendedAnimationController<>(
-        chester,
-        Controller.JUMP, 0, this::jumpPredicate);
-    this.openController = new ExtendedAnimationController<>(
-        chester,
-        Controller.OPEN, 0, this::openPredicate);
+    this.idleController =
+        new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::idlePredicate);
+    this.jumpController =
+        new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::jumpPredicate);
+    this.openController =
+        new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::openPredicate);
     this.chester = chester;
   }
 
@@ -87,16 +83,14 @@ public class ChesterAnimation {
     }
 
     this.idleController.setAnimationSpeed(1.1D);
-    this.idleController.setAnimation(
-        new AnimationBuilder().addAnimation(Animation.IDLE, true));
+    this.idleController.setAnimation(new AnimationBuilder().addAnimation(Animation.IDLE, true));
 
     return PlayState.CONTINUE;
   }
 
   private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
     if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
-      this.jumpController.setAnimation(
-          new AnimationBuilder().addAnimation(Animation.JUMP));
+      this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.JUMP));
 
       return PlayState.CONTINUE;
     }
@@ -105,18 +99,14 @@ public class ChesterAnimation {
 
     if (event.isMoving() && this.chester.onGround && !this.chester.isMouthOpen()) {
       if (!isJumping) {
-        this.jumpController.setAnimation(
-            new AnimationBuilder()
-                .addAnimation(Animation.INIT_JUMP));
+        this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_JUMP));
       }
 
       return PlayState.CONTINUE;
     }
 
     if (isJumping && this.jumpController.hasJustFinishedAnimation()) {
-      this.jumpController.setAnimation(
-          new AnimationBuilder()
-              .addAnimation(Animation.STOP_JUMP));
+      this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.STOP_JUMP));
 
       return PlayState.CONTINUE;
     }
@@ -130,18 +120,14 @@ public class ChesterAnimation {
     }
 
     if (this.chester.isMouthOpen()) {
-      this.openController.setAnimation(
-          new AnimationBuilder()
-              .addAnimation(Animation.OPEN_MOUTH)
-              .addAnimation(Animation.IDLE_MOUTH));
+      this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.OPEN_MOUTH)
+          .addAnimation(Animation.IDLE_MOUTH));
 
       return PlayState.CONTINUE;
     }
 
     if (this.openController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
-      this.openController.setAnimation(
-          new AnimationBuilder()
-              .addAnimation(Animation.CLOSE_MOUTH));
+      this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.CLOSE_MOUTH));
 
       return PlayState.CONTINUE;
     }
@@ -153,10 +139,8 @@ public class ChesterAnimation {
     switch (event.sound) {
       case "idle": {
         this.idleSoundTimes += 1;
-        this.playSound(
-            SoundRegistry.Entity.Chester.IDLE,
-            Math.max(0.025F, 0.1F - this.idleSoundTimes * 0.005F),
-            1.0F);
+        this.playSound(SoundRegistry.Entity.Chester.IDLE,
+            Math.max(0.025F, 0.1F - this.idleSoundTimes * 0.005F), 1.0F);
         break;
       }
       case "jump": {
@@ -171,18 +155,14 @@ public class ChesterAnimation {
         this.playSound(SoundRegistry.Entity.Chester.CLOSE_MOUTH, 0.5F, 1.0F);
         break;
       }
+      default: {
+
+      }
     }
   }
 
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
-    this.chester.world.playSound(
-        Minecraft.getMinecraft().player,
-        this.chester.posX,
-        this.chester.posY,
-        this.chester.posZ,
-        sound,
-        SoundCategory.NEUTRAL,
-        volume,
-        pitch);
+    this.chester.world.playSound(Minecraft.getMinecraft().player, this.chester.posX,
+        this.chester.posY, this.chester.posZ, sound, SoundCategory.NEUTRAL, volume, pitch);
   }
 }

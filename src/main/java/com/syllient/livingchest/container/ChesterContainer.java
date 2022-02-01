@@ -1,9 +1,7 @@
 package com.syllient.livingchest.container;
 
 import java.util.stream.IntStream;
-
 import com.syllient.livingchest.entity.ChesterEntity;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -13,61 +11,47 @@ import net.minecraftforge.items.SlotItemHandler;
 public class ChesterContainer extends Container {
   private final int invCols;
   private final int invRows;
-  private final int xOffset;
-  private final int yOffset;
-  private final int yPlayer;
+  private final int offsetX;
+  private final int offsetY;
+  private final int playerInvPos;
   private final ChesterEntity chester;
 
-  public ChesterContainer(
-      final EntityPlayer player,
-      final ChesterEntity chester) {
+  public ChesterContainer(final EntityPlayer player, final ChesterEntity chester) {
     this.invCols = 9;
     this.invRows = chester.getInventory().getSlots() / this.invCols;
-    this.xOffset = 8;
-    this.yOffset = 18;
-    this.yPlayer = (invRows - 4) * 18;
+    this.offsetX = 8;
+    this.offsetY = 18;
+    this.playerInvPos = (invRows - 4) * 18;
     this.chester = chester;
     this.chester.getInventory().onOpenInventory(player);
 
     IntStream.range(0, invRows).forEach((row) -> {
       IntStream.range(0, invCols).forEach((col) -> {
         final int index = row * 9 + col;
-        final int xPos = col * 18 + xOffset;
-        final int yPos = row * 18 + yOffset;
+        final int xPos = col * 18 + offsetX;
+        final int yPos = row * 18 + offsetY;
 
         this.addSlotToContainer(
-            new SlotItemHandler(
-                this.chester.getInventory(),
-                index,
-                xPos,
-                yPos));
+            new SlotItemHandler(this.chester.getInventory(), index, xPos, yPos));
       });
     });
 
     IntStream.range(0, 3).forEach((row) -> {
       IntStream.range(0, 9).forEach((col) -> {
         final int index = row * 9 + col + 9;
-        final int xPos = col * 18 + xOffset;
-        final int yPos = row * 18 + 103 + yPlayer;
+        final int xPos = col * 18 + offsetX;
+        final int yPos = row * 18 + 103 + playerInvPos;
 
-        this.addSlotToContainer(new Slot(
-            player.inventory,
-            index,
-            xPos,
-            yPos));
+        this.addSlotToContainer(new Slot(player.inventory, index, xPos, yPos));
       });
     });
 
     IntStream.range(0, 9).forEach((col) -> {
       final int index = col;
-      final int xPos = col * 18 + xOffset;
-      final int yPos = 161 + yPlayer;
+      final int xPos = col * 18 + offsetX;
+      final int yPos = 161 + playerInvPos;
 
-      this.addSlotToContainer(new Slot(
-          player.inventory,
-          index,
-          xPos,
-          yPos));
+      this.addSlotToContainer(new Slot(player.inventory, index, xPos, yPos));
     });
   }
 
@@ -92,17 +76,11 @@ public class ChesterContainer extends Container {
       itemStack = itemStackInSlot.copy();
 
       if (index < this.chester.getInventory().getSlots()) {
-        if (!this.mergeItemStack(
-            itemStackInSlot,
-            this.chester.getInventory().getSlots(),
-            this.inventorySlots.size(),
-            true)) {
+        if (!this.mergeItemStack(itemStackInSlot, this.chester.getInventory().getSlots(),
+            this.inventorySlots.size(), true)) {
           return ItemStack.EMPTY;
         }
-      } else if (!this.mergeItemStack(
-          itemStackInSlot,
-          0,
-          this.chester.getInventory().getSlots(),
+      } else if (!this.mergeItemStack(itemStackInSlot, 0, this.chester.getInventory().getSlots(),
           false)) {
         return ItemStack.EMPTY;
       }

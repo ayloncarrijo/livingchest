@@ -1,7 +1,6 @@
 package com.syllient.livingchest.registry;
 
 import com.syllient.livingchest.LivingChest;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -36,8 +35,7 @@ public class SoundRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<SoundEvent> event) {
-    event.getRegistry().registerAll(
-        SoundRegistry.buildEntry("entity.chester.idle"),
+    event.getRegistry().registerAll(SoundRegistry.buildEntry("entity.chester.idle"),
         SoundRegistry.buildEntry("entity.chester.jump"),
         SoundRegistry.buildEntry("entity.chester.hurt"),
         SoundRegistry.buildEntry("entity.chester.death"),

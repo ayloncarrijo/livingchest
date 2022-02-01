@@ -3,7 +3,6 @@ package com.syllient.livingchest;
 import com.syllient.livingchest.client.gui.ChesterGui;
 import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ChesterEntity;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -15,20 +14,13 @@ public class GuiHandler implements IGuiHandler {
   }
 
   @Override
-  public Object getServerGuiElement(
-      final int id,
-      final EntityPlayer player,
-      final World world,
-      final int x,
-      final int y,
-      final int z) {
+  public Object getServerGuiElement(final int id, final EntityPlayer player, final World world,
+      final int x, final int y, final int z) {
     if (id == Gui.CHESTER) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof ChesterEntity) {
-        return new ChesterContainer(
-            player,
-            (ChesterEntity) entity);
+        return new ChesterContainer(player, (ChesterEntity) entity);
       }
     }
 
@@ -36,20 +28,13 @@ public class GuiHandler implements IGuiHandler {
   }
 
   @Override
-  public Object getClientGuiElement(
-      final int id,
-      final EntityPlayer player,
-      final World world,
-      final int x,
-      final int y,
-      final int z) {
+  public Object getClientGuiElement(final int id, final EntityPlayer player, final World world,
+      final int x, final int y, final int z) {
     if (id == Gui.CHESTER) {
       final Entity entity = world.getEntityByID(x);
 
       if (entity instanceof ChesterEntity) {
-        return new ChesterGui(
-            player,
-            (ChesterEntity) entity);
+        return new ChesterGui(player, (ChesterEntity) entity);
       }
     }
 

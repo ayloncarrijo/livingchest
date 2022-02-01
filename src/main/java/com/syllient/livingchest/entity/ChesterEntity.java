@@ -6,7 +6,6 @@ import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.SoundRegistry;
 import com.syllient.livingchest.util.InventoryUtil;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityCow;
@@ -27,8 +26,8 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class ChesterEntity extends EntityCow implements IAnimatable {
-  private static final DataParameter<Boolean> IS_MOUTH_OPEN = EntityDataManager.createKey(ChesterEntity.class,
-      DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> IS_MOUTH_OPEN =
+      EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
 
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final AnimationFactory factory = new AnimationFactory(this);
@@ -49,16 +48,10 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH)
-        .setBaseValue(1.0D); // 450.0D
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // 450.0D
     this.setMoveSpeed(this.getDefaultMoveSpeed());
     this.addPotionEffect(
-        new PotionEffect(
-            MobEffects.REGENERATION,
-            Integer.MAX_VALUE,
-            2,
-            false,
-            false));
+        new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2, false, false));
   }
 
   @Override
@@ -87,8 +80,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   public void onServerUpdate() {
-    if (!this.isMouthOpen() && this.onGround
-        && this.ticksUntilResetMoveSpeed > 0
+    if (!this.isMouthOpen() && this.onGround && this.ticksUntilResetMoveSpeed > 0
         && --this.ticksUntilResetMoveSpeed == 0) {
       this.setMoveSpeed(this.getDefaultMoveSpeed());
     }
@@ -140,18 +132,12 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   public void openGuiTo(final EntityPlayer player) {
-    player.openGui(
-        LivingChest.instance,
-        GuiHandler.Gui.CHESTER,
-        this.world,
-        this.getEntityId(),
-        0,
+    player.openGui(LivingChest.INSTANCE, GuiHandler.Gui.CHESTER, this.world, this.getEntityId(), 0,
         0);
   }
 
   public void setMoveSpeed(final double value) {
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
-        .setBaseValue(value);
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(value);
   }
 
   @Override

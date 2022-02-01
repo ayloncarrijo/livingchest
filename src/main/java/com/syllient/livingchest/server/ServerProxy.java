@@ -1,12 +1,11 @@
 package com.syllient.livingchest.server;
 
-import com.syllient.livingchest.IProxy;
-
+import com.syllient.livingchest.Proxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public class ServerProxy implements IProxy {
+public class ServerProxy implements Proxy {
   @Override
   public void onPreInit(final FMLPreInitializationEvent event) {
 
