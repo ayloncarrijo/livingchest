@@ -35,12 +35,10 @@ public class SoundRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<SoundEvent> event) {
-    event.getRegistry().registerAll(SoundRegistry.buildEntry("entity.chester.idle"),
-        SoundRegistry.buildEntry("entity.chester.jump"),
-        SoundRegistry.buildEntry("entity.chester.hurt"),
-        SoundRegistry.buildEntry("entity.chester.death"),
-        SoundRegistry.buildEntry("entity.chester.open_mouth"),
-        SoundRegistry.buildEntry("entity.chester.close_mouth"));
+    event.getRegistry().registerAll(buildEntry("entity.chester.idle"),
+        buildEntry("entity.chester.jump"), buildEntry("entity.chester.hurt"),
+        buildEntry("entity.chester.death"), buildEntry("entity.chester.open_mouth"),
+        buildEntry("entity.chester.close_mouth"));
   }
 
   private static SoundEvent buildEntry(final String name) {

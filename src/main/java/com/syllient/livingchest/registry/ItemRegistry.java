@@ -17,7 +17,7 @@ public class ItemRegistry {
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Item> event) {
     event.getRegistry()
-        .registerAll(ItemRegistry.buildEntry(new EyeBoneItem(BlockRegistry.EYE_BONE), "eye_bone"));
+        .registerAll(buildEntry(new EyeBoneItem(BlockRegistry.EYE_BONE), "eye_bone"));
   }
 
   private static Item buildEntry(final Item item, final String name) {

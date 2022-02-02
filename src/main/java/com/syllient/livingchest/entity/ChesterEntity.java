@@ -30,7 +30,6 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
 
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
-  private final AnimationFactory factory = new AnimationFactory(this);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private int ticksUntilResetMoveSpeed = 0;
 
@@ -175,7 +174,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
 
   @Override
   public AnimationFactory getFactory() {
-    return this.factory;
+    return this.animation.getFactory();
   }
 
   @Override

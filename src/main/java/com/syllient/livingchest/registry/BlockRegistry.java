@@ -16,7 +16,7 @@ public class BlockRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Block> event) {
-    event.getRegistry().registerAll(BlockRegistry.buildEntry(new EyeBoneBlock(), "eye_bone"));
+    event.getRegistry().registerAll(buildEntry(new EyeBoneBlock(), "eye_bone"));
   }
 
   private static Block buildEntry(final Block block, final String name) {

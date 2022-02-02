@@ -13,7 +13,7 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
-public class ChesterAnimation {
+public class ChesterAnimation extends Animation<ChesterEntity> {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
     private static final String INIT_JUMP = "animation.chester.init_jump";
@@ -33,22 +33,22 @@ public class ChesterAnimation {
   private final ExtendedAnimationController<ChesterEntity> idleController;
   private final ExtendedAnimationController<ChesterEntity> jumpController;
   private final ExtendedAnimationController<ChesterEntity> openController;
-  private final ChesterEntity chester;
   private int idleSoundTimes = 0;
   private int ticksIdling = 0;
   private boolean hasJustOpenedMouth = false;
   private boolean wasMouthOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
+    super(chester);
     this.idleController =
         new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::idlePredicate);
     this.jumpController =
         new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::jumpPredicate);
     this.openController =
         new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::openPredicate);
-    this.chester = chester;
   }
 
+  @Override
   public void registerControllers(final AnimationData data) {
     this.idleController.registerSoundListener(this::soundListener);
     this.jumpController.registerSoundListener(this::soundListener);
@@ -59,8 +59,8 @@ public class ChesterAnimation {
   }
 
   private void onTick() {
-    this.hasJustOpenedMouth = this.chester.isMouthOpen() && !this.wasMouthOpen;
-    this.wasMouthOpen = this.chester.isMouthOpen();
+    this.hasJustOpenedMouth = this.animatable.isMouthOpen() && !this.wasMouthOpen;
+    this.wasMouthOpen = this.animatable.isMouthOpen();
 
     final boolean isIdling = this.jumpController.isAnimationStopped();
 
@@ -97,7 +97,7 @@ public class ChesterAnimation {
 
     final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
-    if (event.isMoving() && this.chester.onGround && !this.chester.isMouthOpen()) {
+    if (event.isMoving() && this.animatable.onGround && !this.animatable.isMouthOpen()) {
       if (!isJumping) {
         this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_JUMP));
       }
@@ -119,7 +119,7 @@ public class ChesterAnimation {
       return PlayState.STOP;
     }
 
-    if (this.chester.isMouthOpen()) {
+    if (this.animatable.isMouthOpen()) {
       this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.OPEN_MOUTH)
           .addAnimation(Animation.IDLE_MOUTH));
 
@@ -162,7 +162,7 @@ public class ChesterAnimation {
   }
 
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
-    this.chester.world.playSound(Minecraft.getMinecraft().player, this.chester.posX,
-        this.chester.posY, this.chester.posZ, sound, SoundCategory.NEUTRAL, volume, pitch);
+    this.animatable.world.playSound(Minecraft.getMinecraft().player, this.animatable.posX,
+        this.animatable.posY, this.animatable.posZ, sound, SoundCategory.NEUTRAL, volume, pitch);
   }
 }
