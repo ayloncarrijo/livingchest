@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -33,8 +34,8 @@ public class EyeBoneBlock extends BlockHorizontal {
       final EntityLivingBase placer, final ItemStack stack) {
     final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-    if (tileEntity instanceof EyeBoneTileEntity) {
-      System.out.println(tileEntity);
+    if (tileEntity instanceof EyeBoneTileEntity && placer instanceof EntityPlayer) {
+      ((EyeBoneTileEntity) tileEntity).setOwnerId(placer.getUniqueID());
     }
   }
 
@@ -42,7 +43,6 @@ public class EyeBoneBlock extends BlockHorizontal {
   public void addInformation(final ItemStack stack, final World player, final List<String> tooltip,
       final ITooltipFlag advanced) {
     tooltip.add("To spawn Chester, press Shift + Right Click on a block");
-    super.addInformation(stack, player, tooltip, advanced);
   }
 
   @Override

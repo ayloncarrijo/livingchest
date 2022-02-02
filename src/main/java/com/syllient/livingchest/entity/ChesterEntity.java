@@ -55,7 +55,10 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
-    compound.setTag("Inventory", this.inventory.serializeNBT());
+    if (this.inventory != null) {
+      compound.setTag("Inventory", this.inventory.serializeNBT());
+    }
+
     return super.writeToNBT(compound);
   }
 
@@ -64,6 +67,7 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
     if (compound.hasKey("Inventory")) {
       this.inventory.deserializeNBT(compound.getCompoundTag("Inventory"));
     }
+
     super.readFromNBT(compound);
   }
 
