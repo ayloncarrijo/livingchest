@@ -14,6 +14,8 @@ public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
   private final EyeBoneTileEntityAnimation animation = new EyeBoneTileEntityAnimation(this);
   private UUID ownerId = null;
 
+  public EyeBoneTileEntity() {}
+
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
     if (this.ownerId != null) {

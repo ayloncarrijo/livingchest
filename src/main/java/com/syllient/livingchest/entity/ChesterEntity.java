@@ -5,6 +5,7 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.SoundRegistry;
+import com.syllient.livingchest.saveddata.ChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
@@ -61,7 +62,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // 450.0D
     this.setMoveSpeed(this.getMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2, false, false));
@@ -109,6 +110,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   public void onDeath(final DamageSource cause) {
     if (!this.world.isRemote) {
       InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
+      ChesterSavedData.get(this.world).onChesterDie(this);
     }
 
     super.onDeath(cause);
@@ -151,6 +153,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
         0);
   }
 
+  public double getMoveSpeed() {
+    return 0.375D;
+  }
+
   public void setMoveSpeed(final double value) {
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(value);
   }
@@ -180,13 +186,13 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     return null;
   }
 
+  public int getDeathCooldown() {
+    return 1000;
+  }
+
   @Override
   protected float getJumpUpwardsMotion() {
     return 0.5F;
-  }
-
-  public double getMoveSpeed() {
-    return 0.375D;
   }
 
   public ChesterInventory getInventory() {

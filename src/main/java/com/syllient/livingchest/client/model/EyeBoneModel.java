@@ -6,15 +6,15 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public abstract class EyeBoneModel<T extends IAnimatable> extends AnimatedGeoModel<T> {
-  public static final ResourceLocation ANIMATION =
+  protected static final ResourceLocation ANIMATION =
       new ResourceLocation(LivingChest.MOD_ID, "animations/eye_bone.json");
 
-  public static final ResourceLocation MODEL =
+  protected static final ResourceLocation MODEL =
       new ResourceLocation(LivingChest.MOD_ID, "geo/eye_bone.json");
 
-  public static final ResourceLocation TEXTURE_OPENED =
+  protected static final ResourceLocation TEXTURE_OPENED =
       new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_opened.png");
 
-  public static final ResourceLocation TEXTURE_CLOSED =
+  protected static final ResourceLocation TEXTURE_CLOSED =
       new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_closed.png");
 }
