@@ -7,8 +7,13 @@ import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.SoundRegistry;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAISit;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,17 +30,26 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class ChesterEntity extends EntityCow implements IAnimatable {
+public class ChesterEntity extends EntityTameable implements IAnimatable {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
-
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private int ticksUntilResetMoveSpeed = 0;
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
+    this.setSize(1.0F, 1.0F);
     this.ignoreFrustumCheck = true;
+  }
+
+  @Override
+  protected void initEntityAI() {
+    this.aiSit = new EntityAISit(this);
+    this.tasks.addTask(1, new EntityAISwimming(this));
+    this.tasks.addTask(2, this.aiSit);
+    this.tasks.addTask(3, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
+    this.tasks.addTask(4, new EntityAIWanderAvoidWater(this, 1.0D));
   }
 
   @Override
@@ -47,8 +61,8 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // 450.0D
-    this.setMoveSpeed(this.getDefaultMoveSpeed());
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
+    this.setMoveSpeed(this.getMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2, false, false));
   }
@@ -85,13 +99,11 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   public void onServerUpdate() {
     if (!this.isMouthOpen() && this.onGround && this.ticksUntilResetMoveSpeed > 0
         && --this.ticksUntilResetMoveSpeed == 0) {
-      this.setMoveSpeed(this.getDefaultMoveSpeed());
+      this.setMoveSpeed(this.getMoveSpeed());
     }
   }
 
-  public void onClientUpdate() {
-
-  }
+  public void onClientUpdate() {}
 
   @Override
   public void onDeath(final DamageSource cause) {
@@ -164,12 +176,17 @@ public class ChesterEntity extends EntityCow implements IAnimatable {
   }
 
   @Override
+  public EntityAgeable createChild(final EntityAgeable ageable) {
+    return null;
+  }
+
+  @Override
   protected float getJumpUpwardsMotion() {
     return 0.5F;
   }
 
-  public double getDefaultMoveSpeed() {
-    return 0.25D;
+  public double getMoveSpeed() {
+    return 0.375D;
   }
 
   public ChesterInventory getInventory() {

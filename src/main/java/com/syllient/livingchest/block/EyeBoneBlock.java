@@ -42,7 +42,7 @@ public class EyeBoneBlock extends BlockHorizontal {
   @Override
   public void addInformation(final ItemStack stack, final World player, final List<String> tooltip,
       final ITooltipFlag advanced) {
-    tooltip.add("To spawn Chester, press Shift + Right Click on a block");
+    tooltip.add("To spawn Chester, use the Eye Bone on a block while sneaking.");
   }
 
   @Override
