@@ -29,6 +29,7 @@ public class LivingChest implements Proxy {
   @Override
   public void onPreInit(final FMLPreInitializationEvent event) {
     NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+    PacketHandler.initialize();
     PROXY.onPreInit(event);
   }
 

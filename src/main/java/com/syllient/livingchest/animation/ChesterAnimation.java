@@ -6,6 +6,8 @@ import com.syllient.livingchest.registry.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -161,6 +163,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     }
   }
 
+  @SideOnly(Side.CLIENT)
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
     this.animatable.world.playSound(Minecraft.getMinecraft().player, this.animatable.posX,
         this.animatable.posY, this.animatable.posZ, sound, SoundCategory.NEUTRAL, volume, pitch);

@@ -36,7 +36,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
-  private int ticksUntilResetMoveSpeed = 0;
+  private int ticksUntilCanMove = 0;
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
@@ -98,8 +98,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public void onServerUpdate() {
-    if (!this.isMouthOpen() && this.onGround && this.ticksUntilResetMoveSpeed > 0
-        && --this.ticksUntilResetMoveSpeed == 0) {
+    if (!this.isMouthOpen() && this.onGround && this.ticksUntilCanMove > 0
+        && --this.ticksUntilCanMove == 0) {
       this.setMoveSpeed(this.getMoveSpeed());
     }
   }
@@ -145,7 +145,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
-    this.ticksUntilResetMoveSpeed = 15;
+    this.ticksUntilCanMove = 15;
   }
 
   public void openGuiTo(final EntityPlayer player) {
@@ -187,7 +187,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public int getDeathCooldown() {
-    return 1000;
+    return 200;
   }
 
   @Override

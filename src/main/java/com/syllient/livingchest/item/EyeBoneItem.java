@@ -1,8 +1,7 @@
 package com.syllient.livingchest.item;
 
-import com.syllient.livingchest.animation.EyeBoneItemAnimation;
+import com.syllient.livingchest.animation.EyeBoneAnimation;
 import com.syllient.livingchest.entity.ChesterEntity;
-import com.syllient.livingchest.saveddata.ChesterSavedData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -16,7 +15,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class EyeBoneItem extends ItemBlock implements IAnimatable {
-  private final EyeBoneItemAnimation animation = new EyeBoneItemAnimation(this);
+  private final EyeBoneAnimation<EyeBoneItem> animation = new EyeBoneAnimation<>(this);
 
   public EyeBoneItem(final Block block) {
     super(block);
@@ -38,10 +37,10 @@ public class EyeBoneItem extends ItemBlock implements IAnimatable {
   }
 
   public void spawnChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
-    if (ChesterSavedData.get(worldIn).isChesterDead(player)) {
-      System.out.println("chester deste player morto");
-      return;
-    }
+    // if (ChesterSavedData.get(worldIn).isChesterDead(player)) {
+    // System.out.println("chester deste player morto");
+    // return;
+    // }
 
     final ChesterEntity chester = new ChesterEntity(worldIn);
     chester.setTamedBy(player);
