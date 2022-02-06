@@ -2,25 +2,30 @@ package com.syllient.livingchest;
 
 import com.syllient.livingchest.network.message.SyncChesterSavedDataMessage;
 import com.syllient.livingchest.saveddata.ChesterSavedData;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID)
 public class EventHandler {
   @SubscribeEvent
-  public static void onPlayerLogIn(final PlayerLoggedInEvent event) {
-    final EntityPlayer player = event.player;
-    final World world = player.world;
+  public static void onPlayerChangeDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
+    if (!event.player.world.isRemote) {
+      PacketHandler.INSTANCE.sendTo(new SyncChesterSavedDataMessage(),
+          (EntityPlayerMP) event.player);
+    }
+  }
 
-    if (!world.isRemote) {
-      PacketHandler.INSTANCE.sendTo(new SyncChesterSavedDataMessage(), (EntityPlayerMP) player);
+  @SubscribeEvent
+  public static void onPlayerLogIn(final PlayerEvent.PlayerLoggedInEvent event) {
+    if (!event.player.world.isRemote) {
+      PacketHandler.INSTANCE.sendTo(new SyncChesterSavedDataMessage(),
+          (EntityPlayerMP) event.player);
     }
   }
 

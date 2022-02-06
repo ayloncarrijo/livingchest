@@ -1,7 +1,7 @@
 package com.syllient.livingchest.item;
 
 import com.syllient.livingchest.animation.EyeBoneAnimation;
-import com.syllient.livingchest.entity.ChesterEntity;
+import com.syllient.livingchest.saveddata.ChesterSavedData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -26,26 +26,11 @@ public class EyeBoneItem extends ItemBlock implements IAnimatable {
       final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
-      if (!worldIn.isRemote) {
-        this.spawnChester(player, worldIn, pos);
-      }
-
+      ChesterSavedData.get(worldIn).toggleChester(player, worldIn, pos);
       return EnumActionResult.SUCCESS;
     }
 
     return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-  }
-
-  public void spawnChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
-    // if (ChesterSavedData.get(worldIn).isChesterDead(player)) {
-    // System.out.println("chester deste player morto");
-    // return;
-    // }
-
-    final ChesterEntity chester = new ChesterEntity(worldIn);
-    chester.setTamedBy(player);
-    chester.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F, 0.0F);
-    worldIn.spawnEntity(chester);
   }
 
   @Override

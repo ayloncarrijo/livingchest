@@ -1,16 +1,18 @@
 package com.syllient.livingchest.util;
 
+import net.minecraftforge.common.DimensionManager;
+
 public class Position {
   private double posX;
   private double posY;
   private double posZ;
   private int dim;
 
-  public Position() {
-    this.posX = 0;
-    this.posY = 0;
-    this.posZ = 0;
-    this.dim = 0;
+  public Position(final double posX, final double posY, final double posZ, final int dim) {
+    this.posX = posX;
+    this.posY = posY;
+    this.posZ = posZ;
+    this.dim = dim;
   }
 
   public double getX() {
@@ -34,5 +36,13 @@ public class Position {
     this.posY = posY;
     this.posZ = posZ;
     this.dim = dim;
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder().append("X: ").append((int) this.posX).append(" / ").append("Y: ")
+        .append((int) this.posY).append(" / ").append("Z: ").append((int) this.posZ).append(" / ")
+        .append("Dimension: ")
+        .append(DimensionManager.getProviderType(this.dim).getName().toUpperCase()).toString();
   }
 }

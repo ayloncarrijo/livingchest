@@ -62,7 +62,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // 450.0D
+    // TODO: Vida 450.0D
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
     this.setMoveSpeed(this.getMoveSpeed());
     this.addPotionEffect(
         new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2, false, false));
@@ -70,20 +71,30 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
-    if (this.inventory != null) {
-      compound.setTag("Inventory", this.inventory.serializeNBT());
-    }
+    ChesterSavedData.get(this.world).saveChesterPosition(this);
 
+    this.writeToNbtToDespawn(compound);
     return super.writeToNBT(compound);
   }
 
   @Override
   public void readFromNBT(final NBTTagCompound compound) {
+    this.readFromNbtWhenSpawn(compound);
+    super.readFromNBT(compound);
+  }
+
+  public NBTTagCompound writeToNbtToDespawn(final NBTTagCompound compound) {
+    if (this.inventory != null) {
+      compound.setTag("Inventory", this.inventory.serializeNBT());
+    }
+
+    return compound;
+  }
+
+  public void readFromNbtWhenSpawn(final NBTTagCompound compound) {
     if (compound.hasKey("Inventory")) {
       this.inventory.deserializeNBT(compound.getCompoundTag("Inventory"));
     }
-
-    super.readFromNBT(compound);
   }
 
   @Override
@@ -187,7 +198,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public int getDeathCooldown() {
-    return 200;
+    // final int minutes = 1; // TODO: Death Cooldown
+    return 500; // minutes * 20 * 60
   }
 
   @Override
