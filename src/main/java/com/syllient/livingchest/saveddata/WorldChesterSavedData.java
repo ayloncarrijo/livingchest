@@ -121,8 +121,9 @@ public class WorldChesterSavedData extends WorldSavedData {
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
 
-    if (worldChester.getNbtData() != null) {
-      chesterEntity.readFromWorldChesterNbt(worldChester.getNbtData());
+    if (worldChester.getInventory() != null) {
+      chesterEntity.getInventory().deserializeNBT(worldChester.getInventory());
+      worldChester.setInventory(null);
     }
 
     worldChester.setUniqueId(chesterEntity.getUniqueID());
@@ -140,7 +141,7 @@ public class WorldChesterSavedData extends WorldSavedData {
         (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, worldChester.getUniqueId());
 
     if (chesterEntity != null) {
-      worldChester.setNbtData(chesterEntity.writeToWorldChesterNbt(new NBTTagCompound()));
+      worldChester.setInventory(chesterEntity.getInventory().serializeNBT());
       worldChester.setUniqueId(null);
       chesterEntity.setDead();
       this.markDirty();

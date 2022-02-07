@@ -6,10 +6,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class WorldChester implements INBTSerializable<NBTTagCompound> {
+  private NBTTagCompound inventory = null;
   private int deadTime = 0;
   private UUID uniqueId = null;
   private Position position = null;
-  private NBTTagCompound nbtData = null;
 
   public WorldChester() {}
 
@@ -23,6 +23,14 @@ public class WorldChester implements INBTSerializable<NBTTagCompound> {
 
   public boolean isDead() {
     return this.deadTime > 0;
+  }
+
+  public NBTTagCompound getInventory() {
+    return this.inventory;
+  }
+
+  protected void setInventory(final NBTTagCompound inventory) {
+    this.inventory = inventory;
   }
 
   public int getDeadTime() {
@@ -54,17 +62,13 @@ public class WorldChester implements INBTSerializable<NBTTagCompound> {
     }
   }
 
-  public NBTTagCompound getNbtData() {
-    return this.nbtData;
-  }
-
-  protected void setNbtData(final NBTTagCompound nbtData) {
-    this.nbtData = nbtData;
-  }
-
   @Override
   public NBTTagCompound serializeNBT() {
     final NBTTagCompound nbtCompound = new NBTTagCompound();
+
+    if (this.inventory != null) {
+      nbtCompound.setTag(NbtKey.INVENTORY, this.inventory);
+    }
 
     if (this.deadTime > 0) {
       nbtCompound.setInteger(NbtKey.DEAD_TIME, this.deadTime);
@@ -78,15 +82,15 @@ public class WorldChester implements INBTSerializable<NBTTagCompound> {
       nbtCompound.setTag(NbtKey.POSITION, this.position.serializeNBT());
     }
 
-    if (this.nbtData != null) {
-      nbtCompound.setTag(NbtKey.NBT_DATA, this.nbtData);
-    }
-
     return nbtCompound;
   }
 
   @Override
   public void deserializeNBT(final NBTTagCompound nbtCompoundIn) {
+    if (nbtCompoundIn.hasKey(NbtKey.INVENTORY)) {
+      this.inventory = nbtCompoundIn.getCompoundTag(NbtKey.INVENTORY);
+    }
+
     if (nbtCompoundIn.hasKey(NbtKey.DEAD_TIME)) {
       this.deadTime = nbtCompoundIn.getInteger(NbtKey.DEAD_TIME);
     }
@@ -98,16 +102,12 @@ public class WorldChester implements INBTSerializable<NBTTagCompound> {
     if (nbtCompoundIn.hasKey(NbtKey.POSITION)) {
       this.position = new Position(nbtCompoundIn.getCompoundTag(NbtKey.POSITION));
     }
-
-    if (nbtCompoundIn.hasKey(NbtKey.NBT_DATA)) {
-      this.nbtData = nbtCompoundIn.getCompoundTag(NbtKey.NBT_DATA);
-    }
   }
 
   class NbtKey {
+    public static final String INVENTORY = "Inventory";
     public static final String DEAD_TIME = "DeadTime";
     public static final String UNIQUE_ID = "UniqueId";
     public static final String POSITION = "Position";
-    public static final String NBT_DATA = "NbtData";
   }
 }
