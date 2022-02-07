@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SyncWorldChesterSavedDataMessage implements IMessage {
-  private NBTTagCompound nbtData;
+  private NBTTagCompound nbtCompound;
 
   public SyncWorldChesterSavedDataMessage() {}
 
@@ -28,7 +28,7 @@ public class SyncWorldChesterSavedDataMessage implements IMessage {
 
   @Override
   public void fromBytes(final ByteBuf buf) {
-    this.nbtData = ByteBufUtils.readTag(buf);
+    this.nbtCompound = ByteBufUtils.readTag(buf);
   }
 
   public static class Handler
@@ -39,7 +39,7 @@ public class SyncWorldChesterSavedDataMessage implements IMessage {
         final MessageContext ctx) {
       Minecraft.getMinecraft().addScheduledTask(() -> {
         WorldChesterSavedData.getInstance(Minecraft.getMinecraft().world)
-            .readFromNBT(message.nbtData);
+            .readFromNBT(message.nbtCompound);
       });
 
       return null;

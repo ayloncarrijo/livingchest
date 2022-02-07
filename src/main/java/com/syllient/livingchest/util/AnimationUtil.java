@@ -5,7 +5,7 @@ import net.minecraft.entity.Entity;
 import software.bernie.geckolib3.core.IAnimatable;
 
 @SuppressWarnings("unchecked")
-public class GeckoLibUtil {
+public class AnimationUtil {
   public static <T extends Entity & IAnimatable> ExtendedAnimationController<T> getController(
       final T entity, final String controllerName) {
     return (ExtendedAnimationController<T>) entity.getFactory()
