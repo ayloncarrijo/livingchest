@@ -70,30 +70,28 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
+  public NBTTagCompound writeToNBT(final NBTTagCompound nbt) {
     ChesterSavedData.get(this.world).saveChesterPosition(this);
-
-    this.writeToNbtToDespawn(compound);
-    return super.writeToNBT(compound);
+    return super.writeToNBT(this.writeToSavedChesterNbt(nbt));
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound compound) {
-    this.readFromNbtWhenSpawn(compound);
-    super.readFromNBT(compound);
+  public void readFromNBT(final NBTTagCompound nbt) {
+    this.readFromSavedChesterNbt(nbt);
+    super.readFromNBT(nbt);
   }
 
-  public NBTTagCompound writeToNbtToDespawn(final NBTTagCompound compound) {
+  public NBTTagCompound writeToSavedChesterNbt(final NBTTagCompound nbt) {
     if (this.inventory != null) {
-      compound.setTag("Inventory", this.inventory.serializeNBT());
+      nbt.setTag("Inventory", this.inventory.serializeNBT());
     }
 
-    return compound;
+    return nbt;
   }
 
-  public void readFromNbtWhenSpawn(final NBTTagCompound compound) {
-    if (compound.hasKey("Inventory")) {
-      this.inventory.deserializeNBT(compound.getCompoundTag("Inventory"));
+  public void readFromSavedChesterNbt(final NBTTagCompound nbt) {
+    if (nbt.hasKey("Inventory")) {
+      this.inventory.deserializeNBT(nbt.getCompoundTag("Inventory"));
     }
   }
 
