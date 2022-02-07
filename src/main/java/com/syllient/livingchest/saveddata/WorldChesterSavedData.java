@@ -49,7 +49,6 @@ public class WorldChesterSavedData extends WorldSavedData {
         (wasResurrectedIn, worldChester) -> {
           if (worldChester.getDeadTime() > 0) {
             worldChester.setDeadTime(worldChester.getDeadTime() - DEAD_TIME_DECREMENT_STEP);
-            this.markDirty();
 
             if (worldChester.getDeadTime() <= 0) {
               return true;
@@ -72,20 +71,11 @@ public class WorldChesterSavedData extends WorldSavedData {
     final WorldChester worldChester = this.getWorldChester(chester.getOwnerId());
     worldChester.setUniqueId(null);
     worldChester.setDeadTime(chester.getDeathCooldown());
-    this.markDirty();
     PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
   }
 
   private void onChesterResurrect() {
     PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
-  }
-
-  public void saveChesterPosition(final ChesterEntity chester) {
-    if (chester.getOwnerId() != null) {
-      this.getWorldChester(chester.getOwnerId()).setPosition(chester.posX, chester.posY,
-          chester.posZ, chester.dimension);
-      this.markDirty();
-    }
   }
 
   public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
@@ -122,14 +112,13 @@ public class WorldChesterSavedData extends WorldSavedData {
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
+    worldChester.setUniqueId(chesterEntity.getUniqueID());
 
     if (worldChester.getInventory() != null) {
       chesterEntity.getInventory().deserializeNBT(worldChester.getInventory());
       worldChester.setInventory(null);
     }
 
-    worldChester.setUniqueId(chesterEntity.getUniqueID());
-    this.markDirty();
     worldIn.spawnEntity(chesterEntity);
   }
 
@@ -146,7 +135,6 @@ public class WorldChesterSavedData extends WorldSavedData {
       worldChester.setInventory(chesterEntity.getInventory().serializeNBT());
       worldChester.setUniqueId(null);
       chesterEntity.setDead();
-      this.markDirty();
     } else {
       player.sendMessage(
           new TextComponentString("Your Chester is out of range. Last know position:"));
@@ -173,8 +161,6 @@ public class WorldChesterSavedData extends WorldSavedData {
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
-    System.out.println("writiiiiiiiiiiiiiiiiiiiiiiiiiing");
-
     final NBTTagList nbtList = new NBTTagList();
 
     this.worldChesterFromPlayerId.forEach((playerId, worldChester) -> {
@@ -205,7 +191,7 @@ public class WorldChesterSavedData extends WorldSavedData {
     public static final String WORLD_CHESTER = "WorldChester";
   }
 
-  public static class WorldChester implements INBTSerializable<NBTTagCompound> {
+  public class WorldChester implements INBTSerializable<NBTTagCompound> {
     private NBTTagCompound inventory = null;
     private int deadTime = 0;
     private UUID uniqueId = null;
@@ -231,6 +217,7 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setInventory(final NBTTagCompound inventory) {
       this.inventory = inventory;
+      WorldChesterSavedData.this.markDirty();
     }
 
     public int getDeadTime() {
@@ -239,6 +226,7 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setDeadTime(final int deadTime) {
       this.deadTime = deadTime;
+      WorldChesterSavedData.this.markDirty();
     }
 
     public UUID getUniqueId() {
@@ -247,19 +235,26 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setUniqueId(final UUID uniqueId) {
       this.uniqueId = uniqueId;
+      WorldChesterSavedData.this.markDirty();
     }
 
     public Position getPosition() {
       return this.position;
     }
 
+    public void setPosition(final ChesterEntity chester) {
+      this.setPosition(chester.posX, chester.posY, chester.posZ, chester.dimension);
+    }
+
     private void setPosition(final double posX, final double posY, final double posZ,
         final int dim) {
-      if (position == null) {
+      if (this.position == null) {
         this.position = new Position(posX, posY, posZ, dim);
       } else {
         this.position.setPosition(posX, posY, posZ, dim);
       }
+
+      WorldChesterSavedData.this.markDirty();
     }
 
     @Override
