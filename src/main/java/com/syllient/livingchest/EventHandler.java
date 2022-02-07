@@ -1,7 +1,7 @@
 package com.syllient.livingchest;
 
-import com.syllient.livingchest.network.message.SyncChesterSavedDataMessage;
-import com.syllient.livingchest.saveddata.ChesterSavedData;
+import com.syllient.livingchest.network.message.SyncWorldChesterSavedDataMessage;
+import com.syllient.livingchest.saveddata.WorldChesterSavedData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -16,7 +16,7 @@ public class EventHandler {
   @SubscribeEvent
   public static void onPlayerChangeDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
     if (!event.player.world.isRemote) {
-      PacketHandler.INSTANCE.sendTo(new SyncChesterSavedDataMessage(),
+      PacketHandler.INSTANCE.sendTo(new SyncWorldChesterSavedDataMessage(),
           (EntityPlayerMP) event.player);
     }
   }
@@ -24,7 +24,7 @@ public class EventHandler {
   @SubscribeEvent
   public static void onPlayerLogIn(final PlayerEvent.PlayerLoggedInEvent event) {
     if (!event.player.world.isRemote) {
-      PacketHandler.INSTANCE.sendTo(new SyncChesterSavedDataMessage(),
+      PacketHandler.INSTANCE.sendTo(new SyncWorldChesterSavedDataMessage(),
           (EntityPlayerMP) event.player);
     }
   }
@@ -33,7 +33,7 @@ public class EventHandler {
   public static void onServerTick(final TickEvent.ServerTickEvent event) {
     if (event.phase == TickEvent.Phase.END) {
       final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
-      ChesterSavedData.get(world).onServerTick();
+      WorldChesterSavedData.getInstance(world).onServerTick();
     }
   }
 }

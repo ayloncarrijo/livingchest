@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
-import com.syllient.livingchest.network.message.SyncChesterSavedDataMessage;
+import com.syllient.livingchest.network.message.SyncWorldChesterSavedDataMessage;
 import com.syllient.livingchest.util.WorldUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,17 +20,17 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
-public class ChesterSavedData extends WorldSavedData {
+public class WorldChesterSavedData extends WorldSavedData {
   private static final String DATA_NAME = LivingChest.MOD_ID + "_" + "chester";
-  private static final int DEAD_TIME_DECREMENT_STEP = 100;
-  private final Map<UUID, WorldChester> worldChesterFromPlayerUuid = new HashMap<>();
+  private static final int DEAD_TIME_DECREMENT_STEP = 5 * 20; // TODO: DECREMENT_STEP
+  private final Map<UUID, WorldChester> worldChesterFromPlayerId = new HashMap<>();
   private int ticks = 0;
 
-  public ChesterSavedData() {
+  public WorldChesterSavedData() {
     super(DATA_NAME);
   }
 
-  public ChesterSavedData(final String name) {
+  public WorldChesterSavedData(final String name) {
     super(name);
   }
 
@@ -43,13 +43,13 @@ public class ChesterSavedData extends WorldSavedData {
   }
 
   private void onDecrementDeadTime() {
-    final boolean wasResurrected = this.worldChesterFromPlayerUuid.values().stream().reduce(false,
-        (wasResurrectedIn, savedChester) -> {
-          if (savedChester.getDeadTime() > 0) {
-            savedChester.setDeadTime(savedChester.getDeadTime() - DEAD_TIME_DECREMENT_STEP);
+    final boolean wasResurrected = this.worldChesterFromPlayerId.values().stream().reduce(false,
+        (wasResurrectedIn, worldChester) -> {
+          if (worldChester.getDeadTime() > 0) {
+            worldChester.setDeadTime(worldChester.getDeadTime() - DEAD_TIME_DECREMENT_STEP);
             this.markDirty();
 
-            if (savedChester.getDeadTime() <= 0) {
+            if (worldChester.getDeadTime() <= 0) {
               return true;
             }
           }
@@ -67,20 +67,20 @@ public class ChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final WorldChester savedChester = this.getSavedChester(chester.getOwnerId());
-    savedChester.setUniqueId(null);
-    savedChester.setDeadTime(chester.getDeathCooldown());
+    final WorldChester worldChester = this.getWorldChester(chester.getOwnerId());
+    worldChester.setUniqueId(null);
+    worldChester.setDeadTime(chester.getDeathCooldown());
     this.markDirty();
-    PacketHandler.INSTANCE.sendToAll(new SyncChesterSavedDataMessage());
+    PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
   }
 
   private void onChesterResurrect() {
-    PacketHandler.INSTANCE.sendToAll(new SyncChesterSavedDataMessage());
+    PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
   }
 
   public void saveChesterPosition(final ChesterEntity chester) {
     if (chester.getOwnerId() != null) {
-      this.getSavedChester(chester.getOwnerId()).setPosition(chester.posX, chester.posY,
+      this.getWorldChester(chester.getOwnerId()).setPosition(chester.posX, chester.posY,
           chester.posZ, chester.dimension);
       this.markDirty();
     }
@@ -91,7 +91,7 @@ public class ChesterSavedData extends WorldSavedData {
       return;
     }
 
-    if (this.getSavedChester(player.getUniqueID()).isSpawned()) {
+    if (this.getWorldChester(player.getUniqueID()).isSpawned()) {
       this.despawnChester(player, worldIn);
     } else {
       this.spawnChester(player, worldIn, pos);
@@ -103,10 +103,10 @@ public class ChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final WorldChester savedChester = this.getSavedChester(player.getUniqueID());
+    final WorldChester worldChester = this.getWorldChester(player.getUniqueID());
 
-    if (savedChester.isDead()) {
-      final int minutes = (int) Math.ceil((float) savedChester.getDeadTime() / 20 / 60);
+    if (worldChester.isDead()) {
+      final int minutes = (int) Math.ceil((float) worldChester.getDeadTime() / 20 / 60);
 
       player.sendMessage(new TextComponentString(
           new StringBuilder().append("Your Chester is dead. ").append(TextFormatting.RED)
@@ -121,11 +121,11 @@ public class ChesterSavedData extends WorldSavedData {
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
 
-    if (savedChester.getNbtData() != null) {
-      chesterEntity.readFromSavedChesterNbt(savedChester.getNbtData());
+    if (worldChester.getNbtData() != null) {
+      chesterEntity.readFromWorldChesterNbt(worldChester.getNbtData());
     }
 
-    savedChester.setUniqueId(chesterEntity.getUniqueID());
+    worldChester.setUniqueId(chesterEntity.getUniqueID());
     this.markDirty();
     worldIn.spawnEntity(chesterEntity);
   }
@@ -135,33 +135,34 @@ public class ChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final WorldChester savedChester = this.getSavedChester(player.getUniqueID());
+    final WorldChester worldChester = this.getWorldChester(player.getUniqueID());
     final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, savedChester.getUniqueId());
+        (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, worldChester.getUniqueId());
 
     if (chesterEntity != null) {
-      savedChester.setNbtData(chesterEntity.writeToSavedChesterNbt(new NBTTagCompound()));
-      savedChester.setUniqueId(null);
+      worldChester.setNbtData(chesterEntity.writeToWorldChesterNbt(new NBTTagCompound()));
+      worldChester.setUniqueId(null);
       chesterEntity.setDead();
       this.markDirty();
     } else {
       player.sendMessage(
           new TextComponentString("Your Chester is out of range. Last know position:"));
       player.sendMessage(
-          new TextComponentString(TextFormatting.GOLD + savedChester.getPosition().toString()));
+          new TextComponentString(TextFormatting.GOLD + worldChester.getPosition().toString()));
     }
   }
 
-  public WorldChester getSavedChester(final UUID playerUuid) {
-    return this.worldChesterFromPlayerUuid.computeIfAbsent(playerUuid, (key) -> new WorldChester());
+  public WorldChester getWorldChester(final UUID playerId) {
+    return this.worldChesterFromPlayerId.computeIfAbsent(playerId, (key) -> new WorldChester());
   }
 
-  public ChesterSavedData getInstance(final World world) {
+  public static WorldChesterSavedData getInstance(final World world) {
     final MapStorage worldStorage = world.getMapStorage();
 
-    return (ChesterSavedData) Optional
-        .ofNullable(worldStorage.getOrLoadData(ChesterSavedData.class, DATA_NAME)).orElseGet(() -> {
-          final WorldSavedData instance = new ChesterSavedData();
+    return (WorldChesterSavedData) Optional
+        .ofNullable(worldStorage.getOrLoadData(WorldChesterSavedData.class, DATA_NAME))
+        .orElseGet(() -> {
+          final WorldSavedData instance = new WorldChesterSavedData();
           worldStorage.setData(DATA_NAME, instance);
           return instance;
         });
@@ -171,31 +172,31 @@ public class ChesterSavedData extends WorldSavedData {
   public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
     final NBTTagList nbtList = new NBTTagList();
 
-    this.worldChesterFromPlayerUuid.forEach((playerUuid, savedChester) -> {
+    this.worldChesterFromPlayerId.forEach((playerId, worldChester) -> {
       final NBTTagCompound nbtCompound = new NBTTagCompound();
-      nbtCompound.setUniqueId(NbtKey.PLAYER_UUID, playerUuid);
-      nbtCompound.setTag(NbtKey.SAVED_CHESTER, savedChester.serializeNBT());
-
+      nbtCompound.setUniqueId(NbtKey.PLAYER_ID, playerId);
+      nbtCompound.setTag(NbtKey.WORLD_CHESTER, worldChester.serializeNBT());
       nbtList.appendTag(nbtCompound);
     });
 
-    nbtCompoundIn.setTag(NbtKey.NBT_LIST, nbtList);
+    nbtCompoundIn.setTag(NbtKey.WORLD_CHESTER_NBT_LIST, nbtList);
     return nbtCompoundIn;
   }
 
   @Override
   public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
-    nbtCompoundIn.getTagList(NbtKey.NBT_LIST, Constants.NBT.TAG_COMPOUND).forEach((nbt) -> {
-      final NBTTagCompound nbtCompound = (NBTTagCompound) nbt;
+    nbtCompoundIn.getTagList(NbtKey.WORLD_CHESTER_NBT_LIST, Constants.NBT.TAG_COMPOUND)
+        .forEach((nbt) -> {
+          final NBTTagCompound nbtCompound = (NBTTagCompound) nbt;
 
-      this.worldChesterFromPlayerUuid.put(nbtCompound.getUniqueId(NbtKey.PLAYER_UUID),
-          new WorldChester(nbtCompound.getCompoundTag(NbtKey.SAVED_CHESTER)));
-    });
+          this.worldChesterFromPlayerId.put(nbtCompound.getUniqueId(NbtKey.PLAYER_ID),
+              new WorldChester(nbtCompound.getCompoundTag(NbtKey.WORLD_CHESTER)));
+        });
   }
 
   class NbtKey {
-    public static final String NBT_LIST = "NbtList";
-    public static final String PLAYER_UUID = "PlayerUuid";
-    public static final String SAVED_CHESTER = "SavedChester";
+    public static final String WORLD_CHESTER_NBT_LIST = "WorldChesterNbtList";
+    public static final String PLAYER_ID = "PlayerId";
+    public static final String WORLD_CHESTER = "WorldChester";
   }
 }

@@ -64,43 +64,43 @@ public class WorldChester implements INBTSerializable<NBTTagCompound> {
 
   @Override
   public NBTTagCompound serializeNBT() {
-    final NBTTagCompound nbt = new NBTTagCompound();
+    final NBTTagCompound nbtCompound = new NBTTagCompound();
 
     if (this.deadTime > 0) {
-      nbt.setInteger(NbtKey.DEAD_TIME, this.deadTime);
+      nbtCompound.setInteger(NbtKey.DEAD_TIME, this.deadTime);
     }
 
     if (this.uniqueId != null) {
-      nbt.setUniqueId(NbtKey.UNIQUE_ID, this.uniqueId);
+      nbtCompound.setUniqueId(NbtKey.UNIQUE_ID, this.uniqueId);
     }
 
     if (this.position != null) {
-      nbt.setTag(NbtKey.POSITION, this.position.serializeNBT());
+      nbtCompound.setTag(NbtKey.POSITION, this.position.serializeNBT());
     }
 
     if (this.nbtData != null) {
-      nbt.setTag(NbtKey.NBT_DATA, this.nbtData);
+      nbtCompound.setTag(NbtKey.NBT_DATA, this.nbtData);
     }
 
-    return nbt;
+    return nbtCompound;
   }
 
   @Override
-  public void deserializeNBT(final NBTTagCompound nbt) {
-    if (nbt.hasKey(NbtKey.DEAD_TIME)) {
-      this.deadTime = nbt.getInteger(NbtKey.DEAD_TIME);
+  public void deserializeNBT(final NBTTagCompound nbtCompoundIn) {
+    if (nbtCompoundIn.hasKey(NbtKey.DEAD_TIME)) {
+      this.deadTime = nbtCompoundIn.getInteger(NbtKey.DEAD_TIME);
     }
 
-    if (nbt.hasUniqueId(NbtKey.UNIQUE_ID)) {
-      this.uniqueId = nbt.getUniqueId(NbtKey.UNIQUE_ID);
+    if (nbtCompoundIn.hasUniqueId(NbtKey.UNIQUE_ID)) {
+      this.uniqueId = nbtCompoundIn.getUniqueId(NbtKey.UNIQUE_ID);
     }
 
-    if (nbt.hasKey(NbtKey.POSITION)) {
-      this.position = new Position(nbt.getCompoundTag(NbtKey.POSITION));
+    if (nbtCompoundIn.hasKey(NbtKey.POSITION)) {
+      this.position = new Position(nbtCompoundIn.getCompoundTag(NbtKey.POSITION));
     }
 
-    if (nbt.hasKey(NbtKey.NBT_DATA)) {
-      this.nbtData = nbt.getCompoundTag(NbtKey.NBT_DATA);
+    if (nbtCompoundIn.hasKey(NbtKey.NBT_DATA)) {
+      this.nbtData = nbtCompoundIn.getCompoundTag(NbtKey.NBT_DATA);
     }
   }
 

@@ -14,8 +14,8 @@ public class Position implements INBTSerializable<NBTTagCompound> {
     this.setPosition(posX, posY, posZ, dim);
   }
 
-  public Position(final NBTTagCompound nbtCompound) {
-    this.deserializeNBT(nbtCompound);
+  public Position(final NBTTagCompound nbtCompoundIn) {
+    this.deserializeNBT(nbtCompoundIn);
   }
 
   public double getPosX() {
@@ -43,22 +43,22 @@ public class Position implements INBTSerializable<NBTTagCompound> {
 
   @Override
   public NBTTagCompound serializeNBT() {
-    final NBTTagCompound nbt = new NBTTagCompound();
+    final NBTTagCompound nbtCompound = new NBTTagCompound();
 
-    nbt.setDouble(NbtKey.POS_X, this.posX);
-    nbt.setDouble(NbtKey.POS_Y, this.posY);
-    nbt.setDouble(NbtKey.POS_Z, this.posZ);
-    nbt.setInteger(NbtKey.DIM, this.dim);
+    nbtCompound.setDouble(NbtKey.POS_X, this.posX);
+    nbtCompound.setDouble(NbtKey.POS_Y, this.posY);
+    nbtCompound.setDouble(NbtKey.POS_Z, this.posZ);
+    nbtCompound.setInteger(NbtKey.DIM, this.dim);
 
-    return nbt;
+    return nbtCompound;
   }
 
   @Override
-  public void deserializeNBT(final NBTTagCompound nbt) {
-    this.posX = nbt.getDouble(NbtKey.POS_X);
-    this.posY = nbt.getDouble(NbtKey.POS_Y);
-    this.posZ = nbt.getDouble(NbtKey.POS_Z);
-    this.dim = nbt.getInteger(NbtKey.DIM);
+  public void deserializeNBT(final NBTTagCompound nbtCompoundIn) {
+    this.posX = nbtCompoundIn.getDouble(NbtKey.POS_X);
+    this.posY = nbtCompoundIn.getDouble(NbtKey.POS_Y);
+    this.posZ = nbtCompoundIn.getDouble(NbtKey.POS_Z);
+    this.dim = nbtCompoundIn.getInteger(NbtKey.DIM);
   }
 
   @Override

@@ -1,6 +1,6 @@
 package com.syllient.livingchest.network.message;
 
-import com.syllient.livingchest.saveddata.ChesterSavedData;
+import com.syllient.livingchest.saveddata.WorldChesterSavedData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,28 +14,32 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SyncChesterSavedDataMessage implements IMessage {
-  private NBTTagCompound compound;
+public class SyncWorldChesterSavedDataMessage implements IMessage {
+  private NBTTagCompound nbtData;
 
-  public SyncChesterSavedDataMessage() {}
+  public SyncWorldChesterSavedDataMessage() {}
 
   @Override
   public void toBytes(final ByteBuf buf) {
     final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
-    ByteBufUtils.writeTag(buf, ChesterSavedData.get(world).getUpdateTag());
+    ByteBufUtils.writeTag(buf,
+        WorldChesterSavedData.getInstance(world).writeToNBT(new NBTTagCompound()));
   }
 
   @Override
   public void fromBytes(final ByteBuf buf) {
-    this.compound = ByteBufUtils.readTag(buf);
+    this.nbtData = ByteBufUtils.readTag(buf);
   }
 
-  public static class Handler implements IMessageHandler<SyncChesterSavedDataMessage, IMessage> {
+  public static class Handler
+      implements IMessageHandler<SyncWorldChesterSavedDataMessage, IMessage> {
     @Override
     @SideOnly(Side.CLIENT)
-    public IMessage onMessage(final SyncChesterSavedDataMessage message, final MessageContext ctx) {
+    public IMessage onMessage(final SyncWorldChesterSavedDataMessage message,
+        final MessageContext ctx) {
       Minecraft.getMinecraft().addScheduledTask(() -> {
-        ChesterSavedData.get(Minecraft.getMinecraft().world).handleUpdateTag(message.compound);
+        WorldChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+            .readFromNBT(message.nbtData);
       });
 
       return null;

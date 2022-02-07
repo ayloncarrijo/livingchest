@@ -5,7 +5,7 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.SoundRegistry;
-import com.syllient.livingchest.saveddata.ChesterSavedData;
+import com.syllient.livingchest.saveddata.WorldChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
@@ -70,28 +70,28 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound nbt) {
-    ChesterSavedData.get(this.world).saveChesterPosition(this);
-    return super.writeToNBT(this.writeToSavedChesterNbt(nbt));
+  public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
+    WorldChesterSavedData.getInstance(this.world).saveChesterPosition(this);
+    return super.writeToNBT(this.writeToWorldChesterNbt(nbtCompoundIn));
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound nbt) {
-    this.readFromSavedChesterNbt(nbt);
-    super.readFromNBT(nbt);
+  public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
+    this.readFromWorldChesterNbt(nbtCompoundIn);
+    super.readFromNBT(nbtCompoundIn);
   }
 
-  public NBTTagCompound writeToSavedChesterNbt(final NBTTagCompound nbt) {
+  public NBTTagCompound writeToWorldChesterNbt(final NBTTagCompound nbtCompoundIn) {
     if (this.inventory != null) {
-      nbt.setTag("Inventory", this.inventory.serializeNBT());
+      nbtCompoundIn.setTag(NbtKey.INVENTORY, this.inventory.serializeNBT());
     }
 
-    return nbt;
+    return nbtCompoundIn;
   }
 
-  public void readFromSavedChesterNbt(final NBTTagCompound nbt) {
-    if (nbt.hasKey("Inventory")) {
-      this.inventory.deserializeNBT(nbt.getCompoundTag("Inventory"));
+  public void readFromWorldChesterNbt(final NBTTagCompound nbtCompoundIn) {
+    if (nbtCompoundIn.hasKey(NbtKey.INVENTORY)) {
+      this.inventory.deserializeNBT(nbtCompoundIn.getCompoundTag(NbtKey.INVENTORY));
     }
   }
 
@@ -119,7 +119,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   public void onDeath(final DamageSource cause) {
     if (!this.world.isRemote) {
       InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
-      ChesterSavedData.get(this.world).onChesterDie(this);
+      WorldChesterSavedData.getInstance(this.world).onChesterDie(this);
     }
 
     super.onDeath(cause);
@@ -217,5 +217,9 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   public void registerControllers(final AnimationData data) {
     this.animation.registerControllers(data);
+  }
+
+  class NbtKey {
+    public static final String INVENTORY = "Inventory";
   }
 }
