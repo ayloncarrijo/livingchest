@@ -19,6 +19,6 @@ public class EyeBoneTileEntityModel extends EyeBoneModel<EyeBoneTileEntity> {
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneTileEntity eyeBone) {
     return WorldChesterSavedData.getInstance(Minecraft.getMinecraft().world)
-        .getWorldChester(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPENED;
+        .getChesterData(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPENED;
   }
 }
