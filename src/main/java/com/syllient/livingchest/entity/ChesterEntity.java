@@ -3,7 +3,9 @@ package com.syllient.livingchest.entity;
 import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
+import com.syllient.livingchest.entity.ai.ChesterSitEntityAi;
 import com.syllient.livingchest.inventory.ChesterInventory;
+import com.syllient.livingchest.registry.ItemRegistry;
 import com.syllient.livingchest.registry.SoundRegistry;
 import com.syllient.livingchest.saveddata.WorldChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
@@ -11,12 +13,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
-import net.minecraft.entity.ai.EntityAISit;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -46,7 +48,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   @Override
   protected void initEntityAI() {
-    this.aiSit = new EntityAISit(this);
+    this.aiSit = new ChesterSitEntityAi(this);
     this.tasks.addTask(1, new EntityAISwimming(this));
     this.tasks.addTask(2, this.aiSit);
     this.tasks.addTask(3, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
@@ -107,6 +109,16 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     if (!this.isMouthOpen() && this.onGround && this.ticksUntilCanMove > 0
         && --this.ticksUntilCanMove == 0) {
       this.setMoveSpeed(this.getMoveSpeed());
+    }
+
+    if (this.getOwnerId() != null && !this.isSitting() && ticksExisted % 60 == 0) {
+      final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
+      final boolean shouldDespawn = owner == null || !(owner.inventoryContainer.inventoryItemStacks
+          .stream().map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
+
+      if (shouldDespawn) {
+        WorldChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(), this.world);
+      }
     }
   }
 

@@ -13,7 +13,6 @@ public class ChesterContainer extends Container {
   private final int invRows;
   private final int offsetX;
   private final int offsetY;
-  private final int playerInvPos;
   private final ChesterEntity chester;
 
   public ChesterContainer(final EntityPlayer player, final ChesterEntity chester) {
@@ -21,37 +20,36 @@ public class ChesterContainer extends Container {
     this.invRows = chester.getInventory().getSlots() / this.invCols;
     this.offsetX = 8;
     this.offsetY = 18;
-    this.playerInvPos = (invRows - 4) * 18;
     this.chester = chester;
     this.chester.getInventory().onOpenInventory(player);
 
     IntStream.range(0, invRows).forEach((row) -> {
       IntStream.range(0, invCols).forEach((col) -> {
         final int index = row * 9 + col;
-        final int xPos = col * 18 + offsetX;
-        final int yPos = row * 18 + offsetY;
+        final int posX = col * 18 + offsetX;
+        final int posY = row * 18 + offsetY;
 
         this.addSlotToContainer(
-            new SlotItemHandler(this.chester.getInventory(), index, xPos, yPos));
+            new SlotItemHandler(this.chester.getInventory(), index, posX, posY));
       });
     });
 
     IntStream.range(0, 3).forEach((row) -> {
       IntStream.range(0, 9).forEach((col) -> {
         final int index = row * 9 + col + 9;
-        final int xPos = col * 18 + offsetX;
-        final int yPos = row * 18 + 103 + playerInvPos;
+        final int posX = col * 18 + offsetX;
+        final int posY = row * 18 + 103 + (invRows - 4) * 18;
 
-        this.addSlotToContainer(new Slot(player.inventory, index, xPos, yPos));
+        this.addSlotToContainer(new Slot(player.inventory, index, posX, posY));
       });
     });
 
     IntStream.range(0, 9).forEach((col) -> {
       final int index = col;
-      final int xPos = col * 18 + offsetX;
-      final int yPos = 161 + playerInvPos;
+      final int posX = col * 18 + offsetX;
+      final int posY = 161 + (invRows - 4) * 18;
 
-      this.addSlotToContainer(new Slot(player.inventory, index, xPos, yPos));
+      this.addSlotToContainer(new Slot(player.inventory, index, posX, posY));
     });
   }
 

@@ -69,7 +69,7 @@ public class WorldChesterSavedData extends WorldSavedData {
     }
 
     final ChesterData chesterData = this.getChesterData(chester.getOwnerId());
-    chesterData.setUniqueId(null);
+    chesterData.setIsDespawned();
     chesterData.setDeadTime(chester.getDeathCooldown());
     PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
   }
@@ -84,7 +84,7 @@ public class WorldChesterSavedData extends WorldSavedData {
     }
 
     if (this.getChesterData(player.getUniqueID()).isSpawned()) {
-      this.despawnChester(player, worldIn);
+      this.despawnChester(player.getUniqueID(), worldIn);
     } else {
       this.spawnChester(player, worldIn, pos);
     }
@@ -101,9 +101,9 @@ public class WorldChesterSavedData extends WorldSavedData {
       final int minutes = (int) Math.ceil((float) chesterData.getDeadTime() / 20 / 60);
 
       player.sendMessage(new TextComponentString(
-          new StringBuilder().append("Your Chester is dead. ").append(TextFormatting.RED)
+          new StringBuilder().append("Your Chester is dead. Wait ").append(TextFormatting.RED)
               .append(minutes).append(" minute").append(minutes > 1 ? "s " : " ")
-              .append(TextFormatting.WHITE).append("until you can summon him again.").toString()));
+              .append(TextFormatting.WHITE).append("to summon him again.").toString()));
 
       return;
     }
@@ -112,7 +112,7 @@ public class WorldChesterSavedData extends WorldSavedData {
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
-    chesterData.setUniqueId(chesterEntity.getUniqueID());
+    chesterData.setIsSpawned(chesterEntity.getUniqueID());
 
     if (chesterData.getInventory() != null) {
       chesterEntity.getInventory().deserializeNBT(chesterData.getInventory());
@@ -122,20 +122,25 @@ public class WorldChesterSavedData extends WorldSavedData {
     worldIn.spawnEntity(chesterEntity);
   }
 
-  public void despawnChester(final EntityPlayer player, final World worldIn) {
+  public void despawnChester(final UUID playerId, final World worldIn) {
     if (worldIn.isRemote) {
       return;
     }
 
-    final ChesterData chesterData = this.getChesterData(player.getUniqueID());
+    final ChesterData chesterData = this.getChesterData(playerId);
     final ChesterEntity chesterEntity =
         (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, chesterData.getUniqueId());
 
     if (chesterEntity != null) {
       chesterData.setInventory(chesterEntity.getInventory().serializeNBT());
-      chesterData.setUniqueId(null);
+      chesterData.setIsDespawned();
       chesterEntity.setDead();
-    } else {
+      return;
+    }
+
+    final EntityPlayer player = worldIn.getPlayerEntityByUUID(playerId);
+
+    if (player != null) {
       player.sendMessage(
           new TextComponentString("Your Chester is out of range. Last know position:"));
       player.sendMessage(
@@ -203,12 +208,20 @@ public class WorldChesterSavedData extends WorldSavedData {
       this.deserializeNBT(nbtCompoundIn);
     }
 
+    public boolean isDead() {
+      return this.deadTime > 0;
+    }
+
     public boolean isSpawned() {
       return this.uniqueId != null;
     }
 
-    public boolean isDead() {
-      return this.deadTime > 0;
+    private void setIsSpawned(final UUID uuid) {
+      this.setUniqueId(uuid);
+    }
+
+    private void setIsDespawned() {
+      this.setUniqueId(null);
     }
 
     public NBTTagCompound getInventory() {
