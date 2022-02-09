@@ -1,6 +1,6 @@
 package com.syllient.livingchest.network.message;
 
-import com.syllient.livingchest.saveddata.WorldChesterSavedData;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,16 +14,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SyncWorldChesterSavedDataMessage implements IMessage {
+public class SyncVirtualChesterMessage implements IMessage {
   private NBTTagCompound nbtCompound;
 
-  public SyncWorldChesterSavedDataMessage() {}
+  public SyncVirtualChesterMessage() {}
 
   @Override
   public void toBytes(final ByteBuf buf) {
     final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
     ByteBufUtils.writeTag(buf,
-        WorldChesterSavedData.getInstance(world).writeToNBT(new NBTTagCompound()));
+        VirtualChesterSavedData.getInstance(world).writeToNBT(new NBTTagCompound()));
   }
 
   @Override
@@ -31,14 +31,12 @@ public class SyncWorldChesterSavedDataMessage implements IMessage {
     this.nbtCompound = ByteBufUtils.readTag(buf);
   }
 
-  public static class Handler
-      implements IMessageHandler<SyncWorldChesterSavedDataMessage, IMessage> {
+  public static class Handler implements IMessageHandler<SyncVirtualChesterMessage, IMessage> {
     @Override
     @SideOnly(Side.CLIENT)
-    public IMessage onMessage(final SyncWorldChesterSavedDataMessage message,
-        final MessageContext ctx) {
+    public IMessage onMessage(final SyncVirtualChesterMessage message, final MessageContext ctx) {
       Minecraft.getMinecraft().addScheduledTask(() -> {
-        WorldChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+        VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
             .readFromNBT(message.nbtCompound);
       });
 

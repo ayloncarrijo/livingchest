@@ -1,6 +1,6 @@
 package com.syllient.livingchest.client.model;
 
-import com.syllient.livingchest.saveddata.WorldChesterSavedData;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.tileentity.EyeBoneTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +18,7 @@ public class EyeBoneTileEntityModel extends EyeBoneModel<EyeBoneTileEntity> {
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneTileEntity eyeBone) {
-    return WorldChesterSavedData.getInstance(Minecraft.getMinecraft().world)
-        .getChesterData(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPENED;
+    return VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+        .getVirtualChester(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPENED;
   }
 }

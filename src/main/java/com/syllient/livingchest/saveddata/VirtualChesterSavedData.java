@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
-import com.syllient.livingchest.network.message.SyncWorldChesterSavedDataMessage;
+import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
 import com.syllient.livingchest.util.Position;
 import com.syllient.livingchest.util.WorldUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,35 +22,35 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
-public class WorldChesterSavedData extends WorldSavedData {
-  private static final String DATA_NAME = LivingChest.MOD_ID + "_" + "chester";
-  private static final int DEAD_TIME_DECREMENT_STEP = 5 * 20; // TODO: DECREMENT_STEP
-  private final Map<UUID, ChesterData> chesterDataFromPlayerId = new HashMap<>();
+public class VirtualChesterSavedData extends WorldSavedData {
+  private static final String DATA_NAME = LivingChest.MOD_ID + "_" + "virtualchester";
+  private static final int TICKS_DECREMENT_STEP = 5 * 20; // TODO: DECREMENT_STEP
+  private final Map<UUID, VirtualChester> virtualChesterFromPlayerId = new HashMap<>();
   private int ticks = 0;
 
-  public WorldChesterSavedData() {
+  public VirtualChesterSavedData() {
     super(DATA_NAME);
   }
 
-  public WorldChesterSavedData(final String name) {
+  public VirtualChesterSavedData(final String name) {
     super(name);
   }
 
   public void onServerTick() {
     this.ticks++;
 
-    if (this.ticks % DEAD_TIME_DECREMENT_STEP == 0) {
+    if (this.ticks % TICKS_DECREMENT_STEP == 0) {
       this.onDecrementDeadTime();
     }
   }
 
   private void onDecrementDeadTime() {
-    final boolean wasResurrected = this.chesterDataFromPlayerId.values().stream().reduce(false,
-        (wasResurrectedIn, chesterData) -> {
-          if (chesterData.getDeadTime() > 0) {
-            chesterData.setDeadTime(chesterData.getDeadTime() - DEAD_TIME_DECREMENT_STEP);
+    final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
+        (wasResurrectedIn, virtualChester) -> {
+          if (virtualChester.getDeadTime() > 0) {
+            virtualChester.setDeadTime(virtualChester.getDeadTime() - TICKS_DECREMENT_STEP);
 
-            if (chesterData.getDeadTime() <= 0) {
+            if (virtualChester.getDeadTime() <= 0) {
               return true;
             }
           }
@@ -68,14 +68,14 @@ public class WorldChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final ChesterData chesterData = this.getChesterData(chester.getOwnerId());
-    chesterData.setIsDespawned();
-    chesterData.setDeadTime(chester.getDeathCooldown());
-    PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
+    final VirtualChester virtualChester = this.getVirtualChester(chester.getOwnerId());
+    virtualChester.setIsDespawned();
+    virtualChester.setDeadTime(chester.getDeathCooldown());
+    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
   private void onChesterResurrect() {
-    PacketHandler.INSTANCE.sendToAll(new SyncWorldChesterSavedDataMessage());
+    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
   public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
@@ -83,7 +83,7 @@ public class WorldChesterSavedData extends WorldSavedData {
       return;
     }
 
-    if (this.getChesterData(player.getUniqueID()).isSpawned()) {
+    if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
       this.despawnChester(player.getUniqueID(), worldIn);
     } else {
       this.spawnChester(player, worldIn, pos);
@@ -95,15 +95,15 @@ public class WorldChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final ChesterData chesterData = this.getChesterData(player.getUniqueID());
+    final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
 
-    if (chesterData.isDead()) {
-      final int minutes = (int) Math.ceil((float) chesterData.getDeadTime() / 20 / 60);
+    if (virtualChester.isDead()) {
+      final int minutes = (int) Math.ceil((float) virtualChester.getDeadTime() / 20 / 60);
 
       player.sendMessage(new TextComponentString(
-          new StringBuilder().append("Your Chester is dead. Wait ").append(TextFormatting.RED)
+          new StringBuilder().append("Your Chester is dead. ").append(TextFormatting.RED)
               .append(minutes).append(" minute").append(minutes > 1 ? "s " : " ")
-              .append(TextFormatting.WHITE).append("to summon him again.").toString()));
+              .append(TextFormatting.WHITE).append("until you can summon him again.").toString()));
 
       return;
     }
@@ -112,11 +112,11 @@ public class WorldChesterSavedData extends WorldSavedData {
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
-    chesterData.setIsSpawned(chesterEntity.getUniqueID());
+    virtualChester.setIsSpawned(chesterEntity.getUniqueID());
 
-    if (chesterData.getInventory() != null) {
-      chesterEntity.getInventory().deserializeNBT(chesterData.getInventory());
-      chesterData.setInventory(null);
+    if (virtualChester.getInventory() != null) {
+      chesterEntity.getInventory().deserializeNBT(virtualChester.getInventory());
+      virtualChester.setInventory(null);
     }
 
     worldIn.spawnEntity(chesterEntity);
@@ -127,13 +127,13 @@ public class WorldChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final ChesterData chesterData = this.getChesterData(playerId);
+    final VirtualChester virtualChester = this.getVirtualChester(playerId);
     final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, chesterData.getUniqueId());
+        (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
-      chesterData.setInventory(chesterEntity.getInventory().serializeNBT());
-      chesterData.setIsDespawned();
+      virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
+      virtualChester.setIsDespawned();
       chesterEntity.setDead();
       return;
     }
@@ -144,21 +144,21 @@ public class WorldChesterSavedData extends WorldSavedData {
       player.sendMessage(
           new TextComponentString("Your Chester is out of range. Last know position:"));
       player.sendMessage(
-          new TextComponentString(TextFormatting.GOLD + chesterData.getPosition().toString()));
+          new TextComponentString(TextFormatting.GOLD + virtualChester.getPosition().toString()));
     }
   }
 
-  public ChesterData getChesterData(final UUID playerId) {
-    return this.chesterDataFromPlayerId.computeIfAbsent(playerId, (key) -> new ChesterData());
+  public VirtualChester getVirtualChester(final UUID playerId) {
+    return this.virtualChesterFromPlayerId.computeIfAbsent(playerId, (key) -> new VirtualChester());
   }
 
-  public static WorldChesterSavedData getInstance(final World world) {
+  public static VirtualChesterSavedData getInstance(final World world) {
     final MapStorage worldStorage = world.getMapStorage();
 
-    return (WorldChesterSavedData) Optional
-        .ofNullable(worldStorage.getOrLoadData(WorldChesterSavedData.class, DATA_NAME))
+    return (VirtualChesterSavedData) Optional
+        .ofNullable(worldStorage.getOrLoadData(VirtualChesterSavedData.class, DATA_NAME))
         .orElseGet(() -> {
-          final WorldSavedData instance = new WorldChesterSavedData();
+          final WorldSavedData instance = new VirtualChesterSavedData();
           worldStorage.setData(DATA_NAME, instance);
           return instance;
         });
@@ -168,43 +168,43 @@ public class WorldChesterSavedData extends WorldSavedData {
   public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
     final NBTTagList nbtList = new NBTTagList();
 
-    this.chesterDataFromPlayerId.forEach((playerId, chesterData) -> {
+    this.virtualChesterFromPlayerId.forEach((playerId, virtualChester) -> {
       final NBTTagCompound nbtCompound = new NBTTagCompound();
       nbtCompound.setUniqueId(NbtKey.PLAYER_ID, playerId);
-      nbtCompound.setTag(NbtKey.CHESTER_DATA, chesterData.serializeNBT());
+      nbtCompound.setTag(NbtKey.VIRTUAL_CHESTER, virtualChester.serializeNBT());
       nbtList.appendTag(nbtCompound);
     });
 
-    nbtCompoundIn.setTag(NbtKey.CHESTER_DATA_NBT_LIST, nbtList);
+    nbtCompoundIn.setTag(NbtKey.VIRTUAL_CHESTER_NBT_LIST, nbtList);
     return nbtCompoundIn;
   }
 
   @Override
   public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
-    nbtCompoundIn.getTagList(NbtKey.CHESTER_DATA_NBT_LIST, Constants.NBT.TAG_COMPOUND)
+    nbtCompoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_NBT_LIST, Constants.NBT.TAG_COMPOUND)
         .forEach((nbt) -> {
           final NBTTagCompound nbtCompound = (NBTTagCompound) nbt;
 
-          this.chesterDataFromPlayerId.put(nbtCompound.getUniqueId(NbtKey.PLAYER_ID),
-              new ChesterData(nbtCompound.getCompoundTag(NbtKey.CHESTER_DATA)));
+          this.virtualChesterFromPlayerId.put(nbtCompound.getUniqueId(NbtKey.PLAYER_ID),
+              new VirtualChester(nbtCompound.getCompoundTag(NbtKey.VIRTUAL_CHESTER)));
         });
   }
 
   class NbtKey {
-    public static final String CHESTER_DATA_NBT_LIST = "ChesterDataNbtList";
+    public static final String VIRTUAL_CHESTER_NBT_LIST = "VirtualChesterNbtList";
     public static final String PLAYER_ID = "PlayerId";
-    public static final String CHESTER_DATA = "ChesterData";
+    public static final String VIRTUAL_CHESTER = "VirtualChester";
   }
 
-  public class ChesterData implements INBTSerializable<NBTTagCompound> {
+  public class VirtualChester implements INBTSerializable<NBTTagCompound> {
     private NBTTagCompound inventory = null;
     private int deadTime = 0;
     private UUID uniqueId = null;
     private Position position = null;
 
-    public ChesterData() {}
+    public VirtualChester() {}
 
-    public ChesterData(final NBTTagCompound nbtCompoundIn) {
+    public VirtualChester(final NBTTagCompound nbtCompoundIn) {
       this.deserializeNBT(nbtCompoundIn);
     }
 
@@ -230,7 +230,7 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setInventory(final NBTTagCompound inventory) {
       this.inventory = inventory;
-      WorldChesterSavedData.this.markDirty();
+      VirtualChesterSavedData.this.markDirty();
     }
 
     public int getDeadTime() {
@@ -239,7 +239,7 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setDeadTime(final int deadTime) {
       this.deadTime = deadTime;
-      WorldChesterSavedData.this.markDirty();
+      VirtualChesterSavedData.this.markDirty();
     }
 
     public UUID getUniqueId() {
@@ -248,7 +248,7 @@ public class WorldChesterSavedData extends WorldSavedData {
 
     private void setUniqueId(final UUID uniqueId) {
       this.uniqueId = uniqueId;
-      WorldChesterSavedData.this.markDirty();
+      VirtualChesterSavedData.this.markDirty();
     }
 
     public Position getPosition() {
@@ -267,7 +267,7 @@ public class WorldChesterSavedData extends WorldSavedData {
         this.position.setPosition(posX, posY, posZ, dim);
       }
 
-      WorldChesterSavedData.this.markDirty();
+      VirtualChesterSavedData.this.markDirty();
     }
 
     @Override

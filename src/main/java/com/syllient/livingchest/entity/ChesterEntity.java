@@ -7,7 +7,7 @@ import com.syllient.livingchest.entity.ai.ChesterSitEntityAi;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.ItemRegistry;
 import com.syllient.livingchest.registry.SoundRegistry;
-import com.syllient.livingchest.saveddata.WorldChesterSavedData;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
@@ -74,7 +74,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
     if (this.getOwnerId() != null) {
-      WorldChesterSavedData.getInstance(this.world).getChesterData(this.getOwnerId())
+      VirtualChesterSavedData.getInstance(this.world).getVirtualChester(this.getOwnerId())
           .setPosition(this);
     }
 
@@ -117,7 +117,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
           .stream().map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
 
       if (shouldDespawn) {
-        WorldChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(), this.world);
+        VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
+            this.world);
       }
     }
   }
@@ -128,7 +129,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   public void onDeath(final DamageSource cause) {
     if (!this.world.isRemote) {
       InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
-      WorldChesterSavedData.getInstance(this.world).onChesterDie(this);
+      VirtualChesterSavedData.getInstance(this.world).onChesterDie(this);
     }
 
     super.onDeath(cause);

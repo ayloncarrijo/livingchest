@@ -1,7 +1,7 @@
 package com.syllient.livingchest.item;
 
 import com.syllient.livingchest.animation.EyeBoneAnimation;
-import com.syllient.livingchest.saveddata.WorldChesterSavedData;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -26,7 +26,7 @@ public class EyeBoneItem extends ItemBlock implements IAnimatable {
       final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
-      WorldChesterSavedData.getInstance(worldIn).toggleChester(player, worldIn, pos);
+      VirtualChesterSavedData.getInstance(worldIn).toggleChester(player, worldIn, pos);
       return EnumActionResult.SUCCESS;
     }
 

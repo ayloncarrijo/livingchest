@@ -1,6 +1,6 @@
 package com.syllient.livingchest;
 
-import com.syllient.livingchest.network.message.SyncWorldChesterSavedDataMessage;
+import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,7 +12,7 @@ public class PacketHandler {
   public static void initialize() {
     int id = 0;
 
-    INSTANCE.registerMessage(SyncWorldChesterSavedDataMessage.Handler.class,
-        SyncWorldChesterSavedDataMessage.class, id++, Side.CLIENT);
+    INSTANCE.registerMessage(SyncVirtualChesterMessage.Handler.class,
+        SyncVirtualChesterMessage.class, id++, Side.CLIENT);
   }
 }
