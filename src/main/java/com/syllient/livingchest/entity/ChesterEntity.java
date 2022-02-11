@@ -5,6 +5,7 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
 import com.syllient.livingchest.entity.ai.ChesterSitEntityAi;
 import com.syllient.livingchest.inventory.ChesterInventory;
+import com.syllient.livingchest.registry.BlockRegistry;
 import com.syllient.livingchest.registry.ItemRegistry;
 import com.syllient.livingchest.registry.SoundRegistry;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -39,6 +41,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private int ticksUntilCanMove = 0;
+  private BlockPos eyeBone;
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
@@ -82,6 +85,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
       nbtCompoundIn.setTag(NbtKey.INVENTORY, this.inventory.serializeNBT());
     }
 
+    if (this.eyeBone != null) {
+      nbtCompoundIn.setTag(NbtKey.EYE_BONE, NBTUtil.createPosTag(this.eyeBone));
+    }
+
     return super.writeToNBT(nbtCompoundIn);
   }
 
@@ -89,6 +96,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
     if (nbtCompoundIn.hasKey(NbtKey.INVENTORY)) {
       this.inventory.deserializeNBT(nbtCompoundIn.getCompoundTag(NbtKey.INVENTORY));
+    }
+
+    if (nbtCompoundIn.hasKey(NbtKey.EYE_BONE)) {
+      this.eyeBone = NBTUtil.getPosFromTag(nbtCompoundIn.getCompoundTag(NbtKey.EYE_BONE));
     }
 
     super.readFromNBT(nbtCompoundIn);
@@ -111,16 +122,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
       this.setMoveSpeed(this.getMoveSpeed());
     }
 
-    if (this.getOwnerId() != null && !this.isSitting() && ticksExisted % 60 == 0) {
-      final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
-      final boolean shouldDespawn = owner == null || !(owner.inventoryContainer.inventoryItemStacks
-          .stream().map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
-
-      if (shouldDespawn) {
-        VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
-            this.world);
-      }
-    }
+    this.checkEyeBone();
   }
 
   public void onClientUpdate() {}
@@ -128,8 +130,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   public void onDeath(final DamageSource cause) {
     if (!this.world.isRemote) {
-      InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
       VirtualChesterSavedData.getInstance(this.world).onChesterDie(this);
+      InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
     }
 
     super.onDeath(cause);
@@ -147,6 +149,30 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     }
 
     return false;
+  }
+
+  private void checkEyeBone() {
+    if (this.eyeBone == null) {
+      this.setSitting(false);
+
+      if (this.getOwnerId() != null && ticksExisted % 60 == 0) {
+        final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
+        final boolean shouldDespawn =
+            owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
+                .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
+
+        if (shouldDespawn) {
+          VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
+              this.world);
+        }
+      }
+    } else {
+      this.setSitting(true);
+
+      if (!this.world.getBlockState(this.eyeBone).getBlock().equals(BlockRegistry.EYE_BONE)) {
+        this.eyeBone = null;
+      }
+    }
   }
 
   public boolean isMouthOpen() {
@@ -173,11 +199,19 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public double getMoveSpeed() {
-    return 0.375D;
+    return 0.370D;
   }
 
   public void setMoveSpeed(final double value) {
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(value);
+  }
+
+  public BlockPos getEyeBone() {
+    return this.eyeBone;
+  }
+
+  public void setEyeBone(final BlockPos pos) {
+    this.eyeBone = pos;
   }
 
   @Override
@@ -191,14 +225,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   @Override
-  public void playLivingSound() {
-    // Handled by Animation class
-  }
+  public void playLivingSound() {}
 
   @Override
-  protected void playStepSound(final BlockPos pos, final Block blockIn) {
-    // Handled by Animation class
-  }
+  protected void playStepSound(final BlockPos pos, final Block blockIn) {}
 
   @Override
   public EntityAgeable createChild(final EntityAgeable ageable) {
@@ -231,5 +261,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   class NbtKey {
     public static final String INVENTORY = "Inventory";
+    public static final String EYE_BONE = "EyeBone";
   }
 }

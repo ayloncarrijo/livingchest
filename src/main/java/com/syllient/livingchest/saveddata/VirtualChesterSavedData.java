@@ -78,6 +78,26 @@ public class VirtualChesterSavedData extends WorldSavedData {
     PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
+  public void onPlaceEyeBone(final EntityPlayer player, final BlockPos pos) {
+    final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
+
+    if (!virtualChester.isSpawned()) {
+      return;
+    }
+
+    final ChesterEntity chesterEntity =
+        (ChesterEntity) WorldUtil.getEntityByUuid(player.world, virtualChester.getUniqueId());
+
+    if (chesterEntity == null) {
+      return;
+    }
+
+    chesterEntity.setEyeBone(pos);
+
+    player.sendMessage(new TextComponentString(TextFormatting.GREEN
+        + "A new Eye Bone position has been set for your Chester. He will wait for you here."));
+  }
+
   public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
     if (worldIn.isRemote) {
       return;
@@ -100,10 +120,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
     if (virtualChester.isDead()) {
       final int minutes = (int) Math.ceil((float) virtualChester.getDeadTime() / 20 / 60);
 
-      player.sendMessage(new TextComponentString(
-          new StringBuilder().append("Your Chester is dead. ").append(TextFormatting.RED)
-              .append(minutes).append(" minute").append(minutes > 1 ? "s " : " ")
-              .append(TextFormatting.WHITE).append("until you can summon him again.").toString()));
+      player.sendMessage(new TextComponentString(new StringBuilder()
+          .append("Ooh, looks like your Chester is dead. You still need to wait ")
+          .append(TextFormatting.RED).append(minutes).append(" minute")
+          .append(minutes > 1 ? "s " : " ").append(TextFormatting.WHITE)
+          .append("before you can summon him again.").toString()));
 
       return;
     }
@@ -142,7 +163,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     if (player != null) {
       player.sendMessage(
-          new TextComponentString("Your Chester is out of range. Last know position:"));
+          new TextComponentString("You need to get closer to your Chester. Last know position:"));
       player.sendMessage(
           new TextComponentString(TextFormatting.GOLD + virtualChester.getPosition().toString()));
     }

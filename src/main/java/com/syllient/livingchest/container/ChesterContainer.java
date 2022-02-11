@@ -55,7 +55,7 @@ public class ChesterContainer extends Container {
 
   @Override
   public boolean canInteractWith(final EntityPlayer playerIn) {
-    return true;
+    return this.chester.isEntityAlive() && this.chester.getDistance(playerIn) <= 8;
   }
 
   @Override
