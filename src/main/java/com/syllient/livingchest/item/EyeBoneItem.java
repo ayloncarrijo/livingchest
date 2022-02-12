@@ -5,6 +5,7 @@ import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -26,11 +27,19 @@ public class EyeBoneItem extends ItemBlock implements IAnimatable {
       final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
-      VirtualChesterSavedData.getInstance(worldIn).toggleChester(player, worldIn, pos);
+      if (!worldIn.isRemote) {
+        VirtualChesterSavedData.getInstance(worldIn).toggleChester(player, worldIn, pos);
+      }
+
       return EnumActionResult.SUCCESS;
     }
 
     return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+  }
+
+  @Override
+  public int getItemStackLimit(final ItemStack stack) {
+    return 1;
   }
 
   @Override

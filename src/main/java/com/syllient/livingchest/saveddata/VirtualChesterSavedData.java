@@ -40,11 +40,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
     this.ticks++;
 
     if (this.ticks % TICKS_DECREMENT_STEP == 0) {
-      this.onDecrementDeadTime();
+      this.decrementDeadTime();
     }
   }
 
-  private void onDecrementDeadTime() {
+  private void decrementDeadTime() {
     final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
         (wasResurrectedIn, virtualChester) -> {
           if (virtualChester.getDeadTime() > 0) {
@@ -63,6 +63,10 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
+  private void onChesterResurrect() {
+    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+  }
+
   public void onChesterDie(final ChesterEntity chester) {
     if (chester.getOwnerId() == null) {
       return;
@@ -71,11 +75,16 @@ public class VirtualChesterSavedData extends WorldSavedData {
     final VirtualChester virtualChester = this.getVirtualChester(chester.getOwnerId());
     virtualChester.setIsDespawned();
     virtualChester.setDeadTime(chester.getDeathCooldown());
+
     PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
-  private void onChesterResurrect() {
-    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+  public void onChesterSetDead(final ChesterEntity chester) {
+    if (chester.getOwnerId() == null) {
+      return;
+    }
+
+    this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
   }
 
   public void onPlaceEyeBone(final EntityPlayer player, final BlockPos pos) {
@@ -94,15 +103,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     chesterEntity.setEyeBone(pos);
 
-    player.sendMessage(new TextComponentString(TextFormatting.GREEN
-        + "A new Eye Bone position has been set for your Chester. He will wait for you here."));
+    player.sendMessage(new TextComponentString(
+        TextFormatting.GREEN + "A new Eye Bone position has been set for your Chester."));
   }
 
   public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
-    if (worldIn.isRemote) {
-      return;
-    }
-
     if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
       this.despawnChester(player.getUniqueID(), worldIn);
     } else {
@@ -111,10 +116,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void spawnChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
-    if (worldIn.isRemote) {
-      return;
-    }
-
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
 
     if (virtualChester.isDead()) {
@@ -144,10 +145,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void despawnChester(final UUID playerId, final World worldIn) {
-    if (worldIn.isRemote) {
-      return;
-    }
-
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
     final ChesterEntity chesterEntity =
         (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, virtualChester.getUniqueId());

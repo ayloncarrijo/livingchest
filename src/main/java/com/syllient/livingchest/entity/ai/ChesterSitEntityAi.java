@@ -22,7 +22,7 @@ public class ChesterSitEntityAi extends EntityAISit {
     final BlockPos eyeBone = this.chester.getEyeBone();
 
     // TODO: verificar logica
-    if (eyeBone != null && this.chester.getDistanceSq(eyeBone) > 256) {
+    if (eyeBone != null && this.chester.getDistanceSq(eyeBone) > 64) {
       this.chester.attemptTeleport(eyeBone.getX() + 0.5, eyeBone.getY() + 1, eyeBone.getZ() + 0.5);
     }
   }

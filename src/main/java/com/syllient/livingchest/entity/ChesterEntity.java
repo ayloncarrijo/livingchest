@@ -40,8 +40,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
-  private int ticksUntilCanMove = 0;
   private BlockPos eyeBone;
+  private int ticksUntilCanMove = 0;
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
@@ -125,6 +125,34 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     this.checkEyeBone();
   }
 
+  private void checkEyeBone() {
+    if (this.eyeBone == null) {
+      this.setSitting(false);
+
+      if (this.getOwnerId() != null && ticksExisted % 60 == 0) {
+        final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
+
+        final boolean shouldDespawn =
+            owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
+                .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
+
+        if (shouldDespawn) {
+          VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
+              this.world);
+        }
+      }
+    } else {
+      this.setSitting(true);
+
+      final boolean isEyeBoneBlock =
+          this.world.getBlockState(this.eyeBone).getBlock().equals(BlockRegistry.EYE_BONE);
+
+      if (!isEyeBoneBlock) {
+        this.eyeBone = null;
+      }
+    }
+  }
+
   public void onClientUpdate() {}
 
   @Override
@@ -135,6 +163,15 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     }
 
     super.onDeath(cause);
+  }
+
+  @Override
+  public void setDead() {
+    if (!this.world.isRemote) {
+      VirtualChesterSavedData.getInstance(this.world).onChesterSetDead(this);
+    }
+
+    super.setDead();
   }
 
   @Override
@@ -149,30 +186,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     }
 
     return false;
-  }
-
-  private void checkEyeBone() {
-    if (this.eyeBone == null) {
-      this.setSitting(false);
-
-      if (this.getOwnerId() != null && ticksExisted % 60 == 0) {
-        final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
-        final boolean shouldDespawn =
-            owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
-                .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
-
-        if (shouldDespawn) {
-          VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
-              this.world);
-        }
-      }
-    } else {
-      this.setSitting(true);
-
-      if (!this.world.getBlockState(this.eyeBone).getBlock().equals(BlockRegistry.EYE_BONE)) {
-        this.eyeBone = null;
-      }
-    }
   }
 
   public boolean isMouthOpen() {
