@@ -122,6 +122,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     this.checkEyeBone();
   }
 
+  public void onClientUpdate() {}
+
   private void checkEyeBone() {
     if (this.eyeBone == null) {
       this.setSitting(false);
@@ -149,8 +151,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
       }
     }
   }
-
-  public void onClientUpdate() {}
 
   @Override
   public void onDeath(final DamageSource cause) {
