@@ -76,10 +76,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
-    if (this.getOwnerId() != null) {
-      VirtualChesterSavedData.getInstance(this.world).getVirtualChester(this.getOwnerId())
-          .setPosition(this);
-    }
+    VirtualChesterSavedData.getInstance(this.world).onChesterWriteToNbt(this);
 
     if (this.inventory != null) {
       nbtCompoundIn.setTag(NbtKey.INVENTORY, this.inventory.serializeNBT());

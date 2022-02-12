@@ -40,11 +40,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
     this.ticks++;
 
     if (this.ticks % TICKS_DECREMENT_STEP == 0) {
-      this.decrementDeadTime();
+      this.reduceDeadTime();
     }
   }
 
-  private void decrementDeadTime() {
+  private void reduceDeadTime() {
     final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
         (wasResurrectedIn, virtualChester) -> {
           if (virtualChester.getDeadTime() > 0) {
@@ -61,50 +61,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
     if (wasResurrected) {
       this.onChesterResurrect();
     }
-  }
-
-  private void onChesterResurrect() {
-    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
-  }
-
-  public void onChesterDie(final ChesterEntity chester) {
-    if (chester.getOwnerId() == null) {
-      return;
-    }
-
-    final VirtualChester virtualChester = this.getVirtualChester(chester.getOwnerId());
-    virtualChester.setIsDespawned();
-    virtualChester.setDeadTime(chester.getDeathCooldown());
-
-    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
-  }
-
-  public void onChesterSetDead(final ChesterEntity chester) {
-    if (chester.getOwnerId() == null) {
-      return;
-    }
-
-    this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
-  }
-
-  public void onPlaceEyeBone(final EntityPlayer player, final BlockPos pos) {
-    final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
-
-    if (!virtualChester.isSpawned()) {
-      return;
-    }
-
-    final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(player.world, virtualChester.getUniqueId());
-
-    if (chesterEntity == null) {
-      return;
-    }
-
-    chesterEntity.setEyeBone(pos);
-
-    player.sendMessage(new TextComponentString(
-        TextFormatting.GREEN + "A new Eye Bone position has been set for your Chester."));
   }
 
   public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
@@ -164,6 +120,58 @@ public class VirtualChesterSavedData extends WorldSavedData {
       player.sendMessage(
           new TextComponentString(TextFormatting.GOLD + virtualChester.getPosition().toString()));
     }
+  }
+
+  public void onPlaceEyeBone(final EntityPlayer player, final BlockPos pos) {
+    final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
+
+    if (!virtualChester.isSpawned()) {
+      return;
+    }
+
+    final ChesterEntity chesterEntity =
+        (ChesterEntity) WorldUtil.getEntityByUuid(player.world, virtualChester.getUniqueId());
+
+    if (chesterEntity == null) {
+      return;
+    }
+
+    chesterEntity.setEyeBone(pos);
+
+    player.sendMessage(new TextComponentString(
+        TextFormatting.GREEN + "A new Eye Bone position has been set for your Chester."));
+  }
+
+  private void onChesterResurrect() {
+    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+  }
+
+  public void onChesterDie(final ChesterEntity chester) {
+    if (chester.getOwnerId() == null) {
+      return;
+    }
+
+    final VirtualChester virtualChester = this.getVirtualChester(chester.getOwnerId());
+    virtualChester.setIsDespawned();
+    virtualChester.setDeadTime(chester.getDeathCooldown());
+
+    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+  }
+
+  public void onChesterSetDead(final ChesterEntity chester) {
+    if (chester.getOwnerId() == null) {
+      return;
+    }
+
+    this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
+  }
+
+  public void onChesterWriteToNbt(final ChesterEntity chester) {
+    if (chester.getOwnerId() == null) {
+      return;
+    }
+
+    this.getVirtualChester(chester.getOwnerId()).setPosition(chester);
   }
 
   public VirtualChester getVirtualChester(final UUID playerId) {
@@ -273,7 +281,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return this.position;
     }
 
-    public void setPosition(final ChesterEntity chester) {
+    private void setPosition(final ChesterEntity chester) {
       this.setPosition(chester.posX, chester.posY, chester.posZ, chester.dimension);
     }
 
