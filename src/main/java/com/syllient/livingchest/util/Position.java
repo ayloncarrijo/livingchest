@@ -14,8 +14,8 @@ public class Position implements INBTSerializable<NBTTagCompound> {
     this.setPosition(posX, posY, posZ, dim);
   }
 
-  public Position(final NBTTagCompound nbtCompoundIn) {
-    this.deserializeNBT(nbtCompoundIn);
+  public Position(final NBTTagCompound tagCompoundIn) {
+    this.deserializeNBT(tagCompoundIn);
   }
 
   public double getPosX() {
@@ -43,22 +43,22 @@ public class Position implements INBTSerializable<NBTTagCompound> {
 
   @Override
   public NBTTagCompound serializeNBT() {
-    final NBTTagCompound nbtCompound = new NBTTagCompound();
+    final NBTTagCompound tagCompound = new NBTTagCompound();
 
-    nbtCompound.setDouble(NbtKey.POS_X, this.posX);
-    nbtCompound.setDouble(NbtKey.POS_Y, this.posY);
-    nbtCompound.setDouble(NbtKey.POS_Z, this.posZ);
-    nbtCompound.setInteger(NbtKey.DIM, this.dim);
+    tagCompound.setDouble(TagKey.POS_X, this.posX);
+    tagCompound.setDouble(TagKey.POS_Y, this.posY);
+    tagCompound.setDouble(TagKey.POS_Z, this.posZ);
+    tagCompound.setInteger(TagKey.DIM, this.dim);
 
-    return nbtCompound;
+    return tagCompound;
   }
 
   @Override
-  public void deserializeNBT(final NBTTagCompound nbtCompoundIn) {
-    this.posX = nbtCompoundIn.getDouble(NbtKey.POS_X);
-    this.posY = nbtCompoundIn.getDouble(NbtKey.POS_Y);
-    this.posZ = nbtCompoundIn.getDouble(NbtKey.POS_Z);
-    this.dim = nbtCompoundIn.getInteger(NbtKey.DIM);
+  public void deserializeNBT(final NBTTagCompound tagCompoundIn) {
+    this.posX = tagCompoundIn.getDouble(TagKey.POS_X);
+    this.posY = tagCompoundIn.getDouble(TagKey.POS_Y);
+    this.posZ = tagCompoundIn.getDouble(TagKey.POS_Z);
+    this.dim = tagCompoundIn.getInteger(TagKey.DIM);
   }
 
   @Override
@@ -69,7 +69,7 @@ public class Position implements INBTSerializable<NBTTagCompound> {
         .append(DimensionManager.getProviderType(this.dim).getName().toUpperCase()).toString();
   }
 
-  class NbtKey {
+  class TagKey {
     public static final String POS_X = "PosX";
     public static final String POS_Y = "PosY";
     public static final String POS_Z = "PosZ";

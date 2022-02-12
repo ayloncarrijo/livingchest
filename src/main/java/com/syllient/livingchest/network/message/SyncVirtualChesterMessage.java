@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SyncVirtualChesterMessage implements IMessage {
-  private NBTTagCompound nbtCompound;
+  private NBTTagCompound tagCompound;
 
   public SyncVirtualChesterMessage() {}
 
@@ -28,7 +28,7 @@ public class SyncVirtualChesterMessage implements IMessage {
 
   @Override
   public void fromBytes(final ByteBuf buf) {
-    this.nbtCompound = ByteBufUtils.readTag(buf);
+    this.tagCompound = ByteBufUtils.readTag(buf);
   }
 
   public static class Handler implements IMessageHandler<SyncVirtualChesterMessage, IMessage> {
@@ -37,7 +37,7 @@ public class SyncVirtualChesterMessage implements IMessage {
     public IMessage onMessage(final SyncVirtualChesterMessage message, final MessageContext ctx) {
       Minecraft.getMinecraft().addScheduledTask(() -> {
         VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
-            .readFromNBT(message.nbtCompound);
+            .readFromNBT(message.tagCompound);
       });
 
       return null;

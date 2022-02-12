@@ -191,33 +191,33 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
-    final NBTTagList nbtList = new NBTTagList();
+  public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
+    final NBTTagList tagList = new NBTTagList();
 
     this.virtualChesterFromPlayerId.forEach((playerId, virtualChester) -> {
-      final NBTTagCompound nbtCompound = new NBTTagCompound();
-      nbtCompound.setUniqueId(NbtKey.PLAYER_ID, playerId);
-      nbtCompound.setTag(NbtKey.VIRTUAL_CHESTER, virtualChester.serializeNBT());
-      nbtList.appendTag(nbtCompound);
+      final NBTTagCompound tagCompound = new NBTTagCompound();
+      tagCompound.setUniqueId(TagKey.PLAYER_ID, playerId);
+      tagCompound.setTag(TagKey.VIRTUAL_CHESTER, virtualChester.serializeNBT());
+      tagList.appendTag(tagCompound);
     });
 
-    nbtCompoundIn.setTag(NbtKey.VIRTUAL_CHESTER_NBT_LIST, nbtList);
-    return nbtCompoundIn;
+    tagCompoundIn.setTag(TagKey.VIRTUAL_CHESTER_TAG_LIST, tagList);
+    return tagCompoundIn;
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
-    nbtCompoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_NBT_LIST, Constants.NBT.TAG_COMPOUND)
-        .forEach((nbt) -> {
-          final NBTTagCompound nbtCompound = (NBTTagCompound) nbt;
+  public void readFromNBT(final NBTTagCompound tagCompoundIn) {
+    tagCompoundIn.getTagList(TagKey.VIRTUAL_CHESTER_TAG_LIST, Constants.NBT.TAG_COMPOUND)
+        .forEach((tag) -> {
+          final NBTTagCompound tagCompound = (NBTTagCompound) tag;
 
-          this.virtualChesterFromPlayerId.put(nbtCompound.getUniqueId(NbtKey.PLAYER_ID),
-              new VirtualChester(nbtCompound.getCompoundTag(NbtKey.VIRTUAL_CHESTER)));
+          this.virtualChesterFromPlayerId.put(tagCompound.getUniqueId(TagKey.PLAYER_ID),
+              new VirtualChester(tagCompound.getCompoundTag(TagKey.VIRTUAL_CHESTER)));
         });
   }
 
-  class NbtKey {
-    public static final String VIRTUAL_CHESTER_NBT_LIST = "VirtualChesterNbtList";
+  class TagKey {
+    public static final String VIRTUAL_CHESTER_TAG_LIST = "VirtualChesterTagList";
     public static final String PLAYER_ID = "PlayerId";
     public static final String VIRTUAL_CHESTER = "VirtualChester";
   }
@@ -230,8 +230,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     public VirtualChester() {}
 
-    public VirtualChester(final NBTTagCompound nbtCompoundIn) {
-      this.deserializeNBT(nbtCompoundIn);
+    public VirtualChester(final NBTTagCompound tagCompoundIn) {
+      this.deserializeNBT(tagCompoundIn);
     }
 
     public boolean isDead() {
@@ -298,47 +298,47 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     @Override
     public NBTTagCompound serializeNBT() {
-      final NBTTagCompound nbtCompound = new NBTTagCompound();
+      final NBTTagCompound tagCompound = new NBTTagCompound();
 
       if (this.inventory != null) {
-        nbtCompound.setTag(NbtKey.INVENTORY, this.inventory);
+        tagCompound.setTag(TagKey.INVENTORY, this.inventory);
       }
 
       if (this.deadTime > 0) {
-        nbtCompound.setInteger(NbtKey.DEAD_TIME, this.deadTime);
+        tagCompound.setInteger(TagKey.DEAD_TIME, this.deadTime);
       }
 
       if (this.uniqueId != null) {
-        nbtCompound.setUniqueId(NbtKey.UNIQUE_ID, this.uniqueId);
+        tagCompound.setUniqueId(TagKey.UNIQUE_ID, this.uniqueId);
       }
 
       if (this.position != null) {
-        nbtCompound.setTag(NbtKey.POSITION, this.position.serializeNBT());
+        tagCompound.setTag(TagKey.POSITION, this.position.serializeNBT());
       }
 
-      return nbtCompound;
+      return tagCompound;
     }
 
     @Override
-    public void deserializeNBT(final NBTTagCompound nbtCompoundIn) {
-      if (nbtCompoundIn.hasKey(NbtKey.INVENTORY)) {
-        this.inventory = nbtCompoundIn.getCompoundTag(NbtKey.INVENTORY);
+    public void deserializeNBT(final NBTTagCompound tagCompoundIn) {
+      if (tagCompoundIn.hasKey(TagKey.INVENTORY)) {
+        this.inventory = tagCompoundIn.getCompoundTag(TagKey.INVENTORY);
       }
 
-      if (nbtCompoundIn.hasKey(NbtKey.DEAD_TIME)) {
-        this.deadTime = nbtCompoundIn.getInteger(NbtKey.DEAD_TIME);
+      if (tagCompoundIn.hasKey(TagKey.DEAD_TIME)) {
+        this.deadTime = tagCompoundIn.getInteger(TagKey.DEAD_TIME);
       }
 
-      if (nbtCompoundIn.hasUniqueId(NbtKey.UNIQUE_ID)) {
-        this.uniqueId = nbtCompoundIn.getUniqueId(NbtKey.UNIQUE_ID);
+      if (tagCompoundIn.hasUniqueId(TagKey.UNIQUE_ID)) {
+        this.uniqueId = tagCompoundIn.getUniqueId(TagKey.UNIQUE_ID);
       }
 
-      if (nbtCompoundIn.hasKey(NbtKey.POSITION)) {
-        this.position = new Position(nbtCompoundIn.getCompoundTag(NbtKey.POSITION));
+      if (tagCompoundIn.hasKey(TagKey.POSITION)) {
+        this.position = new Position(tagCompoundIn.getCompoundTag(TagKey.POSITION));
       }
     }
 
-    class NbtKey {
+    class TagKey {
       public static final String INVENTORY = "Inventory";
       public static final String DEAD_TIME = "DeadTime";
       public static final String UNIQUE_ID = "UniqueId";

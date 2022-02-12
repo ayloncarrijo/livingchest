@@ -17,21 +17,21 @@ public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
   public EyeBoneTileEntity() {}
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound nbtCompoundIn) {
+  public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
     if (this.ownerId != null) {
-      nbtCompoundIn.setUniqueId(NbtKey.OWNER_ID, this.ownerId);
+      tagCompoundIn.setUniqueId(TagKey.OWNER_ID, this.ownerId);
     }
 
-    return super.writeToNBT(nbtCompoundIn);
+    return super.writeToNBT(tagCompoundIn);
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound nbtCompoundIn) {
-    if (nbtCompoundIn.hasUniqueId(NbtKey.OWNER_ID)) {
-      this.ownerId = nbtCompoundIn.getUniqueId(NbtKey.OWNER_ID);
+  public void readFromNBT(final NBTTagCompound tagCompoundIn) {
+    if (tagCompoundIn.hasUniqueId(TagKey.OWNER_ID)) {
+      this.ownerId = tagCompoundIn.getUniqueId(TagKey.OWNER_ID);
     }
 
-    super.readFromNBT(nbtCompoundIn);
+    super.readFromNBT(tagCompoundIn);
   }
 
   @Override
@@ -40,8 +40,8 @@ public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
   }
 
   @Override
-  public void handleUpdateTag(final NBTTagCompound nbtCompoundIn) {
-    this.readFromNBT(nbtCompoundIn);
+  public void handleUpdateTag(final NBTTagCompound tagCompoundIn) {
+    this.readFromNBT(tagCompoundIn);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
     return this.animation.getFactory();
   }
 
-  class NbtKey {
+  class TagKey {
     public static final String OWNER_ID = "OwnerId";
   }
 }
