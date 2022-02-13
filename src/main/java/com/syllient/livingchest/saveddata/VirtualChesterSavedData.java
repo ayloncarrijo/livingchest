@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class VirtualChesterSavedData extends WorldSavedData {
   private static final String DATA_NAME = LivingChest.MOD_ID + "_" + "virtualchester";
-  private static final int TICKS_REDUCE_DEAD_TIME_STEP = 5 * 20; // TODO: DECREMENT_STEP
+  private static final int TICKS_REDUCE_DEAD_TIME_STEP = 600;
   private final Map<UUID, VirtualChester> virtualChesterFromPlayerId = new HashMap<>();
   private int ticks = 0;
 

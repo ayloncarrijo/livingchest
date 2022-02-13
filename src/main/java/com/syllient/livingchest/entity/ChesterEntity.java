@@ -67,7 +67,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    // TODO: Vida 450.0D
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
     this.setMoveSpeed(this.getMoveSpeed());
     this.addPotionEffect(
@@ -246,8 +245,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public int getDeathCooldown() {
-    // final int minutes = 1; // TODO: Death Cooldown
-    return 500; // minutes * 20 * 60
+    final int minutes = 10;
+    return minutes * 20 * 60;
   }
 
   @Override
