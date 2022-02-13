@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 public class VirtualChesterSavedData extends WorldSavedData {
   private static final String DATA_NAME = LivingChest.MOD_ID + "_" + "virtualchester";
-  private static final int TICKS_DECREMENT_STEP = 5 * 20; // TODO: DECREMENT_STEP
+  private static final int TICKS_REDUCE_DEAD_TIME_STEP = 5 * 20; // TODO: DECREMENT_STEP
   private final Map<UUID, VirtualChester> virtualChesterFromPlayerId = new HashMap<>();
   private int ticks = 0;
 
@@ -39,7 +39,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
   public void onServerTick() {
     this.ticks++;
 
-    if (this.ticks % TICKS_DECREMENT_STEP == 0) {
+    if (this.ticks % TICKS_REDUCE_DEAD_TIME_STEP == 0) {
       this.reduceDeadTime();
     }
   }
@@ -48,7 +48,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
         (wasResurrectedIn, virtualChester) -> {
           if (virtualChester.getDeadTime() > 0) {
-            virtualChester.setDeadTime(virtualChester.getDeadTime() - TICKS_DECREMENT_STEP);
+            virtualChester.setDeadTime(virtualChester.getDeadTime() - TICKS_REDUCE_DEAD_TIME_STEP);
 
             if (virtualChester.getDeadTime() <= 0) {
               return true;
