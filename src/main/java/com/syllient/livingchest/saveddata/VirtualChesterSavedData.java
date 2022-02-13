@@ -97,6 +97,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
       virtualChester.setInventory(null);
     }
 
+    if (virtualChester.getHealth() > 0.0F) {
+      chesterEntity.setHealth(virtualChester.getHealth());
+      virtualChester.setHealth(0.0F);
+    }
+
     worldIn.spawnEntity(chesterEntity);
   }
 
@@ -107,6 +112,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     if (chesterEntity != null) {
       virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
+      virtualChester.setHealth(chesterEntity.getHealth());
       virtualChester.setIsDespawned();
       chesterEntity.setDead();
       return;
@@ -225,6 +231,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
   public class VirtualChester implements INBTSerializable<NBTTagCompound> {
     private NBTTagCompound inventory = null;
     private int deadTime = 0;
+    private float health = 0.0F;
     private UUID uniqueId = null;
     private Position position = null;
 
@@ -268,6 +275,15 @@ public class VirtualChesterSavedData extends WorldSavedData {
       VirtualChesterSavedData.this.markDirty();
     }
 
+    public float getHealth() {
+      return this.health;
+    }
+
+    private void setHealth(final float health) {
+      this.health = health;
+      VirtualChesterSavedData.this.markDirty();
+    }
+
     public UUID getUniqueId() {
       return this.uniqueId;
     }
@@ -308,6 +324,10 @@ public class VirtualChesterSavedData extends WorldSavedData {
         tagCompound.setInteger(TagKey.DEAD_TIME, this.deadTime);
       }
 
+      if (this.health > 0.0F) {
+        tagCompound.setFloat(TagKey.HEALTH, this.health);
+      }
+
       if (this.uniqueId != null) {
         tagCompound.setUniqueId(TagKey.UNIQUE_ID, this.uniqueId);
       }
@@ -329,6 +349,10 @@ public class VirtualChesterSavedData extends WorldSavedData {
         this.deadTime = tagCompoundIn.getInteger(TagKey.DEAD_TIME);
       }
 
+      if (tagCompoundIn.hasKey(TagKey.HEALTH)) {
+        this.health = tagCompoundIn.getFloat(TagKey.HEALTH);
+      }
+
       if (tagCompoundIn.hasUniqueId(TagKey.UNIQUE_ID)) {
         this.uniqueId = tagCompoundIn.getUniqueId(TagKey.UNIQUE_ID);
       }
@@ -341,6 +365,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     class TagKey {
       public static final String INVENTORY = "Inventory";
       public static final String DEAD_TIME = "DeadTime";
+      public static final String HEALTH = "Health";
       public static final String UNIQUE_ID = "UniqueId";
       public static final String POSITION = "Position";
     }
