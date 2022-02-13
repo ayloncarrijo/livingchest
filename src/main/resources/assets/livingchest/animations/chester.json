@@ -1,62 +1,6 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.chester.idle": {
-			"loop": true,
-			"animation_length": 0.33333,
-			"bones": {
-				"tongue": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1, 1, 0.8],
-							"easing": "easeOutCirc"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInCirc"
-						}
-					}
-				},
-				"tongue4": {
-					"rotation": {
-						"0.0": {
-							"vector": [0, 0, 0]
-						},
-						"0.1667": {
-							"vector": [-17.5, 0, 0],
-							"easing": "easeOutCirc"
-						},
-						"0.3333": {
-							"vector": [0, 0, 0],
-							"easing": "easeInCirc"
-						}
-					}
-				},
-				"body": {
-					"scale": {
-						"0.0": {
-							"vector": [1, 1, 1]
-						},
-						"0.1667": {
-							"vector": [1, 1.03, 1],
-							"easing": "easeInCubic"
-						},
-						"0.3333": {
-							"vector": [1, 1, 1],
-							"easing": "easeInCubic"
-						}
-					}
-				}
-			},
-			"sound_effects": {
-				"0.1667": {
-					"effect": "idle"
-				}
-			}
-		},
 		"animation.chester.init_jump": {
 			"animation_length": 0.1667,
 			"bones": {
@@ -559,6 +503,62 @@
 			"sound_effects": {
 				"0.0": {
 					"effect": "close_mouth"
+				}
+			}
+		},
+		"animation.chester.idle": {
+			"loop": true,
+			"animation_length": 0.33333,
+			"bones": {
+				"tongue": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.1667": {
+							"vector": [1, 1, 0.8],
+							"easing": "easeOutCirc"
+						},
+						"0.3333": {
+							"vector": [1, 1, 1],
+							"easing": "easeInCirc"
+						}
+					}
+				},
+				"tongue4": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.1667": {
+							"vector": [-17.5, 0, 0],
+							"easing": "easeOutCirc"
+						},
+						"0.3333": {
+							"vector": [0, 0, 0],
+							"easing": "easeInCirc"
+						}
+					}
+				},
+				"root": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.1667": {
+							"vector": [1, 1.03, 1],
+							"easing": "easeInCubic"
+						},
+						"0.3333": {
+							"vector": [1, 1, 1],
+							"easing": "easeInCubic"
+						}
+					}
+				}
+			},
+			"sound_effects": {
+				"0.1667": {
+					"effect": "idle"
 				}
 			}
 		}

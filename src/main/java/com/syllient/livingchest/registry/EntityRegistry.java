@@ -22,7 +22,6 @@ public class EntityRegistry {
   private static EntityEntry buildEntry(final Class<? extends Entity> clazz, final String name) {
     return EntityEntryBuilder.create().entity(clazz).tracker(64, 1, true)
         .name(LivingChest.MOD_ID + "." + name)
-        .id(new ResourceLocation(LivingChest.MOD_ID, name), id++).egg(0xFF000000, 0xFF000000)
-        .build();
+        .id(new ResourceLocation(LivingChest.MOD_ID, name), id++).build();
   }
 }

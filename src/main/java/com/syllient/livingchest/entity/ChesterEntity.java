@@ -68,10 +68,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
     // TODO: Vida 450.0D
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
     this.setMoveSpeed(this.getMoveSpeed());
     this.addPotionEffect(
-        new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 2, false, false));
+        new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
   }
 
   @Override
