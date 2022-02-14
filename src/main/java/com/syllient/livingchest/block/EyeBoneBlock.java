@@ -45,6 +45,12 @@ public class EyeBoneBlock extends BlockHorizontal {
   }
 
   @Override
+  public boolean canHarvestBlock(final IBlockAccess world, final BlockPos pos,
+      final EntityPlayer player) {
+    return true;
+  }
+
+  @Override
   public void addInformation(final ItemStack stack, final World player, final List<String> tooltip,
       final ITooltipFlag advanced) {
     tooltip.add("To spawn/despawn your Chester, use the Eye Bone on a block while sneaking.");
