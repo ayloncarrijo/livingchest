@@ -77,11 +77,11 @@
 				{
 					"name": "horn2",
 					"parent": "head",
-					"pivot": [-3.65, 10.7, 0],
+					"pivot": [-3.6, 10.95, 0],
 					"rotation": [0, 0, 10],
 					"cubes": [
-						{"origin": [-5.15, 10.75, -1], "size": [2, 4, 2], "uv": [40, 34], "mirror": true},
-						{"origin": [-3.15, 13.75, -1], "size": [1, 1, 2], "uv": [0, 33], "mirror": true}
+						{"origin": [-5.1, 11, -1], "size": [2, 4, 2], "uv": [40, 34], "mirror": true},
+						{"origin": [-3.1, 14, -1], "size": [1, 1, 2], "uv": [0, 33], "mirror": true}
 					]
 				},
 				{
