@@ -23,18 +23,15 @@ public class EyeBoneItem extends ItemBlock implements IAnimatable {
   }
 
   @Override
-  public EnumActionResult onItemUse(final EntityPlayer player, final World worldIn,
+  public EnumActionResult onItemUse(final EntityPlayer player, final World world,
       final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
-      if (!worldIn.isRemote) {
-        VirtualChesterSavedData.getInstance(worldIn).toggleChester(player, worldIn, pos);
-      }
-
+      VirtualChesterSavedData.getInstance(world).toggleChester(player, world, pos);
       return EnumActionResult.SUCCESS;
     }
 
-    return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
   }
 
   @Override

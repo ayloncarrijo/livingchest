@@ -63,15 +63,23 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
-  public void toggleChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
+  public void toggleChester(final EntityPlayer player, final World world, final BlockPos pos) {
+    if (world.isRemote) {
+      return;
+    }
+
     if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
-      this.despawnChester(player.getUniqueID(), worldIn);
+      this.despawnChester(player.getUniqueID(), world);
     } else {
-      this.spawnChester(player, worldIn, pos);
+      this.spawnChester(player, world, pos);
     }
   }
 
-  public void spawnChester(final EntityPlayer player, final World worldIn, final BlockPos pos) {
+  public void spawnChester(final EntityPlayer player, final World world, final BlockPos pos) {
+    if (world.isRemote) {
+      return;
+    }
+
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
 
     if (virtualChester.isDead()) {
@@ -86,7 +94,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final ChesterEntity chesterEntity = new ChesterEntity(worldIn);
+    final ChesterEntity chesterEntity = new ChesterEntity(world);
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
@@ -102,13 +110,17 @@ public class VirtualChesterSavedData extends WorldSavedData {
       virtualChester.setHealth(0.0F);
     }
 
-    worldIn.spawnEntity(chesterEntity);
+    world.spawnEntity(chesterEntity);
   }
 
-  public void despawnChester(final UUID playerId, final World worldIn) {
+  public void despawnChester(final UUID playerId, final World world) {
+    if (world.isRemote) {
+      return;
+    }
+
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
     final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(worldIn, virtualChester.getUniqueId());
+        (ChesterEntity) WorldUtil.getEntityByUuid(world, virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
       virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
@@ -118,7 +130,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final EntityPlayer player = worldIn.getPlayerEntityByUUID(playerId);
+    final EntityPlayer player = world.getPlayerEntityByUUID(playerId);
 
     if (player != null) {
       player.sendMessage(
