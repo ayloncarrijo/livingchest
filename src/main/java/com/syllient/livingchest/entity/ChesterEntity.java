@@ -105,6 +105,9 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   public void onUpdate() {
     super.onUpdate();
 
+    this.rotationYaw = this.rotationYawHead;
+    this.renderYawOffset = this.rotationYawHead;
+
     if (!this.world.isRemote) {
       this.onServerUpdate();
     } else {
