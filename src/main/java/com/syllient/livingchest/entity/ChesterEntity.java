@@ -129,7 +129,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
       if (this.getOwnerId() != null && ticksExisted % 60 == 0) {
         final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
-
         final boolean shouldDespawn =
             owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
                 .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
