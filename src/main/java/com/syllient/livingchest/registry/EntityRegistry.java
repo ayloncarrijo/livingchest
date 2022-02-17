@@ -3,7 +3,6 @@ package com.syllient.livingchest.registry;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.entity.ChesterEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -20,8 +19,7 @@ public class EntityRegistry {
   }
 
   private static EntityEntry buildEntry(final Class<? extends Entity> clazz, final String name) {
-    return EntityEntryBuilder.create().entity(clazz).tracker(64, 1, true)
-        .name(LivingChest.MOD_ID + "." + name)
-        .id(new ResourceLocation(LivingChest.MOD_ID, name), id++).build();
+    return EntityEntryBuilder.create().entity(clazz).id(name, id++)
+        .name(LivingChest.MOD_ID + "." + name).tracker(64, 1, true).build();
   }
 }

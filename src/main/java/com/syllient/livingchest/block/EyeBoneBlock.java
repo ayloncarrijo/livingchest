@@ -2,7 +2,7 @@ package com.syllient.livingchest.block;
 
 import java.util.List;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
-import com.syllient.livingchest.tileentity.EyeBoneTileEntity;
+import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -35,12 +35,12 @@ public class EyeBoneBlock extends BlockHorizontal {
       final EntityLivingBase placer, final ItemStack stack) {
     final TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-    if (tileEntity instanceof EyeBoneTileEntity && placer instanceof EntityPlayer) {
+    if (tileEntity instanceof EyeBoneTile && placer instanceof EntityPlayer) {
       if (!worldIn.isRemote) {
         VirtualChesterSavedData.getInstance(worldIn).onPlaceEyeBone((EntityPlayer) placer, pos);
       }
 
-      ((EyeBoneTileEntity) tileEntity).setOwnerId(placer.getUniqueID());
+      ((EyeBoneTile) tileEntity).setOwnerId(placer.getUniqueID());
     }
   }
 
@@ -100,7 +100,7 @@ public class EyeBoneBlock extends BlockHorizontal {
 
   @Override
   public TileEntity createTileEntity(final World world, final IBlockState state) {
-    return new EyeBoneTileEntity();
+    return new EyeBoneTile();
   }
 
   @Override

@@ -2,9 +2,9 @@ package com.syllient.livingchest.client;
 
 import com.syllient.livingchest.Proxy;
 import com.syllient.livingchest.client.renderer.ChesterRenderer;
-import com.syllient.livingchest.client.renderer.EyeBoneTileEntityRenderer;
+import com.syllient.livingchest.client.renderer.EyeBoneTileRenderer;
 import com.syllient.livingchest.entity.ChesterEntity;
-import com.syllient.livingchest.tileentity.EyeBoneTileEntity;
+import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -16,8 +16,7 @@ public class ClientProxy implements Proxy {
   public void onPreInit(final FMLPreInitializationEvent event) {
     RenderingRegistry.registerEntityRenderingHandler(ChesterEntity.class, ChesterRenderer::new);
 
-    ClientRegistry.bindTileEntitySpecialRenderer(EyeBoneTileEntity.class,
-        new EyeBoneTileEntityRenderer());
+    ClientRegistry.bindTileEntitySpecialRenderer(EyeBoneTile.class, new EyeBoneTileRenderer());
   }
 
   @Override

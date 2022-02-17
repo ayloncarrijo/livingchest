@@ -1,4 +1,4 @@
-package com.syllient.livingchest.tileentity;
+package com.syllient.livingchest.tile;
 
 import java.util.UUID;
 import com.syllient.livingchest.animation.EyeBoneAnimation;
@@ -10,11 +10,11 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class EyeBoneTileEntity extends TileEntity implements IAnimatable {
-  private final EyeBoneAnimation<EyeBoneTileEntity> animation = new EyeBoneAnimation<>(this);
+public class EyeBoneTile extends TileEntity implements IAnimatable {
+  private final EyeBoneAnimation<EyeBoneTile> animation = new EyeBoneAnimation<>(this);
   private UUID ownerId = null;
 
-  public EyeBoneTileEntity() {}
+  public EyeBoneTile() {}
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {

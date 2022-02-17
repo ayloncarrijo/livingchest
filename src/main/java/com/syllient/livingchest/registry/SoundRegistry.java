@@ -43,7 +43,6 @@ public class SoundRegistry {
 
   private static SoundEvent buildEntry(final String name) {
     final ResourceLocation location = new ResourceLocation(LivingChest.MOD_ID, name);
-
     return new SoundEvent(location).setRegistryName(location);
   }
 }
