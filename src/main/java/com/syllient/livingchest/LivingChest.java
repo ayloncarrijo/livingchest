@@ -1,15 +1,20 @@
 package com.syllient.livingchest;
 
+import com.syllient.livingchest.client.renderer.EyeBoneTileRenderer;
+import com.syllient.livingchest.registry.TileRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import software.bernie.geckolib3.GeckoLib;
 
-@Mod("livingchest")
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod(LivingChest.MOD_ID)
+@Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class LivingChest {
+  public static final String MOD_ID = "livingchest";
+
   public LivingChest() {
     GeckoLib.initialize();
   }
@@ -18,7 +23,9 @@ public class LivingChest {
   public static void onCommonSetup(final FMLCommonSetupEvent event) {}
 
   @SubscribeEvent
-  public static void onClientSetup(final FMLClientSetupEvent event) {}
+  public static void onClientSetup(final FMLClientSetupEvent event) {
+    ClientRegistry.bindTileEntityRenderer(TileRegistry.EYE_BONE, EyeBoneTileRenderer::new);
+  }
 
   @SubscribeEvent
   public static void onServerSetup(final FMLDedicatedServerSetupEvent event) {}

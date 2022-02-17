@@ -1,0 +1,30 @@
+package com.syllient.livingchest.registry;
+
+import java.util.function.Supplier;
+import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.tile.EyeBoneTile;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ObjectHolder;
+
+@Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@ObjectHolder(LivingChest.MOD_ID)
+public class TileRegistry {
+  public static final TileEntityType<?> EYE_BONE = null;
+
+  @SubscribeEvent
+  public static void initialize(final RegistryEvent.Register<TileEntityType<?>> event) {
+    event.getRegistry().registerAll(
+        buildEntry(EyeBoneTile::new, new Block[] {BlockRegistry.EYE_BONE}, "eye_bone"));
+
+  }
+
+  private static <T extends TileEntity> TileEntityType<?> buildEntry(final Supplier<T> supplier,
+      final Block[] blocks, final String name) {
+    return TileEntityType.Builder.of(supplier, blocks).build(null).setRegistryName(name);
+  }
+}
