@@ -3,12 +3,10 @@ package com.syllient.livingchest.animation;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.geckolib.ExtendedAnimationController;
 import com.syllient.livingchest.registry.SoundRegistry;
-import com.syllient.livingchest.util.DistExecutor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.math.BlockPos;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -165,15 +163,8 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
-    DistExecutor.runWhenOn(Side.CLIENT, new Runnable() {
-      @Override
-      public void run() {
-        final EntityPlayer player = Minecraft.getMinecraft().player;
-        final ChesterEntity chester = ChesterAnimation.this.animatable;
-
-        chester.world.playSound(player, chester.posX, chester.posY, chester.posZ, sound,
-            SoundCategory.NEUTRAL, volume, pitch);
-      }
-    });
+    Minecraft.getMinecraft().world.playSound(
+        new BlockPos(this.animatable.posX, this.animatable.posY, this.animatable.posZ), sound,
+        SoundCategory.NEUTRAL, volume, pitch, false);
   }
 }

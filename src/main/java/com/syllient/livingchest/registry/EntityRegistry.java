@@ -15,10 +15,10 @@ public class EntityRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<EntityEntry> event) {
-    event.getRegistry().registerAll(buildEntry(ChesterEntity.class, "chester"));
+    event.getRegistry().registerAll(buildEntry("chester", ChesterEntity.class));
   }
 
-  private static EntityEntry buildEntry(final Class<? extends Entity> clazz, final String name) {
+  private static EntityEntry buildEntry(final String name, final Class<? extends Entity> clazz) {
     return EntityEntryBuilder.create().entity(clazz).id(name, id++)
         .name(LivingChest.MOD_ID + "." + name).tracker(64, 1, true).build();
   }

@@ -15,10 +15,10 @@ public class BlockRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Block> event) {
-    event.getRegistry().registerAll(buildEntry(new EyeBoneBlock(), "eye_bone"));
+    event.getRegistry().registerAll(buildEntry("eye_bone", new EyeBoneBlock()));
   }
 
-  private static Block buildEntry(final Block block, final String name) {
+  private static Block buildEntry(final String name, final Block block) {
     return block.setRegistryName(name).setUnlocalizedName(LivingChest.MOD_ID + "." + name);
   }
 }

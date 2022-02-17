@@ -1,8 +1,8 @@
 package com.syllient.livingchest.item;
 
 import com.syllient.livingchest.animation.EyeBoneAnimation;
+import com.syllient.livingchest.registry.BlockRegistry;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -18,8 +18,8 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class EyeBoneItem extends ItemBlock implements IAnimatable {
   private final EyeBoneAnimation<EyeBoneItem> animation = new EyeBoneAnimation<>(this);
 
-  public EyeBoneItem(final Block block) {
-    super(block);
+  public EyeBoneItem() {
+    super(BlockRegistry.EYE_BONE);
   }
 
   @Override
