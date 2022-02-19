@@ -45,7 +45,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
-    this.setSize(1.0F, 1.0F);
+    this.setSize(0.65F, 0.85F);
     this.ignoreFrustumCheck = true;
   }
 
@@ -104,9 +104,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   @Override
   public void onUpdate() {
     super.onUpdate();
-
-    this.rotationYaw = this.rotationYawHead;
-    this.renderYawOffset = this.rotationYawHead;
 
     if (!this.world.isRemote) {
       this.onServerUpdate();
