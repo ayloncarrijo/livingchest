@@ -4,7 +4,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class Animation<T extends IAnimatable> {
+public abstract class Animation<T extends IAnimatable> {
   protected final T animatable;
   protected final AnimationFactory factory;
 
@@ -13,7 +13,7 @@ public class Animation<T extends IAnimatable> {
     this.factory = new AnimationFactory(animatable);
   }
 
-  public void registerControllers(final AnimationData data) {}
+  public abstract void registerControllers(final AnimationData data);
 
   public AnimationFactory getFactory() {
     return this.factory;

@@ -15,14 +15,6 @@
     "facing=west": {
       "y": 270,
       "model": "livingchest:eye_bone"
-    },
-    "facing=up": {
-      "y": 0,
-      "model": "livingchest:eye_bone"
-    },
-    "facing=down": {
-      "y": 0,
-      "model": "livingchest:eye_bone"
     }
   }
 }

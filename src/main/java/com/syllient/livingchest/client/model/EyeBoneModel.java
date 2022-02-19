@@ -13,8 +13,8 @@ public abstract class EyeBoneModel<T extends IAnimatable> extends AnimatedGeoMod
       new ResourceLocation(LivingChest.MOD_ID, "geo/eye_bone.json");
 
   protected static final ResourceLocation TEXTURE_OPENED =
-      new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_opened.png");
+      new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone.opened.png");
 
   protected static final ResourceLocation TEXTURE_CLOSED =
-      new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone_closed.png");
+      new ResourceLocation(LivingChest.MOD_ID, "textures/eye_bone.closed.png");
 }
