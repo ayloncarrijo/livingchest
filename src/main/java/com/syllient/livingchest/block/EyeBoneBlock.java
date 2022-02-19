@@ -3,6 +3,7 @@ package com.syllient.livingchest.block;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
@@ -36,5 +37,10 @@ public class EyeBoneBlock extends HorizontalBlock {
   @Override
   public TileEntity createTileEntity(final BlockState state, final IBlockReader world) {
     return new EyeBoneTile();
+  }
+
+  @Override
+  public BlockRenderType getRenderShape(final BlockState blockState) {
+    return BlockRenderType.ENTITYBLOCK_ANIMATED;
   }
 }

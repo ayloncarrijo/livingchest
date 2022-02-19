@@ -15,10 +15,10 @@ public class ItemRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Item> event) {
-    event.getRegistry().registerAll(buildEntry(new EyeBoneItem(), "eye_bone"));
+    event.getRegistry().registerAll(buildEntry("eye_bone", new EyeBoneItem()));
   }
 
-  private static Item buildEntry(final Item item, final String name) {
+  private static Item buildEntry(final String name, final Item item) {
     return item.setRegistryName(name);
   }
 }

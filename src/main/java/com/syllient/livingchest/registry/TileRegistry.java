@@ -18,13 +18,13 @@ public class TileRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<TileEntityType<?>> event) {
-    event.getRegistry().registerAll(
-        buildEntry(EyeBoneTile::new, new Block[] {BlockRegistry.EYE_BONE}, "eye_bone"));
+    event.getRegistry()
+        .registerAll(buildEntry("eye_bone", EyeBoneTile::new, BlockRegistry.EYE_BONE));
 
   }
 
-  private static <T extends TileEntity> TileEntityType<?> buildEntry(final Supplier<T> supplier,
-      final Block[] blocks, final String name) {
+  private static <T extends TileEntity> TileEntityType<?> buildEntry(final String name,
+      final Supplier<T> supplier, final Block... blocks) {
     return TileEntityType.Builder.of(supplier, blocks).build(null).setRegistryName(name);
   }
 }
