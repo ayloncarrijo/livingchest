@@ -16,7 +16,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.common.ToolType;
 
 public class EyeBoneBlock extends HorizontalBlock {
   private static class Shape {
@@ -38,8 +37,7 @@ public class EyeBoneBlock extends HorizontalBlock {
   }
 
   public EyeBoneBlock() {
-    super(
-        AbstractBlock.Properties.of(Material.STONE).harvestLevel(0).harvestTool(ToolType.PICKAXE));
+    super(AbstractBlock.Properties.of(Material.WOOD));
     this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
   }
 
