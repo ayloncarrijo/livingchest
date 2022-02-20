@@ -25,7 +25,7 @@ public class EyeBoneBlock extends BlockHorizontal {
       new AxisAlignedBB(0.345D, 0.0D, 0.345D, 0.655D, 0.84D, 0.655D);
 
   public EyeBoneBlock() {
-    super(Material.ROCK);
+    super(Material.WOOD);
     this.setCreativeTab(CreativeTabs.MISC);
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
   }
@@ -42,12 +42,6 @@ public class EyeBoneBlock extends BlockHorizontal {
 
       ((EyeBoneTile) tileEntity).setOwnerId(placer.getUniqueID());
     }
-  }
-
-  @Override
-  public boolean canHarvestBlock(final IBlockAccess world, final BlockPos pos,
-      final EntityPlayer player) {
-    return true;
   }
 
   @Override
