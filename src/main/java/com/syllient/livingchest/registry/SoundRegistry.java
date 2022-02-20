@@ -10,6 +10,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID)
 public class SoundRegistry {
+  @SubscribeEvent
+  public static void initialize(final RegistryEvent.Register<SoundEvent> event) {
+    event.getRegistry().registerAll(buildEntry("entity.chester.idle"),
+        buildEntry("entity.chester.jump"), buildEntry("entity.chester.hurt"),
+        buildEntry("entity.chester.death"), buildEntry("entity.chester.open_mouth"),
+        buildEntry("entity.chester.close_mouth"));
+  }
+
+  private static SoundEvent buildEntry(final String name) {
+    return new SoundEvent(new ResourceLocation(LivingChest.MOD_ID, name)).setRegistryName(name);
+  }
+
   public static class Entity {
     @ObjectHolder(LivingChest.MOD_ID)
     public static class Chester {
@@ -31,17 +43,5 @@ public class SoundRegistry {
       @ObjectHolder("entity.chester.close_mouth")
       public static final SoundEvent CLOSE_MOUTH = null;
     }
-  }
-
-  @SubscribeEvent
-  public static void initialize(final RegistryEvent.Register<SoundEvent> event) {
-    event.getRegistry().registerAll(buildEntry("entity.chester.idle"),
-        buildEntry("entity.chester.jump"), buildEntry("entity.chester.hurt"),
-        buildEntry("entity.chester.death"), buildEntry("entity.chester.open_mouth"),
-        buildEntry("entity.chester.close_mouth"));
-  }
-
-  private static SoundEvent buildEntry(final String name) {
-    return new SoundEvent(new ResourceLocation(LivingChest.MOD_ID, name)).setRegistryName(name);
   }
 }

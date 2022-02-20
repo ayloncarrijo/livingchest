@@ -20,6 +20,6 @@ public class EntityRegistry {
 
   private static EntityEntry buildEntry(final String name, final Class<? extends Entity> clazz) {
     return EntityEntryBuilder.create().entity(clazz).id(name, id++)
-        .name(LivingChest.MOD_ID + "." + name).tracker(64, 1, true).build();
+        .name(LivingChest.MOD_ID + "." + name).tracker(128, 1, true).build();
   }
 }
