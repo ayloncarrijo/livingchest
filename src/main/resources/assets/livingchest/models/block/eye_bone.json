@@ -1,6 +1,6 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "blocks/bone_block_top"
+    "particle": "block/bone_block_top"
   }
 }
