@@ -4,10 +4,10 @@ import com.syllient.livingchest.entity.ChesterEntity;
 import net.minecraft.entity.ai.EntityAISit;
 import net.minecraft.util.math.BlockPos;
 
-public class ChesterSitEntityAi extends EntityAISit {
+public class ChesterSitAi extends EntityAISit {
   private final ChesterEntity chester;
 
-  public ChesterSitEntityAi(final ChesterEntity chester) {
+  public ChesterSitAi(final ChesterEntity chester) {
     super(chester);
     this.chester = chester;
   }

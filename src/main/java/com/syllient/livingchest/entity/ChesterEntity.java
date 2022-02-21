@@ -3,7 +3,7 @@ package com.syllient.livingchest.entity;
 import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.ChesterAnimation;
-import com.syllient.livingchest.entity.ai.ChesterSitEntityAi;
+import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.BlockRegistry;
 import com.syllient.livingchest.registry.ItemRegistry;
@@ -54,7 +54,7 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   @Override
   protected void initEntityAI() {
-    this.aiSit = new ChesterSitEntityAi(this);
+    this.aiSit = new ChesterSitAi(this);
     this.tasks.addTask(1, new EntityAISwimming(this));
     this.tasks.addTask(2, this.aiSit);
     this.tasks.addTask(3, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
