@@ -12,10 +12,12 @@ import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
+import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -45,7 +47,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
-    this.setSize(0.65F, 0.85F);
+    this.setSize(0.7F, 0.85F);
+    this.moveHelper = new MoveHelper(this);
     this.ignoreFrustumCheck = true;
   }
 
@@ -270,5 +273,17 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   class TagKey {
     public static final String INVENTORY = "Inventory";
     public static final String EYE_BONE = "EyeBone";
+  }
+
+  class MoveHelper extends EntityMoveHelper {
+    public MoveHelper(final EntityLiving entitylivingIn) {
+      super(entitylivingIn);
+    }
+
+    @Override
+    protected float limitAngle(final float sourceAngle, final float targetAngle,
+        final float maximumChange) {
+      return super.limitAngle(sourceAngle, targetAngle, 15.0F);
+    }
   }
 }
