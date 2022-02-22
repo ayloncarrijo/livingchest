@@ -34,7 +34,7 @@ public class SyncVirtualChesterMessage implements IMessage {
   public static class Handler implements IMessageHandler<SyncVirtualChesterMessage, IMessage> {
     @Override
     public IMessage onMessage(final SyncVirtualChesterMessage message, final MessageContext ctx) {
-      DistExecutor.runWhenOn(Side.CLIENT, new Runnable() {
+      DistExecutor.runWhenOn(Side.CLIENT, () -> new Runnable() {
         @Override
         public void run() {
           Minecraft.getMinecraft().addScheduledTask(() -> {
