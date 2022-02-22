@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(LivingChest.MOD_ID)
 public class TileRegistry {
-  public static final TileEntityType<?> EYE_BONE = null;
+  public static final TileEntityType<EyeBoneTile> EYE_BONE = null;
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<TileEntityType<?>> event) {

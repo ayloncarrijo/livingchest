@@ -1,9 +1,12 @@
 package com.syllient.livingchest;
 
+import com.syllient.livingchest.client.renderer.ChesterRenderer;
 import com.syllient.livingchest.client.renderer.EyeBoneTileRenderer;
+import com.syllient.livingchest.registry.EntityRegistry;
 import com.syllient.livingchest.registry.TileRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -24,6 +27,8 @@ public class LivingChest {
 
   @SubscribeEvent
   public static void onClientSetup(final FMLClientSetupEvent event) {
+    RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CHESTER, ChesterRenderer::new);
+
     ClientRegistry.bindTileEntityRenderer(TileRegistry.EYE_BONE, EyeBoneTileRenderer::new);
   }
 
