@@ -1,5 +1,6 @@
-package com.syllient.livingchest.animation;
+package com.syllient.livingchest.animation.block;
 
+import com.syllient.livingchest.animation.Animation;
 import com.syllient.livingchest.geckolib.ExtendedAnimationController;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;

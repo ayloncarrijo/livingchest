@@ -1,7 +1,7 @@
 package com.syllient.livingchest.item;
 
-import com.syllient.livingchest.animation.EyeBoneAnimation;
-import com.syllient.livingchest.client.renderer.EyeBoneItemRenderer;
+import com.syllient.livingchest.animation.block.EyeBoneAnimation;
+import com.syllient.livingchest.client.renderer.item.EyeBoneItemRenderer;
 import com.syllient.livingchest.registry.BlockRegistry;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;

@@ -1,8 +1,8 @@
-package com.syllient.livingchest.client.renderer;
+package com.syllient.livingchest.client.renderer.block;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.syllient.livingchest.client.model.EyeBoneTileModel;
+import com.syllient.livingchest.client.model.block.EyeBoneBlockModel;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
-public class EyeBoneTileRenderer extends GeoBlockRenderer<EyeBoneTile> {
-  public EyeBoneTileRenderer(final TileEntityRendererDispatcher rendererDispatcher) {
-    super(rendererDispatcher, new EyeBoneTileModel());
+public class EyeBoneBlockRenderer extends GeoBlockRenderer<EyeBoneTile> {
+  public EyeBoneBlockRenderer(final TileEntityRendererDispatcher rendererDispatcher) {
+    super(rendererDispatcher, new EyeBoneBlockModel());
   }
 
   @Override

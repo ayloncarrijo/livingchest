@@ -1,6 +1,6 @@
 package com.syllient.livingchest.tile;
 
-import com.syllient.livingchest.animation.EyeBoneAnimation;
+import com.syllient.livingchest.animation.block.EyeBoneAnimation;
 import com.syllient.livingchest.registry.TileRegistry;
 import net.minecraft.tileentity.TileEntity;
 import software.bernie.geckolib3.core.IAnimatable;

@@ -1,4 +1,4 @@
-package com.syllient.livingchest.client.model;
+package com.syllient.livingchest.client.model.entity;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.entity.ChesterEntity;

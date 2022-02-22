@@ -1,11 +1,11 @@
-package com.syllient.livingchest.client.model;
+package com.syllient.livingchest.client.model.block;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class EyeBoneTileModel extends AnimatedGeoModel<EyeBoneTile> {
+public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
   public static final ResourceLocation ANIMATION =
       new ResourceLocation(LivingChest.MOD_ID, "animations/block/eye_bone.json");
 

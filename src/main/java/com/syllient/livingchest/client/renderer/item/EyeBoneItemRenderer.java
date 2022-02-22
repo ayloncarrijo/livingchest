@@ -1,6 +1,6 @@
-package com.syllient.livingchest.client.renderer;
+package com.syllient.livingchest.client.renderer.item;
 
-import com.syllient.livingchest.client.model.EyeBoneItemModel;
+import com.syllient.livingchest.client.model.item.EyeBoneItemModel;
 import com.syllient.livingchest.item.EyeBoneItem;
 import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
