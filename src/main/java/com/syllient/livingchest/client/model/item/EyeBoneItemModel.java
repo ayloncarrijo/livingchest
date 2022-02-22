@@ -1,11 +1,18 @@
-package com.syllient.livingchest.client.model;
+package com.syllient.livingchest.client.model.item;
 
+import com.syllient.livingchest.client.model.block.EyeBoneBlockModel;
 import com.syllient.livingchest.item.EyeBoneItem;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class EyeBoneItemModel extends EyeBoneModel<EyeBoneItem> {
+public class EyeBoneItemModel extends AnimatedGeoModel<EyeBoneItem> {
+  private static final ResourceLocation ANIMATION = EyeBoneBlockModel.ANIMATION;
+  private static final ResourceLocation MODEL = EyeBoneBlockModel.MODEL;
+  private static final ResourceLocation TEXTURE_OPENED = EyeBoneBlockModel.TEXTURE_OPENED;
+  private static final ResourceLocation TEXTURE_CLOSED = EyeBoneBlockModel.TEXTURE_CLOSED;
+
   @Override
   public ResourceLocation getAnimationFileLocation(final EyeBoneItem eyeBone) {
     return ANIMATION;

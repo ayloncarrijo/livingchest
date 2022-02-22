@@ -1,4 +1,4 @@
-package com.syllient.livingchest.client.model;
+package com.syllient.livingchest.client.model.entity;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.entity.ChesterEntity;
@@ -7,13 +7,13 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ChesterModel extends AnimatedGeoModel<ChesterEntity> {
   private static final ResourceLocation ANIMATION =
-      new ResourceLocation(LivingChest.MOD_ID, "animations/chester.json");
+      new ResourceLocation(LivingChest.MOD_ID, "animations/entity/chester.json");
 
   private static final ResourceLocation MODEL =
-      new ResourceLocation(LivingChest.MOD_ID, "geo/chester.json");
+      new ResourceLocation(LivingChest.MOD_ID, "geo/entity/chester.json");
 
   private static final ResourceLocation TEXTURE =
-      new ResourceLocation(LivingChest.MOD_ID, "textures/chester.png");
+      new ResourceLocation(LivingChest.MOD_ID, "textures/entity/chester.png");
 
   @Override
   public ResourceLocation getAnimationFileLocation(final ChesterEntity chester) {

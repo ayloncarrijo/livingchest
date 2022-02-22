@@ -1,6 +1,6 @@
-package com.syllient.livingchest.client.renderer;
+package com.syllient.livingchest.client.renderer.entity;
 
-import com.syllient.livingchest.client.model.ChesterModel;
+import com.syllient.livingchest.client.model.entity.ChesterModel;
 import com.syllient.livingchest.entity.ChesterEntity;
 import net.minecraft.client.renderer.entity.RenderManager;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;

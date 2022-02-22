@@ -1,13 +1,13 @@
-package com.syllient.livingchest.client.renderer;
+package com.syllient.livingchest.client.renderer.block;
 
-import com.syllient.livingchest.client.model.EyeBoneTileModel;
+import com.syllient.livingchest.client.model.block.EyeBoneBlockModel;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.client.renderer.GlStateManager;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
-public class EyeBoneTileRenderer extends GeoBlockRenderer<EyeBoneTile> {
-  public EyeBoneTileRenderer() {
-    super(new EyeBoneTileModel());
+public class EyeBoneBlockRenderer extends GeoBlockRenderer<EyeBoneTile> {
+  public EyeBoneBlockRenderer() {
+    super(new EyeBoneBlockModel());
   }
 
   @Override

@@ -2,7 +2,7 @@ package com.syllient.livingchest.entity;
 
 import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
-import com.syllient.livingchest.animation.ChesterAnimation;
+import com.syllient.livingchest.animation.entity.ChesterAnimation;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.registry.BlockRegistry;

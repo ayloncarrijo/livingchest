@@ -1,7 +1,7 @@
 package com.syllient.livingchest.client;
 
 import com.syllient.livingchest.LivingChest;
-import com.syllient.livingchest.client.renderer.EyeBoneItemRenderer;
+import com.syllient.livingchest.client.renderer.item.EyeBoneItemRenderer;
 import com.syllient.livingchest.registry.ItemRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;

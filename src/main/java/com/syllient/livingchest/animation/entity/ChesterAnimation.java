@@ -1,5 +1,6 @@
-package com.syllient.livingchest.animation;
+package com.syllient.livingchest.animation.entity;
 
+import com.syllient.livingchest.animation.Animation;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.geckolib.ExtendedAnimationController;
 import com.syllient.livingchest.registry.SoundRegistry;
@@ -36,7 +37,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   private final ExtendedAnimationController<ChesterEntity> openController;
   private int idleSoundTimes = 0;
   private int ticksIdling = 0;
-  private boolean hasJustOpenedMouth = false;
+  private boolean hasJustOpened = false;
   private boolean wasMouthOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
@@ -60,7 +61,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private void onTick() {
-    this.hasJustOpenedMouth = this.animatable.isMouthOpen() && !this.wasMouthOpen;
+    this.hasJustOpened = this.animatable.isMouthOpen() && !this.wasMouthOpen;
     this.wasMouthOpen = this.animatable.isMouthOpen();
 
     final boolean isIdling = this.jumpController.isAnimationStopped();
@@ -71,7 +72,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
       this.ticksIdling = 0;
     }
 
-    if (this.hasJustOpenedMouth || this.ticksIdling < 5) {
+    if (this.hasJustOpened || this.ticksIdling < 5) {
       this.idleSoundTimes = 0;
     }
   }
