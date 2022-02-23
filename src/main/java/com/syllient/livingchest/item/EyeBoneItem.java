@@ -1,7 +1,7 @@
 package com.syllient.livingchest.item;
 
 import com.syllient.livingchest.animation.block.EyeBoneAnimation;
-import com.syllient.livingchest.registry.BlockRegistry;
+import com.syllient.livingchest.eventhandler.registry.BlockRegistry;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;

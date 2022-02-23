@@ -1,10 +1,11 @@
-package com.syllient.livingchest;
+package com.syllient.livingchest.eventhandler;
 
+import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -30,8 +31,8 @@ public class EventHandler {
   @SubscribeEvent
   public static void onServerTick(final TickEvent.ServerTickEvent event) {
     if (event.phase == TickEvent.Phase.END) {
-      final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
-      VirtualChesterSavedData.getInstance(world).onServerTick();
+      VirtualChesterSavedData
+          .getInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId())).onServerTick();
     }
   }
 }

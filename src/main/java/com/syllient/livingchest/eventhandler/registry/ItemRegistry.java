@@ -1,4 +1,4 @@
-package com.syllient.livingchest.registry;
+package com.syllient.livingchest.eventhandler.registry;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.item.EyeBoneItem;
@@ -15,10 +15,10 @@ public class ItemRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Item> event) {
-    event.getRegistry().registerAll(buildEntry("eye_bone", new EyeBoneItem()));
+    event.getRegistry().registerAll(createEntry("eye_bone", new EyeBoneItem()));
   }
 
-  private static Item buildEntry(final String name, final Item item) {
+  private static Item createEntry(final String name, final Item item) {
     return item.setRegistryName(name).setUnlocalizedName(LivingChest.MOD_ID + "." + name);
   }
 }

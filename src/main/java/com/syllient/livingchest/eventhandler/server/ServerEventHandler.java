@@ -1,4 +1,4 @@
-package com.syllient.livingchest.server;
+package com.syllient.livingchest.eventhandler.server;
 
 import com.syllient.livingchest.LivingChest;
 import net.minecraftforge.fml.common.Mod;

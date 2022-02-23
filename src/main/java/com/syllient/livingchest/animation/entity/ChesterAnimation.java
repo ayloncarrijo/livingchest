@@ -2,8 +2,8 @@ package com.syllient.livingchest.animation.entity;
 
 import com.syllient.livingchest.animation.Animation;
 import com.syllient.livingchest.entity.ChesterEntity;
+import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.geckolib.ExtendedAnimationController;
-import com.syllient.livingchest.registry.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;

@@ -1,4 +1,4 @@
-package com.syllient.livingchest.registry;
+package com.syllient.livingchest.eventhandler.registry;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.tile.EyeBoneTile;
@@ -14,10 +14,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class TileRegistry {
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<Block> event) {
-    buildEntry("eye_bone", EyeBoneTile.class);
+    createEntry("eye_bone", EyeBoneTile.class);
   }
 
-  private static void buildEntry(final String name, final Class<? extends TileEntity> clazz) {
+  private static void createEntry(final String name, final Class<? extends TileEntity> clazz) {
     GameRegistry.registerTileEntity(clazz, new ResourceLocation(LivingChest.MOD_ID, name));
   }
 }

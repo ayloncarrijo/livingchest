@@ -1,4 +1,4 @@
-package com.syllient.livingchest.registry;
+package com.syllient.livingchest.eventhandler.registry;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.entity.ChesterEntity;
@@ -15,11 +15,12 @@ public class EntityRegistry {
 
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<EntityEntry> event) {
-    event.getRegistry().registerAll(buildEntry("chester", ChesterEntity.class));
+    event.getRegistry().registerAll(createEntry("chester",
+        EntityEntryBuilder.create().entity(ChesterEntity.class).tracker(128, 2, false)));
   }
 
-  private static EntityEntry buildEntry(final String name, final Class<? extends Entity> clazz) {
-    return EntityEntryBuilder.create().entity(clazz).id(name, id++)
-        .name(LivingChest.MOD_ID + "." + name).tracker(128, 1, true).build();
+  private static EntityEntry createEntry(final String name,
+      final EntityEntryBuilder<? extends Entity> builder) {
+    return builder.id(name, id++).name(LivingChest.MOD_ID + "." + name).build();
   }
 }
