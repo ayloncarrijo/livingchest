@@ -1,7 +1,9 @@
 package com.syllient.livingchest.client.model.block;
 
 import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.tile.EyeBoneTile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
@@ -30,6 +32,11 @@ public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneTile eyeBone) {
-    return TEXTURE_OPENED;
+    if (eyeBone.getOwnerId() == null) {
+      return TEXTURE_OPENED;
+    }
+
+    return VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+        .getVirtualChester(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPENED;
   }
 }
