@@ -37,7 +37,6 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   private final ExtendedAnimationController<ChesterEntity> openController;
   private int idleSoundTimes = 0;
   private int ticksIdling = 0;
-  private boolean hasJustOpened = false;
   private boolean wasMouthOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
@@ -61,9 +60,6 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private void onTick() {
-    this.hasJustOpened = this.animatable.isMouthOpen() && !this.wasMouthOpen;
-    this.wasMouthOpen = this.animatable.isMouthOpen();
-
     final boolean isIdling = this.jumpController.isAnimationStopped();
 
     if (isIdling) {
@@ -72,9 +68,11 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
       this.ticksIdling = 0;
     }
 
-    if (this.hasJustOpened || this.ticksIdling < 5) {
+    if ((this.animatable.isMouthOpen() && !this.wasMouthOpen) || this.ticksIdling < 5) {
       this.idleSoundTimes = 0;
     }
+
+    this.wasMouthOpen = this.animatable.isMouthOpen();
   }
 
   private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
@@ -99,7 +97,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
 
     final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
-    if (event.isMoving() && this.animatable.onGround && !this.animatable.isMouthOpen()) {
+    if (event.isMoving() && this.animatable.onGround && this.openController.isAnimationStopped()) {
       if (!isJumping) {
         this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_JUMP));
       }

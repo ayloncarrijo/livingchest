@@ -12,7 +12,6 @@ import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -43,13 +42,20 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private BlockPos eyeBone;
-  private int ticksUntilCanMove = 0;
 
   public ChesterEntity(final World worldIn) {
     super(worldIn);
     this.setSize(0.7F, 0.85F);
+    this.addPotionEffect(
+        new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
     this.moveHelper = new MoveHelper(this);
     this.ignoreFrustumCheck = true;
+  }
+
+  @Override
+  protected void entityInit() {
+    super.entityInit();
+    this.dataManager.register(IS_MOUTH_OPEN, false);
   }
 
   @Override
@@ -62,18 +68,10 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   @Override
-  protected void entityInit() {
-    super.entityInit();
-    this.dataManager.register(IS_MOUTH_OPEN, false);
-  }
-
-  @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
-    this.setMoveSpeed(this.getMoveSpeed());
-    this.addPotionEffect(
-        new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.370D);
   }
 
   @Override
@@ -116,11 +114,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   public void onServerUpdate() {
-    if (!this.isMouthOpen() && this.onGround && this.ticksUntilCanMove > 0
-        && --this.ticksUntilCanMove == 0) {
-      this.setMoveSpeed(this.getMoveSpeed());
-    }
-
     this.checkEyeBone();
   }
 
@@ -196,25 +189,15 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
 
   public void openMouth() {
     this.setIsMouthOpen(true);
-    this.setMoveSpeed(0);
   }
 
   public void closeMouth() {
     this.setIsMouthOpen(false);
-    this.ticksUntilCanMove = 15;
   }
 
   public void openGuiTo(final EntityPlayer player) {
     player.openGui(LivingChest.INSTANCE, GuiHandler.Gui.CHESTER, this.world, this.getEntityId(), 0,
         0);
-  }
-
-  public double getMoveSpeed() {
-    return 0.370D;
-  }
-
-  public void setMoveSpeed(final double value) {
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(value);
   }
 
   public BlockPos getEyeBone() {
@@ -275,15 +258,28 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     public static final String EYE_BONE = "EyeBone";
   }
 
-  class MoveHelper extends EntityMoveHelper {
-    public MoveHelper(final EntityLiving entitylivingIn) {
-      super(entitylivingIn);
+  private static class MoveHelper extends EntityMoveHelper {
+    private final ChesterEntity chester;
+
+    public MoveHelper(final ChesterEntity chester) {
+      super(chester);
+      this.chester = chester;
+    }
+
+    @Override
+    public void onUpdateMoveHelper() {
+      if (this.chester.isMouthOpen()) {
+        this.chester.setMoveForward(0.0F);
+        return;
+      }
+
+      super.onUpdateMoveHelper();
     }
 
     @Override
     protected float limitAngle(final float sourceAngle, final float targetAngle,
         final float maximumChange) {
-      return super.limitAngle(sourceAngle, targetAngle, 15.0F);
+      return super.limitAngle(sourceAngle, targetAngle, 30.0F);
     }
   }
 }
