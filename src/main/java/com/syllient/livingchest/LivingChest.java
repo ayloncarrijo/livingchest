@@ -2,8 +2,8 @@ package com.syllient.livingchest;
 
 import com.syllient.livingchest.client.renderer.block.EyeBoneBlockRenderer;
 import com.syllient.livingchest.client.renderer.entity.ChesterRenderer;
-import com.syllient.livingchest.registry.EntityRegistry;
-import com.syllient.livingchest.registry.TileRegistry;
+import com.syllient.livingchest.eventhandler.registry.EntityRegistry;
+import com.syllient.livingchest.eventhandler.registry.TileRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;

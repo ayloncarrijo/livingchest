@@ -1,4 +1,4 @@
-package com.syllient.livingchest.registry;
+package com.syllient.livingchest.eventhandler.registry;
 
 import java.util.function.Supplier;
 import com.syllient.livingchest.LivingChest;
@@ -19,11 +19,11 @@ public class TileRegistry {
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<TileEntityType<?>> event) {
     event.getRegistry()
-        .registerAll(buildEntry("eye_bone", EyeBoneTile::new, BlockRegistry.EYE_BONE));
+        .registerAll(createEntry("eye_bone", EyeBoneTile::new, BlockRegistry.EYE_BONE));
 
   }
 
-  private static <T extends TileEntity> TileEntityType<?> buildEntry(final String name,
+  private static <T extends TileEntity> TileEntityType<?> createEntry(final String name,
       final Supplier<T> supplier, final Block... blocks) {
     return TileEntityType.Builder.of(supplier, blocks).build(null).setRegistryName(name);
   }

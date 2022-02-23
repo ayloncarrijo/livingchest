@@ -1,4 +1,4 @@
-package com.syllient.livingchest.registry;
+package com.syllient.livingchest.eventhandler.registry;
 
 import com.syllient.livingchest.LivingChest;
 import net.minecraft.util.ResourceLocation;
@@ -12,13 +12,13 @@ import net.minecraftforge.registries.ObjectHolder;
 public class SoundRegistry {
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<SoundEvent> event) {
-    event.getRegistry().registerAll(buildEntry("entity.chester.idle"),
-        buildEntry("entity.chester.jump"), buildEntry("entity.chester.hurt"),
-        buildEntry("entity.chester.death"), buildEntry("entity.chester.open_mouth"),
-        buildEntry("entity.chester.close_mouth"));
+    event.getRegistry().registerAll(createEntry("entity.chester.idle"),
+        createEntry("entity.chester.jump"), createEntry("entity.chester.hurt"),
+        createEntry("entity.chester.death"), createEntry("entity.chester.open_mouth"),
+        createEntry("entity.chester.close_mouth"));
   }
 
-  private static SoundEvent buildEntry(final String name) {
+  private static SoundEvent createEntry(final String name) {
     return new SoundEvent(new ResourceLocation(LivingChest.MOD_ID, name)).setRegistryName(name);
   }
 
