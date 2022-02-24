@@ -1,7 +1,7 @@
 package com.syllient.livingchest.tile;
 
 import java.util.UUID;
-import com.syllient.livingchest.animation.block.EyeBoneAnimation;
+import com.syllient.livingchest.animation.block.EyeBoneBlockAnimation;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -11,7 +11,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class EyeBoneTile extends TileEntity implements IAnimatable {
-  private final EyeBoneAnimation<EyeBoneTile> animation = new EyeBoneAnimation<>(this);
+  private final EyeBoneBlockAnimation animation = new EyeBoneBlockAnimation(this);
   private UUID ownerId = null;
 
   public EyeBoneTile() {}

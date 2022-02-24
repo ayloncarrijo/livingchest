@@ -82,6 +82,10 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
 
+    if (virtualChester.isSpawned()) {
+      return;
+    }
+
     if (virtualChester.isDead()) {
       final int minutes = (int) Math.ceil((float) virtualChester.getDeadTime() / 20 / 60);
 
@@ -119,6 +123,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
+
+    if (!virtualChester.isSpawned()) {
+      return;
+    }
+
     final ChesterEntity chesterEntity =
         (ChesterEntity) WorldUtil.getEntityByUuid(world, virtualChester.getUniqueId());
 

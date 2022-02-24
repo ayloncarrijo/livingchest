@@ -39,7 +39,6 @@ public class LivingChest {
       @Override
       public void run() {
         RenderingRegistry.registerEntityRenderingHandler(ChesterEntity.class, ChesterRenderer::new);
-
         ClientRegistry.bindTileEntitySpecialRenderer(EyeBoneTile.class, new EyeBoneBlockRenderer());
       }
     });

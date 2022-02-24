@@ -1,7 +1,6 @@
 package com.syllient.livingchest.eventhandler.client;
 
 import com.syllient.livingchest.LivingChest;
-import com.syllient.livingchest.client.renderer.item.EyeBoneItemRenderer;
 import com.syllient.livingchest.eventhandler.registry.ItemRegistry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -16,7 +15,5 @@ public class ClientEventHandler {
   public static void onModelRegistry(final ModelRegistryEvent event) {
     ModelLoader.setCustomModelResourceLocation(ItemRegistry.EYE_BONE, 0,
         new ModelResourceLocation(ItemRegistry.EYE_BONE.getRegistryName(), "inventory"));
-
-    ItemRegistry.EYE_BONE.setTileEntityItemStackRenderer(new EyeBoneItemRenderer());
   }
 }
