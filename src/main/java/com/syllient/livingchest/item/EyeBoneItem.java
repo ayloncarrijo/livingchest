@@ -3,6 +3,8 @@ package com.syllient.livingchest.item;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.eventhandler.registry.BlockRegistry;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
+import com.syllient.livingchest.util.DistExecutor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
@@ -14,46 +16,49 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class EyeBoneItem extends ItemBlock {
   public EyeBoneItem() {
     super(BlockRegistry.EYE_BONE);
     this.setMaxStackSize(1);
-    this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "idle"),
-        new IItemPropertyGetter() {
-          int animationStep = 0;
-          long lastWorldTime;
 
-          @Override
-          public float apply(final ItemStack stack, final World worldIn,
-              final EntityLivingBase entity) {
-            if (worldIn == null && entity == null) {
-              return 0.0F;
-            }
+    DistExecutor.runWhenOn(Side.CLIENT, () -> new Runnable() {
+      @Override
+      public void run() {
+        EyeBoneItem.this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "idle"),
+            new IItemPropertyGetter() {
+              static final int ANIMATION_FRAMES = 14;
+              int animationStep = 0;
+              long prevSystemTime = Minecraft.getSystemTime();
 
-            final World world = worldIn != null ? worldIn : entity.world;
+              @Override
+              public float apply(final ItemStack stack, final World worldIn,
+                  final EntityLivingBase entityIn) {
+                if (this.animationStep == ANIMATION_FRAMES + 1) {
+                  this.animationStep = 0;
+                }
 
-            if (this.lastWorldTime != world.getTotalWorldTime()
-                && world.getTotalWorldTime() % 40 == 0) {
-              this.animationStep += 1;
-              this.lastWorldTime = world.getTotalWorldTime();
-            }
+                final boolean isBlinking = this.animationStep % 5 == 0;
+                final long systemTime = Minecraft.getSystemTime();
 
-            if (this.animationStep > 8) {
-              this.animationStep = 0;
-            }
+                if (systemTime - this.prevSystemTime >= (isBlinking ? 400 : 1800)) {
+                  this.animationStep += 1;
+                  this.prevSystemTime = systemTime;
+                }
 
-            System.out.println((float) this.animationStep / 100);
+                return (float) this.animationStep / 100;
+              }
+            });
 
-            return (float) this.animationStep / 100;
-          }
-        });
-    this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "close"),
-        (final ItemStack stack, final World world, final EntityLivingBase entity) -> {
-          return entity instanceof EntityPlayer && VirtualChesterSavedData.getInstance(entity.world)
-              .getVirtualChester(entity.getUniqueID()).isDead() ? 1.0F : 0.0F;
-        });
-
+        EyeBoneItem.this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "close"),
+            (final ItemStack stack, final World world, final EntityLivingBase entity) -> {
+              return entity instanceof EntityPlayer && VirtualChesterSavedData
+                  .getInstance(entity.world).getVirtualChester(entity.getUniqueID()).isDead() ? 1.0F
+                      : 0.0F;
+            });
+      }
+    });
   }
 
   @Override
