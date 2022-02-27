@@ -13,6 +13,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class EyeBoneTile extends TileEntity implements IAnimatable {
   private final EyeBoneBlockAnimation animation = new EyeBoneBlockAnimation(this);
   private UUID ownerId = null;
+  public boolean isClosed = false;
 
   public EyeBoneTile() {}
 

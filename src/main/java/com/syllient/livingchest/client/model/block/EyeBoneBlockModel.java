@@ -32,11 +32,16 @@ public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneTile eyeBone) {
+    final ResourceLocation variantTexture = eyeBone.isClosed ? TEXTURE_CLOSED : TEXTURE_OPEN;
+
     if (eyeBone.getOwnerId() == null) {
-      return TEXTURE_OPEN;
+      return variantTexture;
     }
 
-    return VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
-        .getVirtualChester(eyeBone.getOwnerId()).isDead() ? TEXTURE_CLOSED : TEXTURE_OPEN;
+    final boolean isChesterDead =
+        VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+            .getVirtualChester(eyeBone.getOwnerId()).isDead();
+
+    return isChesterDead ? TEXTURE_CLOSED : variantTexture;
   }
 }

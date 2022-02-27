@@ -6,6 +6,7 @@ import com.syllient.livingchest.tile.EyeBoneTile;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
@@ -24,12 +25,32 @@ public class EyeBoneBlockAnimation extends Animation<EyeBoneTile> {
 
   @Override
   public void registerControllers(final AnimationData data) {
-    data.addAnimationController(new ExtendedAnimationController<>(this.animatable, Controller.IDLE,
-        0, this::idlePredicate));
+    final ExtendedAnimationController<EyeBoneTile> controller =
+        new ExtendedAnimationController<>(this.animatable, Controller.IDLE, 0, this::idlePredicate);
+
+    controller.registerCustomInstructionListener(this::instructionListener);
+    data.addAnimationController(controller);
   }
 
   private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
     event.getController().setAnimation(new AnimationBuilder().addAnimation(Animation.IDLE, true));
     return PlayState.CONTINUE;
+  }
+
+  private void instructionListener(
+      final CustomInstructionKeyframeEvent<? extends IAnimatable> event) {
+    switch (event.instructions) {
+      case "open": {
+        this.animatable.isClosed = false;
+        break;
+      }
+      case "close": {
+        this.animatable.isClosed = true;
+        break;
+      }
+      default: {
+
+      }
+    }
   }
 }
