@@ -42,7 +42,7 @@ public class ChesterGui extends GuiContainer {
 
   @Override
   protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-    final int intColor = 15191721;
+    final int intColor = 13876910;
     this.fontRenderer.drawString("Chester", 8, 6, intColor);
     this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, intColor);
   }

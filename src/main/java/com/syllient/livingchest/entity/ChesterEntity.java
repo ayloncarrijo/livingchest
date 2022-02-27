@@ -15,7 +15,6 @@ import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,7 +63,6 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     this.tasks.addTask(1, new EntityAISwimming(this));
     this.tasks.addTask(2, this.aiSit);
     this.tasks.addTask(3, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
-    this.tasks.addTask(4, new EntityAIWanderAvoidWater(this, 1.0D));
   }
 
   @Override
