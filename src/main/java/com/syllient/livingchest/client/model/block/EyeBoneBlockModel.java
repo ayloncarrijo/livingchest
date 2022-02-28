@@ -12,8 +12,8 @@ public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
   public static final ResourceLocation MODEL =
       new ResourceLocation(LivingChest.MOD_ID, "geo/block/eye_bone.json");
 
-  public static final ResourceLocation TEXTURE_OPENED =
-      new ResourceLocation(LivingChest.MOD_ID, "textures/block/eye_bone.opened.png");
+  public static final ResourceLocation TEXTURE_OPEN =
+      new ResourceLocation(LivingChest.MOD_ID, "textures/block/eye_bone.open.png");
 
   public static final ResourceLocation TEXTURE_CLOSED =
       new ResourceLocation(LivingChest.MOD_ID, "textures/block/eye_bone.closed.png");
@@ -30,6 +30,7 @@ public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
 
   @Override
   public ResourceLocation getTextureLocation(final EyeBoneTile eyeBone) {
-    return TEXTURE_OPENED;
+    final ResourceLocation variantTexture = eyeBone.isClosed ? TEXTURE_CLOSED : TEXTURE_OPEN;
+    return variantTexture;
   }
 }

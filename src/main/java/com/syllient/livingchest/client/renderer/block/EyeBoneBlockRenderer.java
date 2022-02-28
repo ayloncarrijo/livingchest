@@ -16,6 +16,14 @@ public class EyeBoneBlockRenderer extends GeoBlockRenderer<EyeBoneTile> {
   }
 
   @Override
+  public void renderEarly(final EyeBoneTile animatable, final MatrixStack stack, final float ticks,
+      final IRenderTypeBuffer renderTypeBuffer, final IVertexBuilder vertexBuilder,
+      final int packedLightIn, final int packedOverlayIn, final float red, final float green,
+      final float blue, final float partialTicks) {
+    stack.scale(0.715f, 0.715f, 0.715f);
+  }
+
+  @Override
   public RenderType getRenderType(final EyeBoneTile animatable, final float partialTicks,
       final MatrixStack stack, final IRenderTypeBuffer renderTypeBuffer,
       final IVertexBuilder vertexBuilder, final int packedLightIn,

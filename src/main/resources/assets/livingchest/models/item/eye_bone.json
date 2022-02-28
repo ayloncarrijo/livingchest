@@ -1,106 +1,135 @@
 {
   "credit": "Made with Blockbench",
-  "parent": "builtin/entity",
-  "texture_size": [
-    48,
-    48
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "livingchest:item/eye_bone.open.left"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "livingchest:idle": 0
+      },
+      "model": "livingchest:item/eye_bone.closed"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.01
+      },
+      "model": "livingchest:item/eye_bone.open.left"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.02
+      },
+      "model": "livingchest:item/eye_bone.open.bottom"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.03
+      },
+      "model": "livingchest:item/eye_bone.open.right"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.04
+      },
+      "model": "livingchest:item/eye_bone.open.right"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.05
+      },
+      "model": "livingchest:item/eye_bone.closed"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.06
+      },
+      "model": "livingchest:item/eye_bone.open.left"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.07
+      },
+      "model": "livingchest:item/eye_bone.open.top"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.08
+      },
+      "model": "livingchest:item/eye_bone.open.bottom"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.09
+      },
+      "model": "livingchest:item/eye_bone.open.left"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.1
+      },
+      "model": "livingchest:item/eye_bone.closed"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.11
+      },
+      "model": "livingchest:item/eye_bone.open.right"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.12
+      },
+      "model": "livingchest:item/eye_bone.open.right"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.13
+      },
+      "model": "livingchest:item/eye_bone.open.bottom"
+    },
+    {
+      "predicate": {
+        "livingchest:idle": 0.14
+      },
+      "model": "livingchest:item/eye_bone.open.left"
+    },
+    {
+      "predicate": {
+        "livingchest:close": 1
+      },
+      "model": "livingchest:item/eye_bone.closed"
+    }
   ],
   "display": {
     "thirdperson_righthand": {
-      "rotation": [
-        0,
-        -180,
-        0
-      ],
-      "translation": [
-        0,
-        -5.75,
-        1.5
-      ]
+      "rotation": [0, 0, 45],
+      "translation": [0, 5.5, 1],
+      "scale": [0.9, 0.9, 0.9]
     },
     "thirdperson_lefthand": {
-      "rotation": [
-        0,
-        -180,
-        0
-      ],
-      "translation": [
-        0,
-        -5.75,
-        1.5
-      ]
+      "rotation": [0, 0, 45],
+      "translation": [0, 5.5, 1],
+      "scale": [-0.9, 0.9, 0.9]
     },
     "firstperson_righthand": {
-      "rotation": [
-        0,
-        115,
-        0
-      ],
-      "translation": [
-        1,
-        -1.5,
-        1
-      ],
-      "scale": [
-        0.65,
-        0.65,
-        0.65
-      ]
+      "rotation": [0, -90, 35],
+      "translation": [1.25, 4.75, 0.75],
+      "scale": [0.7, 0.7, 0.7]
     },
     "firstperson_lefthand": {
-      "rotation": [
-        0,
-        115,
-        0
-      ],
-      "translation": [
-        1,
-        -1.5,
-        1
-      ],
-      "scale": [
-        0.65,
-        0.65,
-        0.65
-      ]
+      "rotation": [0, -90, 35],
+      "translation": [1.25, 4.75, 0.75],
+      "scale": [-0.7, 0.7, 0.7]
     },
     "ground": {
-      "scale": [
-        0.7,
-        0.7,
-        0.7
-      ]
-    },
-    "gui": {
-      "rotation": [
-        20,
-        -180,
-        45
-      ],
-      "translation": [
-        -6.25,
-        -6.2,
-        1
-      ],
-      "scale": [
-        1.1,
-        1.1,
-        1.1
-      ]
-    },
-    "head": {
-      "translation": [
-        0,
-        6.25,
-        0
-      ]
+      "translation": [0, 2, 0],
+      "scale": [0.5, 0.5, 0.5]
     },
     "fixed": {
-      "translation": [
-        0,
-        -8,
-        -2.5
-      ]
+      "rotation": [0, -180, 0],
+      "translation": [0, 0, -0.5]
     }
   }
 }

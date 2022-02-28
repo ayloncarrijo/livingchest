@@ -4,13 +4,13 @@ license="All rights reserved"
 
 [[mods]]
   modId="livingchest"
-  version="1.0.0.0"
   displayName="Living Chest"
+  version="1.0.0.0"
+  description='''A mod that adds Chester (from Don't Starve) to Minecraft.'''
+  displayURL="https://www.curseforge.com/minecraft/mc-mods/livingchest"
   updateJSONURL="https://raw.githubusercontent.com/ayloncarrijo/livingchest/master/update.json"
-  displayURL="https://www.curseforge.com/minecraft/mc-mods/living-chest"
   logoFile="livingchest.png"
   authors="Syllient"
-  description='''A mod that adds Chester (from Don't Starve) to Minecraft.'''
 
 [[dependencies.livingchest]]
   modId="forge"

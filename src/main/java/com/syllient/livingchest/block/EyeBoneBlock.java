@@ -20,16 +20,16 @@ import net.minecraft.world.IBlockReader;
 public class EyeBoneBlock extends HorizontalBlock {
   private static class Shape {
     private static final VoxelShape EYE =
-        VoxelShapes.box(0.345D, 0.535D, 0.345D, 0.655D, 0.84D, 0.655D);
+        VoxelShapes.box(0.3425D, 0.545D, 0.3425D, 0.6575D, 0.86D, 0.6575D);
 
     private static final VoxelShape GRIP =
-        VoxelShapes.box(0.45D, 0.1D, 0.45D, 0.55D, 0.535D, 0.55D);
+        VoxelShapes.box(0.455D, 0.1D, 0.455D, 0.545D, 0.545D, 0.545D);
 
     private static final VoxelShape BASE_NS =
-        VoxelShapes.box(0.39D, 0.0D, 0.45D, 0.61D, 0.1D, 0.55D);
+        VoxelShapes.box(0.3875D, 0.0D, 0.455D, 0.6125D, 0.1D, 0.545D);
 
     private static final VoxelShape BASE_WE =
-        VoxelShapes.box(0.45D, 0.0D, 0.39D, 0.55D, 0.1D, 0.61D);
+        VoxelShapes.box(0.455D, 0.0D, 0.3875D, 0.545D, 0.1D, 0.6125D);
 
     private static final VoxelShape FULL_NS = VoxelShapes.or(EYE, GRIP, BASE_NS);
 
@@ -64,10 +64,9 @@ public class EyeBoneBlock extends HorizontalBlock {
   @Override
   public VoxelShape getShape(final BlockState state, final IBlockReader reader, final BlockPos pos,
       final ISelectionContext ctx) {
-    final Direction direction = state.getValue(FACING);
+    final Direction facing = state.getValue(FACING);
 
-    return direction == Direction.WEST || direction == Direction.EAST ? Shape.FULL_WE
-        : Shape.FULL_NS;
+    return facing == Direction.WEST || facing == Direction.EAST ? Shape.FULL_WE : Shape.FULL_NS;
   }
 
   @Override

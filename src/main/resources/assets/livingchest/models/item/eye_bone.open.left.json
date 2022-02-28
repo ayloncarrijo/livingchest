@@ -1,0 +1,6 @@
+{
+  "parent": "livingchest:item/eye_bone",
+  "textures": {
+    "layer0": "livingchest:item/eye_bone.open.left"
+  }
+}
