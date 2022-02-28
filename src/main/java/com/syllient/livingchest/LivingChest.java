@@ -16,12 +16,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import software.bernie.geckolib3.GeckoLib;
 
 @Mod(modid = LivingChest.MOD_ID, name = LivingChest.NAME, version = LivingChest.VERSION,
-    dependencies = LivingChest.DEPENDENCIES)
+    dependencies = LivingChest.DEPENDENCIES, updateJSON = LivingChest.UPDATE_JSON)
 public class LivingChest {
   public static final String MOD_ID = "livingchest";
-  public static final String NAME = "LivingChest";
-  public static final String VERSION = "1.0.0.1";
+  public static final String NAME = "Living Chest";
+  public static final String VERSION = "1.0.0.2";
   public static final String DEPENDENCIES = "required-after:geckolib3@[3.0.20,);";
+  public static final String UPDATE_JSON =
+      "https://raw.githubusercontent.com/ayloncarrijo/livingchest/master/update.json";
 
   @Mod.Instance(LivingChest.MOD_ID)
   public static LivingChest INSTANCE;

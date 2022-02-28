@@ -255,7 +255,7 @@ public class ChesterEntity extends EntityTameable
 
   public int getDeathCooldown() {
     final int minutes = 10;
-    return 1 * 20 * 60;
+    return minutes * 20 * 60;
   }
 
   @Override

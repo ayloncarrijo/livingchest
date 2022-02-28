@@ -2,15 +2,13 @@
 {
   "modid": "livingchest",
   "name": "Living Chest",
-  "description": "A mod that adds Chester (from Don't Starve) to Minecraft.",
-  "version": "1.0.0.1",
+  "version": "1.0.0.2",
   "mcversion": "1.12.2",
-  "url": "",
-  "updateUrl": "",
+  "description": "A mod that adds Chester (from Don't Starve) to Minecraft.",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/livingchest",
+  "updateJSON": "https://raw.githubusercontent.com/ayloncarrijo/livingchest/master/update.json",
+  "logoFile": "livingchest.png",
   "authorList": ["Syllient"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
   "dependencies": ["geckolib3"]
 }
 ]
