@@ -42,7 +42,7 @@ public class EyeBoneItem extends ItemBlock {
                 final boolean isBlinking = this.animationStep % 5 == 0;
                 final long systemTime = Minecraft.getSystemTime();
 
-                if (systemTime - this.prevSystemTime >= (isBlinking ? 400 : 1800)) {
+                if (systemTime - this.prevSystemTime >= (isBlinking ? 333 : 1500)) {
                   this.animationStep += 1;
                   this.prevSystemTime = systemTime;
                 }

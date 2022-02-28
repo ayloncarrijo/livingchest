@@ -10,6 +10,7 @@ import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.util.InventoryUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -31,11 +32,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class ChesterEntity extends EntityTameable implements IAnimatable {
+public class ChesterEntity extends EntityTameable
+    implements IAnimatable, IEntityAdditionalSpawnData {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
@@ -101,6 +104,17 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
   }
 
   @Override
+  public void writeSpawnData(final ByteBuf buffer) {
+    buffer.writeFloat(this.rotationYaw);
+  }
+
+  @Override
+  public void readSpawnData(final ByteBuf buffer) {
+    this.setYawRotation(buffer.readFloat());
+    this.setPrevYawRotation(this.rotationYaw);
+  }
+
+  @Override
   public void onUpdate() {
     super.onUpdate();
 
@@ -121,8 +135,8 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     if (this.eyeBone == null) {
       this.setSitting(false);
 
-      if (this.getOwnerId() != null && ticksExisted % 60 == 0) {
-        final EntityPlayer owner = this.world.getPlayerEntityByUUID(this.getOwnerId());
+      if (this.isTamed() && ticksExisted % 60 == 0) {
+        final EntityPlayer owner = (EntityPlayer) this.getOwner();
         final boolean shouldDespawn =
             owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
                 .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
@@ -227,9 +241,21 @@ public class ChesterEntity extends EntityTameable implements IAnimatable {
     return null;
   }
 
+  public void setYawRotation(final float yaw) {
+    this.rotationYaw = yaw;
+    this.rotationYawHead = yaw;
+    this.renderYawOffset = yaw;
+  }
+
+  public void setPrevYawRotation(final float yaw) {
+    this.prevRotationYaw = yaw;
+    this.prevRotationYawHead = yaw;
+    this.prevRenderYawOffset = yaw;
+  }
+
   public int getDeathCooldown() {
     final int minutes = 10;
-    return minutes * 20 * 60;
+    return 1 * 20 * 60;
   }
 
   @Override
