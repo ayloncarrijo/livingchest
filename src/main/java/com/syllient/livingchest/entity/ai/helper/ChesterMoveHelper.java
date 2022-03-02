@@ -1,0 +1,29 @@
+package com.syllient.livingchest.entity.ai.helper;
+
+import com.syllient.livingchest.entity.ChesterEntity;
+import net.minecraft.entity.ai.controller.MovementController;
+
+public class ChesterMoveHelper extends MovementController {
+  private final ChesterEntity chester;
+
+  public ChesterMoveHelper(final ChesterEntity chester) {
+    super(chester);
+    this.chester = chester;
+  }
+
+  @Override
+  public void tick() {
+    if (this.chester.isMouthOpen()) {
+      this.chester.setZza(0.0F);
+      return;
+    }
+
+    super.tick();
+  }
+
+  @Override
+  protected float rotlerp(final float sourceAngle, final float targetAngle,
+      final float maximumChange) {
+    return super.rotlerp(sourceAngle, targetAngle, 30.0F);
+  }
+}
