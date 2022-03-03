@@ -28,8 +28,8 @@ public class EntityRegistry {
 
   @SubscribeEvent
   public static void initializeAttributes(final EntityAttributeCreationEvent event) {
-    event.put(CHESTER, MobEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3D)
-        .add(Attributes.MAX_HEALTH, 8.0D).add(Attributes.ATTACK_DAMAGE, 2.0D).build());
+    event.put(CHESTER, MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 450.0D)
+        .add(Attributes.MOVEMENT_SPEED, 0.37D).build());
   }
 
   private static EntityType<? extends Entity> createEntry(final String name,
