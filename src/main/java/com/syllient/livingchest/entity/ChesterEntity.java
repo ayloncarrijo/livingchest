@@ -4,6 +4,7 @@ import com.syllient.livingchest.animation.entity.ChesterAnimation;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
+import com.syllient.livingchest.inventory.ChesterInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -35,6 +36,7 @@ public class ChesterEntity extends TameableEntity
     implements IAnimatable, IEntityAdditionalSpawnData {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
+  private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private BlockPos eyeBone;
 
@@ -79,17 +81,17 @@ public class ChesterEntity extends TameableEntity
     super.tick();
 
     if (this.level.isClientSide) {
-      this.onServerUpdate();
+      this.handleClientTick();
     } else {
-      this.onClientUpdate();
+      this.handleServerTick();
     }
   }
 
-  private void onServerUpdate() {
+  private void handleClientTick() {}
+
+  private void handleServerTick() {
     this.checkEyeBone();
   }
-
-  private void onClientUpdate() {}
 
   private void checkEyeBone() {}
 
@@ -175,7 +177,9 @@ public class ChesterEntity extends TameableEntity
     return 0.5F;
   }
 
-  public void getInventory() {}
+  public ChesterInventory getInventory() {
+    return this.inventory;
+  }
 
   @Override
   public AnimationFactory getFactory() {
