@@ -52,7 +52,7 @@ public class EyeBoneItem extends ItemBlock {
             });
 
         EyeBoneItem.this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "close"),
-            (final ItemStack stack, final World world, final EntityLivingBase entity) -> {
+            (stack, world, entity) -> {
               return entity instanceof EntityPlayer && VirtualChesterSavedData
                   .getInstance(entity.world).getVirtualChester(entity.getUniqueID()).isDead() ? 1.0F
                       : 0.0F;

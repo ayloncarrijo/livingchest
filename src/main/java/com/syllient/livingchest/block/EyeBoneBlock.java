@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 
 public class EyeBoneBlock extends BlockHorizontal {
   private static final AxisAlignedBB AABB =
-      new AxisAlignedBB(0.345D, 0.0D, 0.345D, 0.655D, 0.8575D, 0.655D);
+      new AxisAlignedBB(0.3425D, 0.0D, 0.3425D, 0.6575D, 0.86D, 0.6575D);
 
   public EyeBoneBlock() {
     super(Material.WOOD);

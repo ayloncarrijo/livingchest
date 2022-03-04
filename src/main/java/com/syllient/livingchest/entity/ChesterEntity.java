@@ -4,6 +4,7 @@ import com.syllient.livingchest.GuiHandler;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.animation.entity.ChesterAnimation;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
+import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
 import com.syllient.livingchest.eventhandler.registry.BlockRegistry;
 import com.syllient.livingchest.eventhandler.registry.ItemRegistry;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
@@ -16,7 +17,6 @@ import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -50,7 +50,7 @@ public class ChesterEntity extends EntityTameable
     this.setSize(0.7F, 0.85F);
     this.addPotionEffect(
         new PotionEffect(MobEffects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
-    this.moveHelper = new MoveHelper(this);
+    this.moveHelper = new ChesterMoveHelper(this);
     this.ignoreFrustumCheck = true;
   }
 
@@ -72,7 +72,7 @@ public class ChesterEntity extends EntityTameable
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.370D);
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.37D);
   }
 
   @Override
@@ -118,18 +118,18 @@ public class ChesterEntity extends EntityTameable
   public void onUpdate() {
     super.onUpdate();
 
-    if (!this.world.isRemote) {
-      this.onServerUpdate();
+    if (this.world.isRemote) {
+      this.handleClientTick();
     } else {
-      this.onClientUpdate();
+      this.handleServerTick();
     }
   }
 
-  public void onServerUpdate() {
+  private void handleClientTick() {}
+
+  private void handleServerTick() {
     this.checkEyeBone();
   }
-
-  public void onClientUpdate() {}
 
   private void checkEyeBone() {
     if (this.eyeBone == null) {
@@ -159,13 +159,13 @@ public class ChesterEntity extends EntityTameable
   }
 
   @Override
-  public void onDeath(final DamageSource cause) {
+  public void onDeath(final DamageSource source) {
     if (!this.world.isRemote) {
       VirtualChesterSavedData.getInstance(this.world).onChesterDie(this);
       InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
     }
 
-    super.onDeath(cause);
+    super.onDeath(source);
   }
 
   @Override
@@ -226,12 +226,9 @@ public class ChesterEntity extends EntityTameable
   }
 
   @Override
-  protected SoundEvent getHurtSound(final DamageSource damageSourceIn) {
+  protected SoundEvent getHurtSound(final DamageSource source) {
     return SoundRegistry.Entity.Chester.HURT;
   }
-
-  @Override
-  public void playLivingSound() {}
 
   @Override
   protected void playStepSound(final BlockPos pos, final Block blockIn) {}
@@ -280,30 +277,5 @@ public class ChesterEntity extends EntityTameable
   class TagKey {
     public static final String INVENTORY = "Inventory";
     public static final String EYE_BONE = "EyeBone";
-  }
-
-  private static class MoveHelper extends EntityMoveHelper {
-    private final ChesterEntity chester;
-
-    public MoveHelper(final ChesterEntity chester) {
-      super(chester);
-      this.chester = chester;
-    }
-
-    @Override
-    public void onUpdateMoveHelper() {
-      if (this.chester.isMouthOpen()) {
-        this.chester.setMoveForward(0.0F);
-        return;
-      }
-
-      super.onUpdateMoveHelper();
-    }
-
-    @Override
-    protected float limitAngle(final float sourceAngle, final float targetAngle,
-        final float maximumChange) {
-      return super.limitAngle(sourceAngle, targetAngle, 30.0F);
-    }
   }
 }

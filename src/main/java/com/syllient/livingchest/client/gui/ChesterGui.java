@@ -13,14 +13,23 @@ public class ChesterGui extends GuiContainer {
   private static final ResourceLocation TEXTURE =
       new ResourceLocation(LivingChest.MOD_ID, "textures/gui/chester.png");
 
-  private final int invCols;
-  private final int invRows;
+  private final ChesterContainer container;
+  protected int titleLabelX;
+  protected int titleLabelY;
+  protected int inventoryLabelX;
+  protected int inventoryLabelY;
+  protected int textColor;
 
   public ChesterGui(final EntityPlayer player, final ChesterEntity chester) {
     super(new ChesterContainer(player, chester));
-    this.invCols = 9;
-    this.invRows = chester.getInventory().getSlots() / this.invCols;
-    this.ySize = 114 + this.invRows * 18;
+    this.container = (ChesterContainer) this.inventorySlots;
+    this.xSize = 176;
+    this.ySize = 114 + this.container.rows * 18;
+    this.titleLabelX = 8;
+    this.titleLabelY = 6;
+    this.inventoryLabelX = 8;
+    this.inventoryLabelY = this.ySize - 94;
+    this.textColor = 13876910;
   }
 
   @Override
@@ -35,15 +44,16 @@ public class ChesterGui extends GuiContainer {
       final int mouseY) {
     Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-    this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.invRows * 18 + 17);
-    this.drawTexturedModalRect(this.guiLeft, this.guiTop + this.invRows * 18 + 17, 0, 126,
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize,
+        this.container.rows * 18 + 17);
+    this.drawTexturedModalRect(this.guiLeft, this.guiTop + this.container.rows * 18 + 17, 0, 126,
         this.xSize, 96);
   }
 
   @Override
   protected void drawGuiContainerForegroundLayer(final int mouseX, final int mouseY) {
-    final int intColor = 13876910;
-    this.fontRenderer.drawString("Chester", 8, 6, intColor);
-    this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, intColor);
+    this.fontRenderer.drawString("Chester", this.titleLabelX, this.titleLabelY, this.textColor);
+    this.fontRenderer.drawString("Inventory", this.inventoryLabelX, this.inventoryLabelY,
+        this.textColor);
   }
 }

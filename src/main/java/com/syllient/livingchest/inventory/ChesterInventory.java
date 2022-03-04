@@ -13,7 +13,7 @@ public class ChesterInventory extends ItemStackHandler {
     this.chester = chester;
   }
 
-  public void onOpenInventory(final EntityPlayer player) {
+  public void handleInventoryOpening(final EntityPlayer player) {
     if (player.world.isRemote || player.isSpectator()) {
       return;
     }
@@ -23,7 +23,7 @@ public class ChesterInventory extends ItemStackHandler {
     }
   }
 
-  public void onCloseInventory(final EntityPlayer player) {
+  public void handleInventoryClosure(final EntityPlayer player) {
     if (player.world.isRemote || player.isSpectator()) {
       return;
     }
