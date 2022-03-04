@@ -1,22 +1,105 @@
 package com.syllient.livingchest.container;
 
+import java.util.stream.IntStream;
+import com.syllient.livingchest.entity.ChesterEntity;
+import com.syllient.livingchest.eventhandler.registry.ContainerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class ChesterContainer extends Container {
-  public ChesterContainer(final ContainerType<?> type, final int windowId) {
-    // super(ContainerRegistry.CHESTER, id);
-    super(type, windowId);
+  public final int invCols;
+  public final int invRows;
+  public final int offsetX;
+  public final int offsetY;
+  public final ChesterEntity chester;
+
+  public ChesterContainer(final int windowId, final PlayerInventory inventory,
+      final PacketBuffer extraData) {
+    this(windowId, inventory.player,
+        (ChesterEntity) inventory.player.level.getEntity(extraData.readInt()));
   }
 
-  // public ChesterContainer(final int windowId, final PlayerEntity player,
-  // final ChesterEntity chester) {
-  // super(ContainerRegistry.CHESTER, windowId);
-  // }
+  public ChesterContainer(final int windowId, final PlayerEntity player,
+      final ChesterEntity chester) {
+    super(ContainerRegistry.CHESTER, windowId);
+    this.invCols = 9;
+    this.invRows = chester.getInventory().getSlots() / this.invCols;
+    this.offsetX = 8;
+    this.offsetY = 18;
+    this.chester = chester;
+    this.chester.getInventory().handleInventoryOpening(player);
+
+    IntStream.range(0, this.invRows).forEach((row) -> {
+      IntStream.range(0, this.invCols).forEach((col) -> {
+        final int index = row * 9 + col;
+        final int posX = col * 18 + this.offsetX;
+        final int posY = row * 18 + this.offsetY;
+
+        this.addSlot(new SlotItemHandler(this.chester.getInventory(), index, posX, posY));
+      });
+    });
+
+    IntStream.range(0, 3).forEach((row) -> {
+      IntStream.range(0, 9).forEach((col) -> {
+        final int index = row * 9 + col + 9;
+        final int posX = col * 18 + this.offsetX;
+        final int posY = row * 18 + 103 + (this.invRows - 4) * 18;
+
+        this.addSlot(new Slot(player.inventory, index, posX, posY));
+      });
+    });
+
+    IntStream.range(0, 9).forEach((col) -> {
+      final int index = col;
+      final int posX = col * 18 + this.offsetX;
+      final int posY = 161 + (this.invRows - 4) * 18;
+
+      this.addSlot(new Slot(player.inventory, index, posX, posY));
+    });
+  }
 
   @Override
   public boolean stillValid(final PlayerEntity player) {
-    return false;
+    return this.chester.isAlive() && this.chester.closerThan(player, 8);
+  }
+
+  @Override
+  public void removed(final PlayerEntity player) {
+    super.removed(player);
+    this.chester.getInventory().handleInventoryClosure(player);
+  }
+
+  @Override
+  public ItemStack quickMoveStack(final PlayerEntity player, final int index) {
+    ItemStack itemStack = ItemStack.EMPTY;
+    final Slot invSlot = this.slots.get(index);
+
+    if (invSlot != null && invSlot.hasItem()) {
+      final ItemStack itemStackInSlot = invSlot.getItem();
+      itemStack = itemStackInSlot.copy();
+
+      if (index < this.chester.getInventory().getSlots()) {
+        if (!this.moveItemStackTo(itemStackInSlot, this.chester.getInventory().getSlots(),
+            this.slots.size(), true)) {
+          return ItemStack.EMPTY;
+        }
+      } else if (!this.moveItemStackTo(itemStackInSlot, 0, this.chester.getInventory().getSlots(),
+          false)) {
+        return ItemStack.EMPTY;
+      }
+
+      if (itemStackInSlot.isEmpty()) {
+        invSlot.set(ItemStack.EMPTY);
+      } else {
+        invSlot.setChanged();
+      }
+    }
+
+    return itemStack;
   }
 }

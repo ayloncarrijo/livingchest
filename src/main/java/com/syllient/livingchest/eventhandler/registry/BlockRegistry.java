@@ -21,5 +21,4 @@ public class BlockRegistry {
   private static Block createEntry(final String name, final Block block) {
     return block.setRegistryName(name);
   }
-
 }

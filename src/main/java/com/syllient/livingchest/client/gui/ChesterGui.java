@@ -7,14 +7,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
 public class ChesterGui extends ContainerScreen<ChesterContainer> {
-  public ChesterGui(final ChesterContainer container, final PlayerInventory player,
+  public ChesterGui(final ChesterContainer container, final PlayerInventory inventory,
       final ITextComponent textComponent) {
-    super(container, player, textComponent);
+    super(container, inventory, textComponent);
   }
 
   @Override
   protected void renderBg(final MatrixStack stack, final float partialTicks, final int mouseX,
-      final int mouseY) {
-
-  }
+      final int mouseY) {}
 }

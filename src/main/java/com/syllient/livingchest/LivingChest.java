@@ -1,10 +1,13 @@
 package com.syllient.livingchest;
 
+import com.syllient.livingchest.client.gui.ChesterGui;
 import com.syllient.livingchest.client.renderer.block.EyeBoneBlockRenderer;
 import com.syllient.livingchest.client.renderer.entity.ChesterRenderer;
+import com.syllient.livingchest.eventhandler.registry.ContainerRegistry;
 import com.syllient.livingchest.eventhandler.registry.EntityRegistry;
 import com.syllient.livingchest.eventhandler.registry.ItemRegistry;
 import com.syllient.livingchest.eventhandler.registry.TileRegistry;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.util.NativeUtil;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
@@ -44,6 +47,7 @@ public class LivingChest {
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CHESTER,
             ChesterRenderer::new);
         ClientRegistry.bindTileEntityRenderer(TileRegistry.EYE_BONE, EyeBoneBlockRenderer::new);
+        ScreenManager.register(ContainerRegistry.CHESTER, ChesterGui::new);
 
         event.enqueueWork(() -> {
           ItemModelsProperties.register(ItemRegistry.EYE_BONE, new ResourceLocation(MOD_ID, "idle"),
