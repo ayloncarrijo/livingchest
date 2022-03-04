@@ -19,6 +19,8 @@ public class ChesterMoveHelper extends MovementController {
     }
 
     super.tick();
+    this.chester.setYawRotations(this.chester.yRot);
+    this.chester.setIsMoving(this.chester.zza > 0.0F);
   }
 
   @Override

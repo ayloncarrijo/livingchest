@@ -42,6 +42,9 @@ public class ChesterEntity extends TameableEntity
     implements IAnimatable, IEntityAdditionalSpawnData, INamedContainerProvider {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> IS_MOVING =
+      EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
+
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private BlockPos eyeBone;
@@ -57,6 +60,7 @@ public class ChesterEntity extends TameableEntity
   protected void defineSynchedData() {
     super.defineSynchedData();
     this.entityData.define(IS_MOUTH_OPEN, false);
+    this.entityData.define(IS_MOVING, false);
   }
 
   @Override
@@ -126,6 +130,14 @@ public class ChesterEntity extends TameableEntity
     return ActionResultType.PASS;
   }
 
+  public boolean isMoving() {
+    return this.entityData.get(IS_MOVING);
+  }
+
+  public void setIsMoving(final boolean value) {
+    this.entityData.set(IS_MOVING, value);
+  }
+
   public boolean isMouthOpen() {
     return this.entityData.get(IS_MOUTH_OPEN);
   }
@@ -180,13 +192,13 @@ public class ChesterEntity extends TameableEntity
     return null;
   }
 
-  public void setYawRotation(final float yaw) {
+  public void setYawRotations(final float yaw) {
     this.yRot = yaw;
     this.yHeadRot = yaw;
     this.yBodyRot = yaw;
   }
 
-  public void setPrevYawRotation(final float yaw) {
+  public void setPrevYawRotations(final float yaw) {
     this.yRotO = yaw;
     this.yHeadRotO = yaw;
     this.yBodyRotO = yaw;
