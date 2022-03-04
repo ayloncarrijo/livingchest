@@ -41,6 +41,9 @@ public class ChesterEntity extends EntityTameable
     implements IAnimatable, IEntityAdditionalSpawnData {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
+  private static final DataParameter<Boolean> IS_MOVING =
+      EntityDataManager.createKey(ChesterEntity.class, DataSerializers.BOOLEAN);
+
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private BlockPos eyeBone;
@@ -58,6 +61,7 @@ public class ChesterEntity extends EntityTameable
   protected void entityInit() {
     super.entityInit();
     this.dataManager.register(IS_MOUTH_OPEN, false);
+    this.dataManager.register(IS_MOVING, false);
   }
 
   @Override
@@ -110,8 +114,8 @@ public class ChesterEntity extends EntityTameable
 
   @Override
   public void readSpawnData(final ByteBuf buffer) {
-    this.setYawRotation(buffer.readFloat());
-    this.setPrevYawRotation(this.rotationYaw);
+    this.setYawRotations(buffer.readFloat());
+    this.setPrevYawRotations(this.rotationYaw);
   }
 
   @Override
@@ -191,6 +195,14 @@ public class ChesterEntity extends EntityTameable
     return false;
   }
 
+  public boolean isMoving() {
+    return this.dataManager.get(IS_MOVING);
+  }
+
+  public void setIsMoving(final boolean value) {
+    this.dataManager.set(IS_MOVING, value);
+  }
+
   public boolean isMouthOpen() {
     return this.dataManager.get(IS_MOUTH_OPEN);
   }
@@ -238,13 +250,13 @@ public class ChesterEntity extends EntityTameable
     return null;
   }
 
-  public void setYawRotation(final float yaw) {
+  public void setYawRotations(final float yaw) {
     this.rotationYaw = yaw;
     this.rotationYawHead = yaw;
     this.renderYawOffset = yaw;
   }
 
-  public void setPrevYawRotation(final float yaw) {
+  public void setPrevYawRotations(final float yaw) {
     this.prevRotationYaw = yaw;
     this.prevRotationYawHead = yaw;
     this.prevRenderYawOffset = yaw;

@@ -42,24 +42,24 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   public ChesterAnimation(final ChesterEntity chester) {
     super(chester);
     this.idleController =
-        new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::idlePredicate);
+        new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::handleIdleAnimation);
     this.jumpController =
-        new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::jumpPredicate);
+        new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::handleJumpAnimation);
     this.openController =
-        new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::openPredicate);
+        new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::handleOpenAnimation);
   }
 
   @Override
   public void registerControllers(final AnimationData data) {
-    this.idleController.registerSoundListener(this::soundListener);
-    this.jumpController.registerSoundListener(this::soundListener);
-    this.openController.registerSoundListener(this::soundListener);
+    this.idleController.registerSoundListener(this::handleSoundKeyframe);
+    this.jumpController.registerSoundListener(this::handleSoundKeyframe);
+    this.openController.registerSoundListener(this::handleSoundKeyframe);
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
     data.addAnimationController(this.openController);
   }
 
-  private void onTick() {
+  private void handleAnimationTick() {
     final boolean isIdling = this.jumpController.isAnimationStopped();
 
     if (isIdling) {
@@ -75,8 +75,8 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     this.wasMouthOpen = this.animatable.isMouthOpen();
   }
 
-  private PlayState idlePredicate(final AnimationEvent<? extends IAnimatable> event) {
-    this.onTick();
+  private PlayState handleIdleAnimation(final AnimationEvent<? extends IAnimatable> event) {
+    this.handleAnimationTick();
 
     if (this.ticksIdling < 5) {
       return PlayState.STOP;
@@ -88,7 +88,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private PlayState jumpPredicate(final AnimationEvent<? extends IAnimatable> event) {
+  private PlayState handleJumpAnimation(final AnimationEvent<? extends IAnimatable> event) {
     if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
       this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.JUMP));
 
@@ -97,7 +97,8 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
 
     final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
-    if (event.isMoving() && this.animatable.onGround && this.openController.isAnimationStopped()) {
+    if (this.animatable.isMoving() && this.animatable.onGround
+        && this.openController.isAnimationStopped()) {
       if (!isJumping) {
         this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_JUMP));
       }
@@ -114,7 +115,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private PlayState openPredicate(final AnimationEvent<? extends IAnimatable> event) {
+  private PlayState handleOpenAnimation(final AnimationEvent<? extends IAnimatable> event) {
     if (this.ticksIdling < 5) {
       return PlayState.STOP;
     }
@@ -135,7 +136,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private void soundListener(final SoundKeyframeEvent<? extends IAnimatable> event) {
+  private void handleSoundKeyframe(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
       case "idle": {
         this.idleSoundTimes += 1;
@@ -162,8 +163,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
-    Minecraft.getMinecraft().world.playSound(
-        new BlockPos(this.animatable.posX, this.animatable.posY, this.animatable.posZ), sound,
+    Minecraft.getMinecraft().world.playSound(new BlockPos(this.animatable), sound,
         SoundCategory.NEUTRAL, volume, pitch, false);
   }
 }

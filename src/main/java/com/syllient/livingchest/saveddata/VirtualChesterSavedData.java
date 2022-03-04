@@ -106,8 +106,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
-    chesterEntity.setYawRotation(player.rotationYaw - 180.0F);
-    chesterEntity.setPrevYawRotation(chesterEntity.rotationYaw);
+    chesterEntity.setYawRotations(player.rotationYaw - 180.0F);
+    chesterEntity.setPrevYawRotations(chesterEntity.rotationYaw);
 
     if (virtualChester.getInventory() != null) {
       chesterEntity.getInventory().deserializeNBT(virtualChester.getInventory());

@@ -19,6 +19,8 @@ public class ChesterMoveHelper extends EntityMoveHelper {
     }
 
     super.onUpdateMoveHelper();
+    this.chester.setYawRotations(this.chester.rotationYaw);
+    this.chester.setIsMoving(this.chester.moveForward > 0.0F);
   }
 
   @Override
