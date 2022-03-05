@@ -159,7 +159,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
         }, Boolean::logicalOr);
 
     if (wasResurrected) {
-      this.handleChesterResurrection();
+      PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
     }
   }
 
@@ -217,10 +217,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
-  }
-
-  public void handleChesterResurrection() {
-    PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
   @Override
