@@ -144,7 +144,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
-  private void reduceDeadTime() {
+  private void reduceAllDeadTimes() {
     final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
         (wasResurrectedIn, virtualChester) -> {
           if (virtualChester.getDeadTime() > 0) {
@@ -167,7 +167,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     this.ticks++;
 
     if (this.ticks % TICKS_REDUCE_DEAD_TIME_STEP == 0) {
-      this.reduceDeadTime();
+      this.reduceAllDeadTimes();
     }
   }
 
@@ -191,6 +191,14 @@ public class VirtualChesterSavedData extends WorldSavedData {
         TextFormatting.GREEN + "A new Eye Bone position has been set for your Chester."));
   }
 
+  public void handleChesterSave(final ChesterEntity chester) {
+    if (chester.getOwnerId() == null) {
+      return;
+    }
+
+    this.getVirtualChester(chester.getOwnerId()).setPosition(chester);
+  }
+
   public void handleChesterDeath(final ChesterEntity chester) {
     if (chester.getOwnerId() == null) {
       return;
@@ -209,14 +217,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
-  }
-
-  public void handleChesterAutoSave(final ChesterEntity chester) {
-    if (chester.getOwnerId() == null) {
-      return;
-    }
-
-    this.getVirtualChester(chester.getOwnerId()).setPosition(chester);
   }
 
   public void handleChesterResurrection() {
