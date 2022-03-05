@@ -144,7 +144,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
-  private void reduceAllDeadTimes() {
+  private void reduceDeadTimeFromAll() {
     final boolean wasResurrected = this.virtualChesterFromPlayerId.values().stream().reduce(false,
         (wasResurrectedIn, virtualChester) -> {
           if (virtualChester.getDeadTime() > 0) {
@@ -167,7 +167,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     this.ticks++;
 
     if (this.ticks % TICKS_REDUCE_DEAD_TIME_STEP == 0) {
-      this.reduceAllDeadTimes();
+      this.reduceDeadTimeFromAll();
     }
   }
 
