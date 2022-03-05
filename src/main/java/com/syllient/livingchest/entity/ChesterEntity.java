@@ -81,7 +81,7 @@ public class ChesterEntity extends EntityTameable
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
-    VirtualChesterSavedData.getInstance(this.world).handleChesterSave(this);
+    VirtualChesterSavedData.getServerInstance(this.world).handleChesterSave(this);
 
     if (this.inventory != null) {
       tagCompoundIn.setTag(TagKey.INVENTORY, this.inventory.serializeNBT());
@@ -146,7 +146,7 @@ public class ChesterEntity extends EntityTameable
                 .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
 
         if (shouldDespawn) {
-          VirtualChesterSavedData.getInstance(this.world).despawnChester(this.getOwnerId(),
+          VirtualChesterSavedData.getServerInstance(this.world).despawnChester(this.getOwnerId(),
               this.world);
         }
       }
@@ -165,7 +165,7 @@ public class ChesterEntity extends EntityTameable
   @Override
   public void onDeath(final DamageSource source) {
     if (!this.world.isRemote) {
-      VirtualChesterSavedData.getInstance(this.world).handleChesterDeath(this);
+      VirtualChesterSavedData.getServerInstance(this.world).handleChesterDeath(this);
       InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
     }
 
@@ -175,7 +175,7 @@ public class ChesterEntity extends EntityTameable
   @Override
   public void setDead() {
     if (!this.world.isRemote) {
-      VirtualChesterSavedData.getInstance(this.world).handleChesterRemoval(this);
+      VirtualChesterSavedData.getServerInstance(this.world).handleChesterRemoval(this);
     }
 
     super.setDead();

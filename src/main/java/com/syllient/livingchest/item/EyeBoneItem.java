@@ -54,7 +54,8 @@ public class EyeBoneItem extends ItemBlock {
         EyeBoneItem.this.addPropertyOverride(new ResourceLocation(LivingChest.MOD_ID, "close"),
             (stack, world, entity) -> {
               return entity instanceof EntityPlayer && VirtualChesterSavedData
-                  .getInstance(entity.world).getVirtualChester(entity.getUniqueID()).isDead() ? 1.0F
+                  .getServerInstance(entity.world).getVirtualChester(entity.getUniqueID()).isDead()
+                      ? 1.0F
                       : 0.0F;
             });
       }
@@ -66,7 +67,7 @@ public class EyeBoneItem extends ItemBlock {
       final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
-      VirtualChesterSavedData.getInstance(world).toggleChester(player, world, pos);
+      VirtualChesterSavedData.getServerInstance(world).toggleChester(player, world, pos);
       return EnumActionResult.SUCCESS;
     }
 

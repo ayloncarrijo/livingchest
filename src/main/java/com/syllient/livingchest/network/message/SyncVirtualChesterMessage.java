@@ -23,7 +23,7 @@ public class SyncVirtualChesterMessage implements IMessage {
   public void toBytes(final ByteBuf buf) {
     final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
     ByteBufUtils.writeTag(buf,
-        VirtualChesterSavedData.getInstance(world).writeToNBT(new NBTTagCompound()));
+        VirtualChesterSavedData.getServerInstance(world).writeToNBT(new NBTTagCompound()));
   }
 
   @Override
@@ -38,7 +38,7 @@ public class SyncVirtualChesterMessage implements IMessage {
         @Override
         public void run() {
           Minecraft.getMinecraft().addScheduledTask(() -> {
-            VirtualChesterSavedData.getInstance(Minecraft.getMinecraft().world)
+            VirtualChesterSavedData.getServerInstance(Minecraft.getMinecraft().world)
                 .readFromNBT(message.tagCompound);
           });
         }

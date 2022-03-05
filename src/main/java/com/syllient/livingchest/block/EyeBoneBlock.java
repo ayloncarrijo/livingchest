@@ -37,8 +37,8 @@ public class EyeBoneBlock extends BlockHorizontal {
 
     if (tileEntity instanceof EyeBoneTile && placer instanceof EntityPlayer) {
       if (!worldIn.isRemote) {
-        VirtualChesterSavedData.getInstance(worldIn).handleEyeBonePlacement((EntityPlayer) placer,
-            pos);
+        VirtualChesterSavedData.getServerInstance(worldIn)
+            .handleEyeBonePlacement((EntityPlayer) placer, pos);
       }
 
       ((EyeBoneTile) tileEntity).setOwnerId(placer.getUniqueID());

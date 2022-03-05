@@ -32,7 +32,7 @@ public class EventHandler {
   public static void onServerTick(final TickEvent.ServerTickEvent event) {
     if (event.phase == TickEvent.Phase.END) {
       VirtualChesterSavedData
-          .getInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId()))
+          .getServerInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId()))
           .handleServerTick();
     }
   }
