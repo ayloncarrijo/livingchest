@@ -1,16 +1,15 @@
 package com.syllient.livingchest.util;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class Position implements INBTSerializable<NBTTagCompound> {
   private double posX;
   private double posY;
   private double posZ;
-  private int dim;
+  private String dim;
 
-  public Position(final double posX, final double posY, final double posZ, final int dim) {
+  public Position(final double posX, final double posY, final double posZ, final String dim) {
     this.setPosition(posX, posY, posZ, dim);
   }
 
@@ -30,11 +29,12 @@ public class Position implements INBTSerializable<NBTTagCompound> {
     return this.posZ;
   }
 
-  public int getDim() {
+  public String getDim() {
     return this.dim;
   }
 
-  public void setPosition(final double posX, final double posY, final double posZ, final int dim) {
+  public void setPosition(final double posX, final double posY, final double posZ,
+      final String dim) {
     this.posX = posX;
     this.posY = posY;
     this.posZ = posZ;
@@ -48,7 +48,7 @@ public class Position implements INBTSerializable<NBTTagCompound> {
     tagCompound.setDouble(TagKey.POS_X, this.posX);
     tagCompound.setDouble(TagKey.POS_Y, this.posY);
     tagCompound.setDouble(TagKey.POS_Z, this.posZ);
-    tagCompound.setInteger(TagKey.DIM, this.dim);
+    tagCompound.setString(TagKey.DIM, this.dim);
 
     return tagCompound;
   }
@@ -58,15 +58,14 @@ public class Position implements INBTSerializable<NBTTagCompound> {
     this.posX = tagCompoundIn.getDouble(TagKey.POS_X);
     this.posY = tagCompoundIn.getDouble(TagKey.POS_Y);
     this.posZ = tagCompoundIn.getDouble(TagKey.POS_Z);
-    this.dim = tagCompoundIn.getInteger(TagKey.DIM);
+    this.dim = tagCompoundIn.getString(TagKey.DIM);
   }
 
   @Override
   public String toString() {
     return new StringBuilder().append("X: ").append((int) this.posX).append(" / ").append("Y: ")
         .append((int) this.posY).append(" / ").append("Z: ").append((int) this.posZ).append(" / ")
-        .append("Dimension: ")
-        .append(DimensionManager.getProviderType(this.dim).getName().toUpperCase()).toString();
+        .append("Dimension: ").append(this.dim.toUpperCase()).toString();
   }
 
   class TagKey {

@@ -19,13 +19,14 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class VirtualChesterSavedData extends WorldSavedData {
-  private static final int TICKS_DECREASE_DEAD_TIME_STEP = 600;
   private static final String ID = LivingChest.MOD_ID + "_" + "virtualchester";
   private static final VirtualChesterSavedData INSTANCE = new VirtualChesterSavedData();
+  private static final int TICKS_DECREASE_DEAD_TIME_STEP = 600;
 
   private final Map<UUID, VirtualChester> virtualChesterByPlayerId = new HashMap<>();
   private int tickCount = 0;
@@ -323,11 +324,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     private void setPosition(final ChesterEntity chester) {
-      this.setPosition(chester.posX, chester.posY, chester.posZ, chester.dimension);
+      this.setPosition(chester.posX, chester.posY, chester.posZ,
+          DimensionManager.getProviderType(chester.dimension).getName());
     }
 
     private void setPosition(final double posX, final double posY, final double posZ,
-        final int dim) {
+        final String dim) {
       if (this.position == null) {
         this.position = new Position(posX, posY, posZ, dim);
       } else {
