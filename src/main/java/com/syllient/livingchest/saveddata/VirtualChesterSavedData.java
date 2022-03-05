@@ -23,9 +23,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class VirtualChesterSavedData extends WorldSavedData {
+  private static final int TICKS_DECREASE_DEAD_TIME_STEP = 600;
   private static final String ID = LivingChest.MOD_ID + "_" + "virtualchester";
   private static final VirtualChesterSavedData INSTANCE = new VirtualChesterSavedData();
-  private static final int TICKS_DECREASE_DEAD_TIME_STEP = 600;
+
   private final Map<UUID, VirtualChester> virtualChesterByPlayerId = new HashMap<>();
   private int tickCount = 0;
 
@@ -38,6 +39,10 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public static VirtualChesterSavedData getServerInstance(final World world) {
+    if (world.isRemote) {
+      throw new IllegalArgumentException("The world must be an instance of ServerWorld.");
+    }
+
     final MapStorage worldStorage = world.getMapStorage();
 
     return (VirtualChesterSavedData) Optional
@@ -48,7 +53,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
         });
   }
 
-  public static VirtualChesterSavedData getClientInstance() {
+  public static VirtualChesterSavedData getClientInstance(final World world) {
+    if (!world.isRemote) {
+      throw new IllegalArgumentException("The world must be an instance of ClientWorld.");
+    }
+
     return INSTANCE;
   }
 
@@ -57,10 +66,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void toggleChester(final EntityPlayer player, final World world, final BlockPos pos) {
-    if (world.isRemote) {
-      return;
-    }
-
     if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
       this.despawnChester(player.getUniqueID(), world);
     } else {
@@ -69,10 +74,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void spawnChester(final EntityPlayer player, final World world, final BlockPos pos) {
-    if (world.isRemote) {
-      return;
-    }
-
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
 
     if (virtualChester.isSpawned()) {
@@ -117,10 +118,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void despawnChester(final UUID playerId, final World world) {
-    if (world.isRemote) {
-      return;
-    }
-
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
 
     if (!virtualChester.isSpawned()) {

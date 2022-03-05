@@ -75,13 +75,15 @@ public class ChesterEntity extends EntityTameable
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // TODO
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.37D);
   }
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
-    VirtualChesterSavedData.getServerInstance(this.world).handleChesterSave(this);
+    if (!this.world.isRemote) {
+      VirtualChesterSavedData.getServerInstance(this.world).handleChesterSave(this);
+    }
 
     if (this.inventory != null) {
       tagCompoundIn.setTag(TagKey.INVENTORY, this.inventory.serializeNBT());
@@ -263,8 +265,10 @@ public class ChesterEntity extends EntityTameable
   }
 
   public int getDeathCooldown() {
-    final int minutes = 10;
-    return minutes * 20 * 60;
+    // TODO
+    // final int minutes = 10;
+    // return minutes * 20 * 60;
+    return 10;
   }
 
   @Override

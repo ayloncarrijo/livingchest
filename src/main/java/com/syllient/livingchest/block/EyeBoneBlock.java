@@ -31,13 +31,13 @@ public class EyeBoneBlock extends BlockHorizontal {
   }
 
   @Override
-  public void onBlockPlacedBy(final World worldIn, final BlockPos pos, final IBlockState state,
+  public void onBlockPlacedBy(final World world, final BlockPos pos, final IBlockState state,
       final EntityLivingBase placer, final ItemStack stack) {
-    final TileEntity tileEntity = worldIn.getTileEntity(pos);
+    final TileEntity tileEntity = world.getTileEntity(pos);
 
     if (tileEntity instanceof EyeBoneTile && placer instanceof EntityPlayer) {
-      if (!worldIn.isRemote) {
-        VirtualChesterSavedData.getServerInstance(worldIn)
+      if (!world.isRemote) {
+        VirtualChesterSavedData.getServerInstance(world)
             .handleEyeBonePlacement((EntityPlayer) placer, pos);
       }
 

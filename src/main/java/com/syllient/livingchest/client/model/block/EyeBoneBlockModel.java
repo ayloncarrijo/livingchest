@@ -39,7 +39,7 @@ public class EyeBoneBlockModel extends AnimatedGeoModel<EyeBoneTile> {
     }
 
     final boolean isChesterDead =
-        VirtualChesterSavedData.getServerInstance(Minecraft.getMinecraft().world)
+        VirtualChesterSavedData.getClientInstance(Minecraft.getMinecraft().world)
             .getVirtualChester(eyeBone.getOwnerId()).isDead();
 
     return isChesterDead ? TEXTURE_CLOSED : variantTexture;

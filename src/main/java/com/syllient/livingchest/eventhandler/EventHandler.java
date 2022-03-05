@@ -15,21 +15,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID)
 public class EventHandler {
   @SubscribeEvent
-  public static void onPlayerChangeDimension(final PlayerEvent.PlayerChangedDimensionEvent event) {
+  public static void handlePlayerLogIn(final PlayerEvent.PlayerLoggedInEvent event) {
     if (!event.player.world.isRemote) {
       PacketHandler.INSTANCE.sendTo(new SyncVirtualChesterMessage(), (EntityPlayerMP) event.player);
     }
   }
 
   @SubscribeEvent
-  public static void onPlayerLogIn(final PlayerEvent.PlayerLoggedInEvent event) {
-    if (!event.player.world.isRemote) {
-      PacketHandler.INSTANCE.sendTo(new SyncVirtualChesterMessage(), (EntityPlayerMP) event.player);
-    }
-  }
-
-  @SubscribeEvent
-  public static void onServerTick(final TickEvent.ServerTickEvent event) {
+  public static void handleServerTick(final TickEvent.ServerTickEvent event) {
     if (event.phase == TickEvent.Phase.END) {
       VirtualChesterSavedData
           .getServerInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId()))

@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -21,9 +20,10 @@ public class SyncVirtualChesterMessage implements IMessage {
 
   @Override
   public void toBytes(final ByteBuf buf) {
-    final World world = DimensionManager.getWorld(DimensionType.OVERWORLD.getId());
     ByteBufUtils.writeTag(buf,
-        VirtualChesterSavedData.getServerInstance(world).writeToNBT(new NBTTagCompound()));
+        VirtualChesterSavedData
+            .getServerInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId()))
+            .writeToNBT(new NBTTagCompound()));
   }
 
   @Override
@@ -38,7 +38,7 @@ public class SyncVirtualChesterMessage implements IMessage {
         @Override
         public void run() {
           Minecraft.getMinecraft().addScheduledTask(() -> {
-            VirtualChesterSavedData.getServerInstance(Minecraft.getMinecraft().world)
+            VirtualChesterSavedData.getClientInstance(Minecraft.getMinecraft().world)
                 .readFromNBT(message.tagCompound);
           });
         }
