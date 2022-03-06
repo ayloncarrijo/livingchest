@@ -81,33 +81,33 @@ public class ChesterEntity extends EntityTameable
   }
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
+  public NBTTagCompound writeToNBT(final NBTTagCompound compoundIn) {
     if (!this.world.isRemote) {
       VirtualChesterSavedData.getServerInstance(this.world).handleChesterSave(this);
     }
 
     if (this.inventory != null) {
-      tagCompoundIn.setTag(TagKey.INVENTORY, this.inventory.serializeNBT());
+      compoundIn.setTag(NbtKey.INVENTORY, this.inventory.serializeNBT());
     }
 
     if (this.eyeBone != null) {
-      tagCompoundIn.setTag(TagKey.EYE_BONE, NBTUtil.createPosTag(this.eyeBone));
+      compoundIn.setTag(NbtKey.EYE_BONE, NBTUtil.createPosTag(this.eyeBone));
     }
 
-    return super.writeToNBT(tagCompoundIn);
+    return super.writeToNBT(compoundIn);
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound tagCompoundIn) {
-    if (tagCompoundIn.hasKey(TagKey.INVENTORY)) {
-      this.inventory.deserializeNBT(tagCompoundIn.getCompoundTag(TagKey.INVENTORY));
+  public void readFromNBT(final NBTTagCompound compoundIn) {
+    if (compoundIn.hasKey(NbtKey.INVENTORY)) {
+      this.inventory.deserializeNBT(compoundIn.getCompoundTag(NbtKey.INVENTORY));
     }
 
-    if (tagCompoundIn.hasKey(TagKey.EYE_BONE)) {
-      this.eyeBone = NBTUtil.getPosFromTag(tagCompoundIn.getCompoundTag(TagKey.EYE_BONE));
+    if (compoundIn.hasKey(NbtKey.EYE_BONE)) {
+      this.eyeBone = NBTUtil.getPosFromTag(compoundIn.getCompoundTag(NbtKey.EYE_BONE));
     }
 
-    super.readFromNBT(tagCompoundIn);
+    super.readFromNBT(compoundIn);
   }
 
   @Override
@@ -291,7 +291,7 @@ public class ChesterEntity extends EntityTameable
     this.animation.registerControllers(data);
   }
 
-  class TagKey {
+  class NbtKey {
     public static final String INVENTORY = "Inventory";
     public static final String EYE_BONE = "EyeBone";
   }

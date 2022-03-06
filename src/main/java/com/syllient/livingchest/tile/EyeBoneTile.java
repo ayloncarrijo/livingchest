@@ -18,21 +18,21 @@ public class EyeBoneTile extends TileEntity implements IAnimatable {
   public EyeBoneTile() {}
 
   @Override
-  public NBTTagCompound writeToNBT(final NBTTagCompound tagCompoundIn) {
+  public NBTTagCompound writeToNBT(final NBTTagCompound compoundIn) {
     if (this.ownerId != null) {
-      tagCompoundIn.setUniqueId(TagKey.OWNER_ID, this.ownerId);
+      compoundIn.setUniqueId(NbtKey.OWNER_ID, this.ownerId);
     }
 
-    return super.writeToNBT(tagCompoundIn);
+    return super.writeToNBT(compoundIn);
   }
 
   @Override
-  public void readFromNBT(final NBTTagCompound tagCompoundIn) {
-    if (tagCompoundIn.hasUniqueId(TagKey.OWNER_ID)) {
-      this.ownerId = tagCompoundIn.getUniqueId(TagKey.OWNER_ID);
+  public void readFromNBT(final NBTTagCompound compoundIn) {
+    if (compoundIn.hasUniqueId(NbtKey.OWNER_ID)) {
+      this.ownerId = compoundIn.getUniqueId(NbtKey.OWNER_ID);
     }
 
-    super.readFromNBT(tagCompoundIn);
+    super.readFromNBT(compoundIn);
   }
 
   @Override
@@ -74,7 +74,7 @@ public class EyeBoneTile extends TileEntity implements IAnimatable {
     return this.animation.getFactory();
   }
 
-  class TagKey {
+  class NbtKey {
     public static final String OWNER_ID = "OwnerId";
   }
 }

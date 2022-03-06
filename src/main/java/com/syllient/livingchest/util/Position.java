@@ -43,22 +43,22 @@ public class Position implements INBTSerializable<NBTTagCompound> {
 
   @Override
   public NBTTagCompound serializeNBT() {
-    final NBTTagCompound tagCompound = new NBTTagCompound();
+    final NBTTagCompound compound = new NBTTagCompound();
 
-    tagCompound.setDouble(TagKey.POS_X, this.posX);
-    tagCompound.setDouble(TagKey.POS_Y, this.posY);
-    tagCompound.setDouble(TagKey.POS_Z, this.posZ);
-    tagCompound.setString(TagKey.DIM, this.dim);
+    compound.setDouble(NbtKey.POS_X, this.posX);
+    compound.setDouble(NbtKey.POS_Y, this.posY);
+    compound.setDouble(NbtKey.POS_Z, this.posZ);
+    compound.setString(NbtKey.DIM, this.dim);
 
-    return tagCompound;
+    return compound;
   }
 
   @Override
-  public void deserializeNBT(final NBTTagCompound tagCompoundIn) {
-    this.posX = tagCompoundIn.getDouble(TagKey.POS_X);
-    this.posY = tagCompoundIn.getDouble(TagKey.POS_Y);
-    this.posZ = tagCompoundIn.getDouble(TagKey.POS_Z);
-    this.dim = tagCompoundIn.getString(TagKey.DIM);
+  public void deserializeNBT(final NBTTagCompound compoundIn) {
+    this.posX = compoundIn.getDouble(NbtKey.POS_X);
+    this.posY = compoundIn.getDouble(NbtKey.POS_Y);
+    this.posZ = compoundIn.getDouble(NbtKey.POS_Z);
+    this.dim = compoundIn.getString(NbtKey.DIM);
   }
 
   @Override
@@ -68,7 +68,7 @@ public class Position implements INBTSerializable<NBTTagCompound> {
         .append("Dimension: ").append(this.dim.toUpperCase()).toString();
   }
 
-  class TagKey {
+  class NbtKey {
     public static final String POS_X = "PosX";
     public static final String POS_Y = "PosY";
     public static final String POS_Z = "PosZ";
