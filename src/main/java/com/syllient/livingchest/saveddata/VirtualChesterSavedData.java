@@ -9,7 +9,6 @@ import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
 import com.syllient.livingchest.util.Position;
-import com.syllient.livingchest.util.WorldUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
@@ -66,16 +66,27 @@ public class VirtualChesterSavedData extends WorldSavedData {
     return this.virtualChesterByPlayerId.computeIfAbsent(playerId, (key) -> new VirtualChester());
   }
 
-  public void toggleChester(final EntityPlayer player, final World world, final BlockPos pos) {
+  public void toggleChester(final EntityPlayer player, final BlockPos pos) {
+    if (player.world.isRemote) {
+      return;
+    }
+
+    final WorldServer world = (WorldServer) player.world;
+
     if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
-      this.despawnChester(player.getUniqueID(), world);
+      this.despawnChester(world, player.getUniqueID());
     } else {
-      this.spawnChester(player, world, pos);
+      this.spawnChester(player, pos);
     }
   }
 
-  public void spawnChester(final EntityPlayer player, final World world, final BlockPos pos) {
+  public void spawnChester(final EntityPlayer player, final BlockPos pos) {
+    if (player.world.isRemote) {
+      return;
+    }
+
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
+    final WorldServer world = (WorldServer) player.world;
 
     if (virtualChester.isSpawned()) {
       return;
@@ -118,7 +129,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     world.spawnEntity(chesterEntity);
   }
 
-  public void despawnChester(final UUID playerId, final World world) {
+  public void despawnChester(final WorldServer world, final UUID playerId) {
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
 
     if (!virtualChester.isSpawned()) {
@@ -126,7 +137,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(world, virtualChester.getUniqueId());
+        (ChesterEntity) world.getEntityFromUuid(virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
       virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
@@ -155,14 +166,19 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public void handleEyeBonePlacement(final EntityPlayer player, final BlockPos pos) {
+    if (player.world.isRemote) {
+      return;
+    }
+
     final VirtualChester virtualChester = this.getVirtualChester(player.getUniqueID());
+    final WorldServer world = (WorldServer) player.world;
 
     if (!virtualChester.isSpawned()) {
       return;
     }
 
     final ChesterEntity chesterEntity =
-        (ChesterEntity) WorldUtil.getEntityByUuid(player.world, virtualChester.getUniqueId());
+        (ChesterEntity) world.getEntityFromUuid(virtualChester.getUniqueId());
 
     if (chesterEntity == null) {
       return;

@@ -67,7 +67,7 @@ public class EyeBoneItem extends ItemBlock {
       final float hitY, final float hitZ) {
     if (player.isSneaking()) {
       if (!world.isRemote) {
-        VirtualChesterSavedData.getServerInstance(world).toggleChester(player, world, pos);
+        VirtualChesterSavedData.getServerInstance(world).toggleChester(player, pos);
       }
 
       return EnumActionResult.SUCCESS;
