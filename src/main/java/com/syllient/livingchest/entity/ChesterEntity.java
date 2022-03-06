@@ -71,20 +71,20 @@ public class ChesterEntity extends TameableEntity
   }
 
   @Override
-  public void addAdditionalSaveData(final CompoundNBT compoundNbt) {
-    super.addAdditionalSaveData(compoundNbt);
+  public void addAdditionalSaveData(final CompoundNBT compoundIn) {
+    super.addAdditionalSaveData(compoundIn);
   }
 
   @Override
-  public void readAdditionalSaveData(final CompoundNBT compoundNbt) {
-    super.readAdditionalSaveData(compoundNbt);
+  public void readAdditionalSaveData(final CompoundNBT compoundIn) {
+    super.readAdditionalSaveData(compoundIn);
   }
 
   @Override
   public void writeSpawnData(final PacketBuffer buffer) {}
 
   @Override
-  public void readSpawnData(final PacketBuffer additionalData) {}
+  public void readSpawnData(final PacketBuffer buffer) {}
 
   @Override
   public void tick() {
