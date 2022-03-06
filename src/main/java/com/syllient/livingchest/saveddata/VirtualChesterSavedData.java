@@ -253,7 +253,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
     compoundIn.getList(NbtKey.VIRTUAL_CHESTER_TAG_LIST, Constants.NBT.TAG_COMPOUND)
         .forEach((nbt) -> {
           final CompoundNBT compound = (CompoundNBT) nbt;
-
           this.virtualChesterByPlayerId.put(compound.getUUID(NbtKey.PLAYER_ID),
               new VirtualChester(compound.getCompound(NbtKey.VIRTUAL_CHESTER)));
         });
@@ -352,51 +351,51 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     @Override
     public CompoundNBT serializeNBT() {
-      final CompoundNBT nbt = new CompoundNBT();
+      final CompoundNBT compound = new CompoundNBT();
 
       if (this.inventory != null) {
-        nbt.put(NbtKey.INVENTORY, this.inventory);
+        compound.put(NbtKey.INVENTORY, this.inventory);
       }
 
       if (this.deadTime > 0) {
-        nbt.putInt(NbtKey.DEAD_TIME, this.deadTime);
+        compound.putInt(NbtKey.DEAD_TIME, this.deadTime);
       }
 
       if (this.health > 0.0F) {
-        nbt.putFloat(NbtKey.HEALTH, this.health);
+        compound.putFloat(NbtKey.HEALTH, this.health);
       }
 
       if (this.uniqueId != null) {
-        nbt.putUUID(NbtKey.UNIQUE_ID, this.uniqueId);
+        compound.putUUID(NbtKey.UNIQUE_ID, this.uniqueId);
       }
 
       if (this.position != null) {
-        nbt.put(NbtKey.POSITION, this.position.serializeNBT());
+        compound.put(NbtKey.POSITION, this.position.serializeNBT());
       }
 
-      return nbt;
+      return compound;
     }
 
     @Override
-    public void deserializeNBT(final CompoundNBT nbt) {
-      if (nbt.contains(NbtKey.INVENTORY)) {
-        this.inventory = nbt.getCompound(NbtKey.INVENTORY);
+    public void deserializeNBT(final CompoundNBT compoundIn) {
+      if (compoundIn.contains(NbtKey.INVENTORY)) {
+        this.inventory = compoundIn.getCompound(NbtKey.INVENTORY);
       }
 
-      if (nbt.contains(NbtKey.DEAD_TIME)) {
-        this.deadTime = nbt.getInt(NbtKey.DEAD_TIME);
+      if (compoundIn.contains(NbtKey.DEAD_TIME)) {
+        this.deadTime = compoundIn.getInt(NbtKey.DEAD_TIME);
       }
 
-      if (nbt.contains(NbtKey.HEALTH)) {
-        this.health = nbt.getFloat(NbtKey.HEALTH);
+      if (compoundIn.contains(NbtKey.HEALTH)) {
+        this.health = compoundIn.getFloat(NbtKey.HEALTH);
       }
 
-      if (nbt.hasUUID(NbtKey.UNIQUE_ID)) {
-        this.uniqueId = nbt.getUUID(NbtKey.UNIQUE_ID);
+      if (compoundIn.hasUUID(NbtKey.UNIQUE_ID)) {
+        this.uniqueId = compoundIn.getUUID(NbtKey.UNIQUE_ID);
       }
 
-      if (nbt.contains(NbtKey.POSITION)) {
-        this.position = new Position(nbt.getCompound(NbtKey.POSITION));
+      if (compoundIn.contains(NbtKey.POSITION)) {
+        this.position = new Position(compoundIn.getCompound(NbtKey.POSITION));
       }
     }
 
