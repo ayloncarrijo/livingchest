@@ -163,9 +163,9 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private void playSound(final SoundEvent sound, final float volume, final float pitch) {
-    final Minecraft instance = Minecraft.getInstance();
+    final Minecraft minecraft = Minecraft.getInstance();
 
-    instance.level.playLocalSound(new BlockPos(this.animatable.position()), sound,
+    minecraft.level.playLocalSound(new BlockPos(this.animatable.position()), sound,
         SoundCategory.NEUTRAL, volume, pitch, false);
   }
 }
