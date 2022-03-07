@@ -32,7 +32,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -149,8 +148,7 @@ public class ChesterEntity extends EntityTameable
                 .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
 
         if (shouldDespawn) {
-          VirtualChesterSavedData.getServerInstance(this.world)
-              .despawnChester((WorldServer) this.world, this.getOwnerId());
+          VirtualChesterSavedData.getServerInstance(this.world).despawnChester(this);
         }
       }
     } else {

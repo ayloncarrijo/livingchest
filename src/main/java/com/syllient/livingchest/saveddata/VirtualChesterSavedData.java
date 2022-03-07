@@ -71,10 +71,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final WorldServer world = (WorldServer) player.world;
-
     if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
-      this.despawnChester(world, player.getUniqueID());
+      this.despawnChester((WorldServer) player.world, player.getUniqueID());
     } else {
       this.spawnChester(player, pos);
     }
@@ -127,6 +125,14 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     virtualChester.setIsSpawned(chesterEntity.getUniqueID());
     world.spawnEntity(chesterEntity);
+  }
+
+  public void despawnChester(final ChesterEntity chester) {
+    if (chester.world.isRemote || chester.getOwnerId() == null) {
+      return;
+    }
+
+    this.despawnChester((WorldServer) chester.world, chester.getOwnerId());
   }
 
   public void despawnChester(final WorldServer world, final UUID playerId) {
