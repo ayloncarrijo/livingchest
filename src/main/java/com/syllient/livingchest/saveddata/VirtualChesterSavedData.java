@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import com.syllient.livingchest.LivingChest;
+import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.eventhandler.registry.EntityRegistry;
+import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
 import com.syllient.livingchest.util.Position;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,6 +21,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class VirtualChesterSavedData extends WorldSavedData {
   private static final String ID = LivingChest.MOD_ID + "_" + "virtualchester";
@@ -62,10 +65,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    final ServerWorld world = (ServerWorld) player.level;
-
     if (this.getVirtualChester(player.getUUID()).isSpawned()) {
-      this.despawnChester(world, player.getUUID());
+      this.despawnChester((ServerWorld) player.level, player.getUUID());
     } else {
       this.spawnChester(player, pos);
     }
@@ -119,6 +120,14 @@ public class VirtualChesterSavedData extends WorldSavedData {
     world.addFreshEntity(chesterEntity);
   }
 
+  public void despawnChester(final ChesterEntity chester) {
+    if (chester.level.isClientSide || chester.getOwnerUUID() == null) {
+      return;
+    }
+
+    this.despawnChester((ServerWorld) chester.level, chester.getOwnerUUID());
+  }
+
   public void despawnChester(final ServerWorld world, final UUID playerId) {
     final VirtualChester virtualChester = this.getVirtualChester(playerId);
 
@@ -147,7 +156,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
           new StringTextComponent(TextFormatting.GOLD + virtualChester.getPosition().toString()),
           Util.NIL_UUID);
     }
-
   }
 
   public void handleServerTick() {
@@ -202,7 +210,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     virtualChester.setIsDespawned();
     virtualChester.setDeadTime(chester.getDeathCooldown());
 
-    // PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+    PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new SyncVirtualChesterMessage());
   }
 
   public void handleChesterRemoval(final ChesterEntity chester) {
@@ -229,7 +237,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
         }, Boolean::logicalOr);
 
     if (wasResurrected) {
-      // PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+      PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new SyncVirtualChesterMessage());
     }
   }
 
