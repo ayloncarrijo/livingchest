@@ -6,6 +6,7 @@ import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.inventory.ChesterInventory;
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -72,6 +73,10 @@ public class ChesterEntity extends TameableEntity
 
   @Override
   public void addAdditionalSaveData(final CompoundNBT compoundIn) {
+    if (!this.level.isClientSide) {
+      VirtualChesterSavedData.getServerInstance(this.level).handleChesterDataSave(this);
+    }
+
     super.addAdditionalSaveData(compoundIn);
   }
 
@@ -107,11 +112,19 @@ public class ChesterEntity extends TameableEntity
 
   @Override
   public void die(final DamageSource source) {
+    if (!this.level.isClientSide) {
+      VirtualChesterSavedData.getServerInstance(this.level).handleChesterDeath(this);
+    }
+
     super.die(source);
   }
 
   @Override
   public void remove(final boolean shouldKeepData) {
+    if (!this.level.isClientSide) {
+      VirtualChesterSavedData.getServerInstance(this.level).handleChesterRemoval(this);
+    }
+
     super.remove(shouldKeepData);
   }
 
@@ -205,8 +218,9 @@ public class ChesterEntity extends TameableEntity
   }
 
   public int getDeathCooldown() {
-    final int minutes = 10;
-    return minutes * 20 * 60;
+    // final int minutes = 10;
+    // return minutes * 20 * 60;
+    return 100; // TODO
   }
 
   @Override

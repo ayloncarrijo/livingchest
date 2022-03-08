@@ -193,7 +193,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
         Util.NIL_UUID);
   }
 
-  public void handleChesterSave(final ChesterEntity chester) {
+  public void handleChesterDataSave(final ChesterEntity chester) {
     if (chester.getOwnerUUID() == null) {
       return;
     }
