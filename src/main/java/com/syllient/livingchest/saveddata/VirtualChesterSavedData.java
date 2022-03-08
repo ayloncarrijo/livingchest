@@ -196,7 +196,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
         TextFormatting.GREEN + "A new Eye Bone position has been set for your Chester."));
   }
 
-  public void handleChesterSave(final ChesterEntity chester) {
+  public void handleChesterDataSave(final ChesterEntity chester) {
     if (chester.getOwnerId() == null) {
       return;
     }

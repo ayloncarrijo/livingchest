@@ -22,7 +22,25 @@ public class EyeBoneItem extends ItemBlock {
   public EyeBoneItem() {
     super(BlockRegistry.EYE_BONE);
     this.setMaxStackSize(1);
+    this.createProperties();
+  }
 
+  @Override
+  public EnumActionResult onItemUse(final EntityPlayer player, final World world,
+      final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
+      final float hitY, final float hitZ) {
+    if (player.isSneaking()) {
+      if (!world.isRemote) {
+        VirtualChesterSavedData.getServerInstance(world).toggleChester(player, pos);
+      }
+
+      return EnumActionResult.SUCCESS;
+    }
+
+    return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+  }
+
+  private void createProperties() {
     DistExecutor.runWhenOn(Side.CLIENT, () -> new Runnable() {
       @Override
       public void run() {
@@ -59,20 +77,5 @@ public class EyeBoneItem extends ItemBlock {
             });
       }
     });
-  }
-
-  @Override
-  public EnumActionResult onItemUse(final EntityPlayer player, final World world,
-      final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
-      final float hitY, final float hitZ) {
-    if (player.isSneaking()) {
-      if (!world.isRemote) {
-        VirtualChesterSavedData.getServerInstance(world).toggleChester(player, pos);
-      }
-
-      return EnumActionResult.SUCCESS;
-    }
-
-    return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
   }
 }
