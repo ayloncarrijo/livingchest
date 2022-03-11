@@ -15,12 +15,13 @@ public class ChesterMoveHelper extends EntityMoveHelper {
   public void onUpdateMoveHelper() {
     if (this.chester.isMouthOpen()) {
       this.chester.setMoveForward(0.0F);
+      this.chester.setIsMoving(false);
       return;
     }
 
     super.onUpdateMoveHelper();
-    this.chester.setYawRotations(this.chester.rotationYaw);
     this.chester.setIsMoving(this.chester.moveForward > 0.0F);
+    this.chester.setYawRotations(this.chester.rotationYaw);
   }
 
   @Override

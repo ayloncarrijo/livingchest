@@ -143,6 +143,7 @@ public class ChesterEntity extends EntityTameable
 
       if (this.isTamed() && ticksExisted % 60 == 0) {
         final EntityPlayer owner = (EntityPlayer) this.getOwner();
+
         final boolean shouldDespawn =
             owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
                 .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
