@@ -4,6 +4,7 @@ import com.syllient.livingchest.animation.entity.ChesterAnimation;
 import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
+import com.syllient.livingchest.entity.ai.pathfinding.FixedGroundPathNavigator;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
@@ -23,6 +24,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ActionResultType;
@@ -55,6 +57,11 @@ public class ChesterEntity extends TameableEntity
     this.addEffect(new EffectInstance(Effects.REGENERATION, Integer.MAX_VALUE, 1, false, false));
     this.moveControl = new ChesterMoveHelper(this);
     this.noCulling = true;
+  }
+
+  @Override
+  protected PathNavigator createNavigation(final World world) {
+    return new FixedGroundPathNavigator(this, world);
   }
 
   @Override

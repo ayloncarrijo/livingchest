@@ -23,7 +23,7 @@ public class EntityRegistry {
     event.getRegistry()
         .registerAll(createEntry("chester",
             EntityType.Builder.of(ChesterEntity::new, EntityClassification.CREATURE)
-                .setTrackingRange(128).setUpdateInterval(2).sized(0.7F, 0.85F)));
+                .setTrackingRange(128).setUpdateInterval(3).sized(0.7F, 0.85F)));
   }
 
   @SubscribeEvent

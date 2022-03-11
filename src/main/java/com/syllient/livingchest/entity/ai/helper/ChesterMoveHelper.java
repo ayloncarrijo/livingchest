@@ -15,12 +15,13 @@ public class ChesterMoveHelper extends MovementController {
   public void tick() {
     if (this.chester.isMouthOpen()) {
       this.chester.setZza(0.0F);
+      this.chester.setIsMoving(false);
       return;
     }
 
     super.tick();
-    this.chester.setYawRotations(this.chester.yRot);
     this.chester.setIsMoving(this.chester.zza > 0.0F);
+    this.chester.setYawRotations(this.mob.yRot);
   }
 
   @Override
