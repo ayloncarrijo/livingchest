@@ -101,22 +101,17 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     final ChesterEntity chesterEntity = EntityRegistry.CHESTER.create(world);
-    chesterEntity.tame(player);
-    chesterEntity.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F, 0.0F);
-    chesterEntity.setYawRotations(player.yRot - 180.0F);
-    chesterEntity.setPrevYawRotations(chesterEntity.yRot);
 
-    if (virtualChester.getInventory() != null) {
-      chesterEntity.getInventory().deserializeNBT(virtualChester.getInventory());
-      virtualChester.setInventory(null);
-    }
-
-    if (virtualChester.getHealth() > 0.0F) {
-      chesterEntity.setHealth(virtualChester.getHealth());
-      virtualChester.setHealth(0.0F);
+    if (virtualChester.getAdditionalSaveData() != null) {
+      chesterEntity.readAdditionalSaveData(virtualChester.getAdditionalSaveData());
+      virtualChester.setAdditionalSaveData(null);
     }
 
     virtualChester.setIsSpawned(chesterEntity.getUUID());
+    chesterEntity.tame(player);
+    chesterEntity.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F, 0.0F);
+    chesterEntity.setYawRotations(player.yRot - 180.0F);
+    chesterEntity.setOldYawRotations(chesterEntity.yRot);
     world.addFreshEntity(chesterEntity);
   }
 
@@ -139,8 +134,9 @@ public class VirtualChesterSavedData extends WorldSavedData {
         (ChesterEntity) world.getEntity(virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
-      virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
-      virtualChester.setHealth(chesterEntity.getHealth());
+      final CompoundNBT additionalSaveData = new CompoundNBT();
+      chesterEntity.addAdditionalSaveData(additionalSaveData);
+      virtualChester.setAdditionalSaveData(additionalSaveData);
       virtualChester.setIsDespawned();
       chesterEntity.remove();
       return;
@@ -273,9 +269,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   public class VirtualChester implements INBTSerializable<CompoundNBT> {
-    private CompoundNBT inventory = null;
+    private CompoundNBT additionalSaveData = null;
     private int deadTime = 0;
-    private float health = 0.0F;
     private UUID uniqueId = null;
     private Position position = null;
 
@@ -301,12 +296,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
       this.setUniqueId(null);
     }
 
-    public CompoundNBT getInventory() {
-      return this.inventory;
+    private CompoundNBT getAdditionalSaveData() {
+      return this.additionalSaveData;
     }
 
-    private void setInventory(final CompoundNBT inventory) {
-      this.inventory = inventory;
+    private void setAdditionalSaveData(final CompoundNBT compoundIn) {
+      this.additionalSaveData = compoundIn;
       VirtualChesterSavedData.this.setDirty();
     }
 
@@ -316,15 +311,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     private void setDeadTime(final int deadTime) {
       this.deadTime = deadTime;
-      VirtualChesterSavedData.this.setDirty();
-    }
-
-    public float getHealth() {
-      return this.health;
-    }
-
-    private void setHealth(final float health) {
-      this.health = health;
       VirtualChesterSavedData.this.setDirty();
     }
 
@@ -361,16 +347,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
     public CompoundNBT serializeNBT() {
       final CompoundNBT compound = new CompoundNBT();
 
-      if (this.inventory != null) {
-        compound.put(NbtKey.INVENTORY, this.inventory);
+      if (this.additionalSaveData != null) {
+        compound.put(NbtKey.ADDITIONAL_SAVE_DATA, this.additionalSaveData);
       }
 
       if (this.deadTime > 0) {
         compound.putInt(NbtKey.DEAD_TIME, this.deadTime);
-      }
-
-      if (this.health > 0.0F) {
-        compound.putFloat(NbtKey.HEALTH, this.health);
       }
 
       if (this.uniqueId != null) {
@@ -386,16 +368,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     @Override
     public void deserializeNBT(final CompoundNBT compoundIn) {
-      if (compoundIn.contains(NbtKey.INVENTORY)) {
-        this.inventory = compoundIn.getCompound(NbtKey.INVENTORY);
+      if (compoundIn.contains(NbtKey.ADDITIONAL_SAVE_DATA)) {
+        this.additionalSaveData = compoundIn.getCompound(NbtKey.ADDITIONAL_SAVE_DATA);
       }
 
       if (compoundIn.contains(NbtKey.DEAD_TIME)) {
         this.deadTime = compoundIn.getInt(NbtKey.DEAD_TIME);
-      }
-
-      if (compoundIn.contains(NbtKey.HEALTH)) {
-        this.health = compoundIn.getFloat(NbtKey.HEALTH);
       }
 
       if (compoundIn.hasUUID(NbtKey.UNIQUE_ID)) {
@@ -408,9 +386,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     class NbtKey {
-      public static final String INVENTORY = "Inventory";
+      public static final String ADDITIONAL_SAVE_DATA = "AdditionalSaveData";
       public static final String DEAD_TIME = "DeadTime";
-      public static final String HEALTH = "Health";
       public static final String UNIQUE_ID = "UniqueId";
       public static final String POSITION = "Position";
     }

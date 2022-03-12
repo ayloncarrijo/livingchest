@@ -30,7 +30,7 @@ public class FixedGroundPathNavigator extends GroundPathNavigator {
       this.path.advance();
     }
 
-    // === Fix: 1.16 movement. Copied from 1.12.2 === //
+    // === Fix 1.16 movement. Copied from 1.12.2 === //
 
     int i = this.path.getNodeCount();
 
@@ -52,7 +52,7 @@ public class FixedGroundPathNavigator extends GroundPathNavigator {
       }
     }
 
-    // === Fix: 1.16 movement. Copied from 1.12.2 === //
+    // === Fix 1.16 movement. Copied from 1.12.2 === //
 
     this.doStuckDetection(vector3d);
   }

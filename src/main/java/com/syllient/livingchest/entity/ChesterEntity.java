@@ -20,6 +20,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -84,19 +86,45 @@ public class ChesterEntity extends TameableEntity
       VirtualChesterSavedData.getServerInstance(this.level).handleChesterDataSave(this);
     }
 
+    if (this.inventory != null) {
+      compoundIn.put(NbtKey.INVENTORY, this.inventory.serializeNBT());
+    }
+
+    if (this.eyeBone != null) {
+      compoundIn.put(NbtKey.EYE_BONE, NBTUtil.writeBlockPos(this.eyeBone));
+    }
+
     super.addAdditionalSaveData(compoundIn);
   }
 
   @Override
   public void readAdditionalSaveData(final CompoundNBT compoundIn) {
+    if (compoundIn.contains(NbtKey.INVENTORY)) {
+      this.inventory.deserializeNBT(compoundIn.getCompound(NbtKey.INVENTORY));
+    }
+
+    if (compoundIn.contains(NbtKey.EYE_BONE)) {
+      this.eyeBone = NBTUtil.readBlockPos(compoundIn.getCompound(NbtKey.EYE_BONE));
+    }
+
     super.readAdditionalSaveData(compoundIn);
   }
 
   @Override
-  public void writeSpawnData(final PacketBuffer buffer) {}
+  public void writeSpawnData(final PacketBuffer buffer) {
+    buffer.writeFloat(this.yRot);
+  }
 
   @Override
-  public void readSpawnData(final PacketBuffer buffer) {}
+  public void readSpawnData(final PacketBuffer buffer) {
+    this.setYawRotations(buffer.readFloat());
+    this.setOldYawRotations(this.yRot);
+  }
+
+  @Override
+  public IPacket<?> getAddEntityPacket() {
+    return NetworkHooks.getEntitySpawningPacket(this);
+  }
 
   @Override
   public void tick() {
@@ -105,6 +133,7 @@ public class ChesterEntity extends TameableEntity
     if (this.level.isClientSide) {
       this.handleClientTick();
     } else {
+      System.out.println(this.getHealth());
       this.handleServerTick();
     }
   }
@@ -218,7 +247,7 @@ public class ChesterEntity extends TameableEntity
     this.yBodyRot = yaw;
   }
 
-  public void setPrevYawRotations(final float yaw) {
+  public void setOldYawRotations(final float yaw) {
     this.yRotO = yaw;
     this.yHeadRotO = yaw;
     this.yBodyRotO = yaw;
