@@ -107,23 +107,18 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     final ChesterEntity chesterEntity = new ChesterEntity(world);
+
+    if (virtualChester.getAdditionalSaveData() != null) {
+      chesterEntity.readFromNBT(virtualChester.getAdditionalSaveData());
+      virtualChester.setAdditionalSaveData(null);
+    }
+
+    virtualChester.setIsSpawned(chesterEntity.getUniqueID());
     chesterEntity.setTamedBy(player);
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
     chesterEntity.setYawRotations(player.rotationYaw - 180.0F);
-    chesterEntity.setPrevYawRotations(chesterEntity.rotationYaw);
-
-    if (virtualChester.getInventory() != null) {
-      chesterEntity.getInventory().deserializeNBT(virtualChester.getInventory());
-      virtualChester.setInventory(null);
-    }
-
-    if (virtualChester.getHealth() > 0.0F) {
-      chesterEntity.setHealth(virtualChester.getHealth());
-      virtualChester.setHealth(0.0F);
-    }
-
-    virtualChester.setIsSpawned(chesterEntity.getUniqueID());
+    chesterEntity.setOldYawRotations(chesterEntity.rotationYaw);
     world.spawnEntity(chesterEntity);
   }
 
@@ -146,20 +141,27 @@ public class VirtualChesterSavedData extends WorldSavedData {
         (ChesterEntity) world.getEntityFromUuid(virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
-      virtualChester.setInventory(chesterEntity.getInventory().serializeNBT());
-      virtualChester.setHealth(chesterEntity.getHealth());
+      final NBTTagCompound additionalSaveData = new NBTTagCompound();
+      chesterEntity.writeToNBT(additionalSaveData);
+      virtualChester.setAdditionalSaveData(additionalSaveData);
       virtualChester.setIsDespawned();
       chesterEntity.setDead();
       return;
     }
 
     final EntityPlayer player = world.getPlayerEntityByUUID(playerId);
+    final Position lastPos = virtualChester.getPosition();
 
     if (player != null) {
+      if (lastPos == null) {
+        player.sendMessage(new TextComponentString(
+            "The last know position of your Chester has not been saved. This could be a bug."));
+        return;
+      }
+
       player.sendMessage(
           new TextComponentString("You need to get closer to your Chester. Last know position:"));
-      player.sendMessage(
-          new TextComponentString(TextFormatting.GOLD + virtualChester.getPosition().toString()));
+      player.sendMessage(new TextComponentString(TextFormatting.GOLD + lastPos.toString()));
     }
   }
 
@@ -255,13 +257,13 @@ public class VirtualChesterSavedData extends WorldSavedData {
       list.appendTag(compound);
     });
 
-    compoundIn.setTag(NbtKey.VIRTUAL_CHESTER_TAG_LIST, list);
+    compoundIn.setTag(NbtKey.VIRTUAL_CHESTER_LIST, list);
     return compoundIn;
   }
 
   @Override
   public void readFromNBT(final NBTTagCompound compoundIn) {
-    compoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_TAG_LIST, Constants.NBT.TAG_COMPOUND)
+    compoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_LIST, Constants.NBT.TAG_COMPOUND)
         .forEach((nbt) -> {
           final NBTTagCompound compound = (NBTTagCompound) nbt;
           this.virtualChesterByPlayerId.put(compound.getUniqueId(NbtKey.PLAYER_ID),
@@ -270,15 +272,14 @@ public class VirtualChesterSavedData extends WorldSavedData {
   }
 
   class NbtKey {
-    public static final String VIRTUAL_CHESTER_TAG_LIST = "VirtualChesterTagList";
+    public static final String VIRTUAL_CHESTER_LIST = "VirtualChesterList";
     public static final String PLAYER_ID = "PlayerId";
     public static final String VIRTUAL_CHESTER = "VirtualChester";
   }
 
   public class VirtualChester implements INBTSerializable<NBTTagCompound> {
-    private NBTTagCompound inventory = null;
+    private NBTTagCompound additionalSaveData = null;
     private int deadTime = 0;
-    private float health = 0.0F;
     private UUID uniqueId = null;
     private Position position = null;
 
@@ -304,12 +305,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
       this.setUniqueId(null);
     }
 
-    public NBTTagCompound getInventory() {
-      return this.inventory;
+    private NBTTagCompound getAdditionalSaveData() {
+      return this.additionalSaveData;
     }
 
-    private void setInventory(final NBTTagCompound inventory) {
-      this.inventory = inventory;
+    private void setAdditionalSaveData(final NBTTagCompound compoundIn) {
+      this.additionalSaveData = compoundIn;
       VirtualChesterSavedData.this.markDirty();
     }
 
@@ -319,15 +320,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     private void setDeadTime(final int deadTime) {
       this.deadTime = deadTime;
-      VirtualChesterSavedData.this.markDirty();
-    }
-
-    public float getHealth() {
-      return this.health;
-    }
-
-    private void setHealth(final float health) {
-      this.health = health;
       VirtualChesterSavedData.this.markDirty();
     }
 
@@ -364,16 +356,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
     public NBTTagCompound serializeNBT() {
       final NBTTagCompound compound = new NBTTagCompound();
 
-      if (this.inventory != null) {
-        compound.setTag(NbtKey.INVENTORY, this.inventory);
+      if (this.additionalSaveData != null) {
+        compound.setTag(NbtKey.ADDITIONAL_SAVE_DATA, this.additionalSaveData);
       }
 
       if (this.deadTime > 0) {
         compound.setInteger(NbtKey.DEAD_TIME, this.deadTime);
-      }
-
-      if (this.health > 0.0F) {
-        compound.setFloat(NbtKey.HEALTH, this.health);
       }
 
       if (this.uniqueId != null) {
@@ -389,16 +377,12 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     @Override
     public void deserializeNBT(final NBTTagCompound compoundIn) {
-      if (compoundIn.hasKey(NbtKey.INVENTORY)) {
-        this.inventory = compoundIn.getCompoundTag(NbtKey.INVENTORY);
+      if (compoundIn.hasKey(NbtKey.ADDITIONAL_SAVE_DATA)) {
+        this.additionalSaveData = compoundIn.getCompoundTag(NbtKey.ADDITIONAL_SAVE_DATA);
       }
 
       if (compoundIn.hasKey(NbtKey.DEAD_TIME)) {
         this.deadTime = compoundIn.getInteger(NbtKey.DEAD_TIME);
-      }
-
-      if (compoundIn.hasKey(NbtKey.HEALTH)) {
-        this.health = compoundIn.getFloat(NbtKey.HEALTH);
       }
 
       if (compoundIn.hasUniqueId(NbtKey.UNIQUE_ID)) {
@@ -411,9 +395,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     class NbtKey {
-      public static final String INVENTORY = "Inventory";
+      public static final String ADDITIONAL_SAVE_DATA = "AdditionalSaveData";
       public static final String DEAD_TIME = "DeadTime";
-      public static final String HEALTH = "Health";
       public static final String UNIQUE_ID = "UniqueId";
       public static final String POSITION = "Position";
     }

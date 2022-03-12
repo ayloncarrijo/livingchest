@@ -117,7 +117,7 @@ public class ChesterEntity extends EntityTameable
   @Override
   public void readSpawnData(final ByteBuf buffer) {
     this.setYawRotations(buffer.readFloat());
-    this.setPrevYawRotations(this.rotationYaw);
+    this.setOldYawRotations(this.rotationYaw);
   }
 
   @Override
@@ -258,7 +258,7 @@ public class ChesterEntity extends EntityTameable
     this.renderYawOffset = yaw;
   }
 
-  public void setPrevYawRotations(final float yaw) {
+  public void setOldYawRotations(final float yaw) {
     this.prevRotationYaw = yaw;
     this.prevRotationYawHead = yaw;
     this.prevRenderYawOffset = yaw;
