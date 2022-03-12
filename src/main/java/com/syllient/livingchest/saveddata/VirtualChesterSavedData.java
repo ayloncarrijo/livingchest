@@ -143,13 +143,21 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
 
     final PlayerEntity player = world.getPlayerByUUID(playerId);
+    final Position lastPos = virtualChester.getPosition();
 
     if (player != null) {
+      if (lastPos == null) {
+        player.sendMessage(
+            new StringTextComponent(
+                "The last know position of your Chester has not been saved. This could be a bug."),
+            Util.NIL_UUID);
+        return;
+      }
+
       player.sendMessage(
           new StringTextComponent("You need to get closer to your Chester. Last know position:"),
           Util.NIL_UUID);
-      player.sendMessage(
-          new StringTextComponent(TextFormatting.GOLD + virtualChester.getPosition().toString()),
+      player.sendMessage(new StringTextComponent(TextFormatting.GOLD + lastPos.toString()),
           Util.NIL_UUID);
     }
   }
@@ -248,22 +256,21 @@ public class VirtualChesterSavedData extends WorldSavedData {
       list.add(compound);
     });
 
-    compoundIn.put(NbtKey.VIRTUAL_CHESTER_TAG_LIST, list);
+    compoundIn.put(NbtKey.VIRTUAL_CHESTER_LIST, list);
     return compoundIn;
   }
 
   @Override
   public void load(final CompoundNBT compoundIn) {
-    compoundIn.getList(NbtKey.VIRTUAL_CHESTER_TAG_LIST, Constants.NBT.TAG_COMPOUND)
-        .forEach((nbt) -> {
-          final CompoundNBT compound = (CompoundNBT) nbt;
-          this.virtualChesterByPlayerId.put(compound.getUUID(NbtKey.PLAYER_ID),
-              new VirtualChester(compound.getCompound(NbtKey.VIRTUAL_CHESTER)));
-        });
+    compoundIn.getList(NbtKey.VIRTUAL_CHESTER_LIST, Constants.NBT.TAG_COMPOUND).forEach((nbt) -> {
+      final CompoundNBT compound = (CompoundNBT) nbt;
+      this.virtualChesterByPlayerId.put(compound.getUUID(NbtKey.PLAYER_ID),
+          new VirtualChester(compound.getCompound(NbtKey.VIRTUAL_CHESTER)));
+    });
   }
 
   class NbtKey {
-    public static final String VIRTUAL_CHESTER_TAG_LIST = "VirtualChesterTagList";
+    public static final String VIRTUAL_CHESTER_LIST = "VirtualChesterList";
     public static final String PLAYER_ID = "PlayerId";
     public static final String VIRTUAL_CHESTER = "VirtualChester";
   }
