@@ -133,7 +133,6 @@ public class ChesterEntity extends TameableEntity
     if (this.level.isClientSide) {
       this.handleClientTick();
     } else {
-      System.out.println(this.getHealth());
       this.handleServerTick();
     }
   }
@@ -153,15 +152,6 @@ public class ChesterEntity extends TameableEntity
     }
 
     super.die(source);
-  }
-
-  @Override
-  public void remove(final boolean shouldKeepData) {
-    if (!this.level.isClientSide) {
-      VirtualChesterSavedData.getServerInstance(this.level).handleChesterRemoval(this);
-    }
-
-    super.remove(shouldKeepData);
   }
 
   @Override
