@@ -81,9 +81,7 @@ public class ChesterEntity extends EntityTameable
 
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound compoundIn) {
-    if (!this.world.isRemote) {
-      VirtualChesterSavedData.getServerInstance(this.world).handleChesterDataSave(this);
-    }
+    VirtualChesterSavedData.getServerInstance(this.world).handleChesterDataSave(this);
 
     if (this.inventory != null) {
       compoundIn.setTag(NbtKey.INVENTORY, this.inventory.serializeNBT());

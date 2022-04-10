@@ -14,5 +14,6 @@ public class EyeBoneBlockRenderer extends GeoBlockRenderer<EyeBoneTile> {
   public void renderEarly(final EyeBoneTile animatable, final float ticks, final float red,
       final float green, final float blue, final float partialTicks) {
     GlStateManager.scale(0.715f, 0.715f, 0.715f);
+    GlStateManager.translate(0, -0.0125, 0);
   }
 }
