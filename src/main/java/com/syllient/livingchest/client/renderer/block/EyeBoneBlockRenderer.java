@@ -21,6 +21,7 @@ public class EyeBoneBlockRenderer extends GeoBlockRenderer<EyeBoneTile> {
       final int packedLightIn, final int packedOverlayIn, final float red, final float green,
       final float blue, final float partialTicks) {
     stack.scale(0.715f, 0.715f, 0.715f);
+    stack.translate(0, -0.0125, 0);
   }
 
   @Override

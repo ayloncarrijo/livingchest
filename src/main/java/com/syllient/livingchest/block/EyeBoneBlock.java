@@ -20,16 +20,16 @@ import net.minecraft.world.IBlockReader;
 public class EyeBoneBlock extends HorizontalBlock {
   private static class Shape {
     private static final VoxelShape EYE =
-        VoxelShapes.box(0.3425D, 0.545D, 0.3425D, 0.6575D, 0.86D, 0.6575D);
+        VoxelShapes.box(0.3425D, 0.5375D, 0.3425D, 0.6575D, 0.85D, 0.6575D);
 
     private static final VoxelShape GRIP =
-        VoxelShapes.box(0.455D, 0.1D, 0.455D, 0.545D, 0.545D, 0.545D);
+        VoxelShapes.box(0.455D, 0.09125D, 0.455D, 0.545D, 0.545D, 0.545D);
 
     private static final VoxelShape BASE_NS =
-        VoxelShapes.box(0.3875D, 0.0D, 0.455D, 0.6125D, 0.1D, 0.545D);
+        VoxelShapes.box(0.3875D, 0.0D, 0.455D, 0.6125D, 0.09125D, 0.545D);
 
     private static final VoxelShape BASE_WE =
-        VoxelShapes.box(0.455D, 0.0D, 0.3875D, 0.545D, 0.1D, 0.6125D);
+        VoxelShapes.box(0.455D, 0.0D, 0.3875D, 0.545D, 0.09125D, 0.6125D);
 
     private static final VoxelShape FULL_NS = VoxelShapes.or(EYE, GRIP, BASE_NS);
 
