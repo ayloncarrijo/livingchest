@@ -316,7 +316,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     private void setPosition(final ChesterEntity chester) {
       this.setPosition(chester.getX(), chester.getY(), chester.getZ(),
-          chester.level.dimension().getRegistryName().getPath());
+          chester.level.dimension().location().getPath());
     }
 
     private void setPosition(final double posX, final double posY, final double posZ,
