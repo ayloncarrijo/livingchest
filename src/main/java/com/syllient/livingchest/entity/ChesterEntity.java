@@ -82,9 +82,7 @@ public class ChesterEntity extends TameableEntity
 
   @Override
   public void addAdditionalSaveData(final CompoundNBT compoundIn) {
-    if (!this.level.isClientSide) {
-      VirtualChesterSavedData.getServerInstance(this.level).handleChesterDataSave(this);
-    }
+    VirtualChesterSavedData.getServerInstance(this.level).handleChesterDataSave(this);
 
     if (this.inventory != null) {
       compoundIn.put(NbtKey.INVENTORY, this.inventory.serializeNBT());

@@ -44,7 +44,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       throw new IllegalArgumentException("The world must be an instance of ServerWorld.");
     }
 
-    return ((ServerWorld) world).getChunkSource().getDataStorage()
+    return ((ServerWorld) world).getServer().overworld().getChunkSource().getDataStorage()
         .computeIfAbsent(VirtualChesterSavedData::new, ID);
   }
 
