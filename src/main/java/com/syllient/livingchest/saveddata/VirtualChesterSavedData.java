@@ -66,18 +66,6 @@ public class VirtualChesterSavedData extends WorldSavedData {
     return this.virtualChesterByPlayerId.computeIfAbsent(playerId, (key) -> new VirtualChester());
   }
 
-  public void toggleChester(final EntityPlayer player, final BlockPos pos) {
-    if (player.world.isRemote) {
-      return;
-    }
-
-    if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
-      this.despawnChester((WorldServer) player.world, player.getUniqueID());
-    } else {
-      this.spawnChester(player, pos);
-    }
-  }
-
   public void spawnChester(final EntityPlayer player, final BlockPos pos) {
     if (player.world.isRemote) {
       return;
@@ -162,6 +150,18 @@ public class VirtualChesterSavedData extends WorldSavedData {
       player.sendMessage(
           new TextComponentString("You need to get closer to your Chester. Last know position:"));
       player.sendMessage(new TextComponentString(TextFormatting.GOLD + lastPos.toString()));
+    }
+  }
+
+  public void toggleChester(final EntityPlayer player, final BlockPos pos) {
+    if (player.world.isRemote) {
+      return;
+    }
+
+    if (this.getVirtualChester(player.getUniqueID()).isSpawned()) {
+      this.despawnChester((WorldServer) player.world, player.getUniqueID());
+    } else {
+      this.spawnChester(player, pos);
     }
   }
 
