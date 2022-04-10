@@ -117,7 +117,7 @@ public class ChesterEntity extends EntityTameable
   @Override
   public void readSpawnData(final ByteBuf buffer) {
     this.setYawRotations(buffer.readFloat());
-    this.setOldYawRotations(this.rotationYaw);
+    this.setPrevYawRotations(this.rotationYaw);
   }
 
   @Override
@@ -172,15 +172,6 @@ public class ChesterEntity extends EntityTameable
     }
 
     super.onDeath(source);
-  }
-
-  @Override
-  public void setDead() {
-    if (!this.world.isRemote) {
-      VirtualChesterSavedData.getServerInstance(this.world).handleChesterRemoval(this);
-    }
-
-    super.setDead();
   }
 
   @Override
@@ -258,7 +249,7 @@ public class ChesterEntity extends EntityTameable
     this.renderYawOffset = yaw;
   }
 
-  public void setOldYawRotations(final float yaw) {
+  public void setPrevYawRotations(final float yaw) {
     this.prevRotationYaw = yaw;
     this.prevRotationYawHead = yaw;
     this.prevRenderYawOffset = yaw;
@@ -268,7 +259,7 @@ public class ChesterEntity extends EntityTameable
     // TODO
     // final int minutes = 10;
     // return minutes * 20 * 60;
-    return 10;
+    return 1200;
   }
 
   @Override

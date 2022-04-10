@@ -8,10 +8,10 @@ import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
 import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
+import com.syllient.livingchest.util.NbtUtil;
 import com.syllient.livingchest.util.Position;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 public class VirtualChesterSavedData extends WorldSavedData {
   private static final String ID = LivingChest.MOD_ID + "_" + "virtualchester";
   private static final VirtualChesterSavedData INSTANCE = new VirtualChesterSavedData();
-  private static final int TICKS_DECREASE_DEAD_TIME_STEP = 600;
+  private static final int TICK_DEAD_TIME_STEP = 600;
 
   private final Map<UUID, VirtualChester> virtualChesterByPlayerId = new HashMap<>();
   private int tickCount = 0;
@@ -118,7 +118,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     chesterEntity.setLocationAndAngles(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F,
         0.0F);
     chesterEntity.setYawRotations(player.rotationYaw - 180.0F);
-    chesterEntity.setOldYawRotations(chesterEntity.rotationYaw);
+    chesterEntity.setPrevYawRotations(chesterEntity.rotationYaw);
     world.spawnEntity(chesterEntity);
   }
 
@@ -165,11 +165,27 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
+  private void tickDeadTime() {
+    final boolean wasResurrected = virtualChesterByPlayerId.values().stream().reduce(false,
+        (wasResurrectedIn, virtualChester) -> {
+          if (virtualChester.getDeadTime() > 0) {
+            virtualChester.setDeadTime(virtualChester.getDeadTime() - TICK_DEAD_TIME_STEP);
+            return wasResurrectedIn || virtualChester.getDeadTime() <= 0;
+          }
+
+          return wasResurrectedIn;
+        }, Boolean::logicalOr);
+
+    if (wasResurrected) {
+      PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
+    }
+  }
+
   public void handleServerTick() {
     this.tickCount++;
 
-    if (this.tickCount % TICKS_DECREASE_DEAD_TIME_STEP == 0) {
-      this.decreaseDeadTime();
+    if (this.tickCount % TICK_DEAD_TIME_STEP == 0) {
+      this.tickDeadTime();
     }
   }
 
@@ -218,63 +234,28 @@ public class VirtualChesterSavedData extends WorldSavedData {
     PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
   }
 
-  public void handleChesterRemoval(final ChesterEntity chester) {
-    if (chester.getOwnerId() == null) {
-      return;
-    }
-
-    this.getVirtualChester(chester.getOwnerId()).setIsDespawned();
-  }
-
-  private void decreaseDeadTime() {
-    final boolean wasResurrected = this.virtualChesterByPlayerId.values().stream().reduce(false,
-        (wasResurrectedIn, virtualChester) -> {
-          if (virtualChester.getDeadTime() > 0) {
-            virtualChester
-                .setDeadTime(virtualChester.getDeadTime() - TICKS_DECREASE_DEAD_TIME_STEP);
-
-            if (virtualChester.getDeadTime() <= 0) {
-              return true;
-            }
-          }
-
-          return wasResurrectedIn;
-        }, Boolean::logicalOr);
-
-    if (wasResurrected) {
-      PacketHandler.INSTANCE.sendToAll(new SyncVirtualChesterMessage());
-    }
-  }
-
   @Override
   public NBTTagCompound writeToNBT(final NBTTagCompound compoundIn) {
-    final NBTTagList list = new NBTTagList();
+    compoundIn.setTag(NbtKey.VIRTUAL_CHESTER_LIST,
+        NbtUtil.serializeMap(this.virtualChesterByPlayerId, NBTTagCompound::setUniqueId,
+            (compound, key, value) -> compound.setTag(key, value.serializeNBT())));
 
-    this.virtualChesterByPlayerId.forEach((playerId, virtualChester) -> {
-      final NBTTagCompound compound = new NBTTagCompound();
-      compound.setUniqueId(NbtKey.PLAYER_ID, playerId);
-      compound.setTag(NbtKey.VIRTUAL_CHESTER, virtualChester.serializeNBT());
-      list.appendTag(compound);
-    });
-
-    compoundIn.setTag(NbtKey.VIRTUAL_CHESTER_LIST, list);
     return compoundIn;
   }
 
   @Override
   public void readFromNBT(final NBTTagCompound compoundIn) {
-    compoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_LIST, Constants.NBT.TAG_COMPOUND)
-        .forEach((nbt) -> {
-          final NBTTagCompound compound = (NBTTagCompound) nbt;
-          this.virtualChesterByPlayerId.put(compound.getUniqueId(NbtKey.PLAYER_ID),
-              new VirtualChester(compound.getCompoundTag(NbtKey.VIRTUAL_CHESTER)));
-        });
+    if (compoundIn.hasKey(NbtKey.VIRTUAL_CHESTER_LIST)) {
+      this.virtualChesterByPlayerId.clear();
+      this.virtualChesterByPlayerId.putAll(NbtUtil.deserializeMap(
+          compoundIn.getTagList(NbtKey.VIRTUAL_CHESTER_LIST, Constants.NBT.TAG_COMPOUND),
+          NBTTagCompound::getUniqueId,
+          (compound, key) -> new VirtualChester(compound.getCompoundTag(key))));
+    }
   }
 
   class NbtKey {
     public static final String VIRTUAL_CHESTER_LIST = "VirtualChesterList";
-    public static final String PLAYER_ID = "PlayerId";
-    public static final String VIRTUAL_CHESTER = "VirtualChester";
   }
 
   public class VirtualChester implements INBTSerializable<NBTTagCompound> {
