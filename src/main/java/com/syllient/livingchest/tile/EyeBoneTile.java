@@ -41,8 +41,8 @@ public class EyeBoneTile extends TileEntity implements IAnimatable {
   }
 
   @Override
-  public void handleUpdateTag(final NBTTagCompound tagCompoundIn) {
-    this.readFromNBT(tagCompoundIn);
+  public void handleUpdateTag(final NBTTagCompound compoundIn) {
+    this.readFromNBT(compoundIn);
   }
 
   @Override

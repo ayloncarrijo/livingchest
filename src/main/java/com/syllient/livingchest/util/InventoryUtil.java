@@ -9,18 +9,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 
 public class InventoryUtil {
-  public static void dropInventoryItems(final World world, final BlockPos pos,
+  public static void dropItems(final World world, final BlockPos pos,
       final IItemHandler inventory) {
-    dropInventoryItems(world, pos.getX(), pos.getY(), pos.getZ(), inventory);
+    dropItems(world, pos.getX(), pos.getY(), pos.getZ(), inventory);
   }
 
-  public static void dropInventoryItems(final World world, final Entity entity,
+  public static void dropItems(final World world, final Entity entity,
       final IItemHandler inventory) {
-    dropInventoryItems(world, entity.posX, entity.posY, entity.posZ, inventory);
+    dropItems(world, entity.posX, entity.posY, entity.posZ, inventory);
   }
 
-  public static void dropInventoryItems(final World world, final double x, final double y,
-      final double z, final IItemHandler inventory) {
+  public static void dropItems(final World world, final double x, final double y, final double z,
+      final IItemHandler inventory) {
     IntStream.range(0, inventory.getSlots()).forEach((slot) -> {
       final ItemStack itemStack = inventory.getStackInSlot(slot);
 

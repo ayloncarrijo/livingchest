@@ -49,7 +49,7 @@ public class EyeBoneBlockAnimation extends Animation<EyeBoneTile> {
         break;
       }
       default: {
-
+        return;
       }
     }
   }

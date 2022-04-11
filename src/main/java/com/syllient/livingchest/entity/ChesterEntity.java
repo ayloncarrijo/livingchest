@@ -139,12 +139,11 @@ public class ChesterEntity extends EntityTameable
     if (this.eyeBone == null) {
       this.setSitting(false);
 
-      if (this.isTamed() && ticksExisted % 60 == 0) {
+      if (this.isTamed() && this.ticksExisted % 60 == 0) {
         final EntityPlayer owner = (EntityPlayer) this.getOwner();
 
-        final boolean shouldDespawn =
-            owner == null || !(owner.inventoryContainer.inventoryItemStacks.stream()
-                .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
+        final boolean shouldDespawn = owner == null || !(owner.inventoryContainer.getInventory()
+            .stream().map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
 
         if (shouldDespawn) {
           VirtualChesterSavedData.getServerInstance(this.world).despawnChester(this);
@@ -166,7 +165,7 @@ public class ChesterEntity extends EntityTameable
   public void onDeath(final DamageSource source) {
     if (!this.world.isRemote) {
       VirtualChesterSavedData.getServerInstance(this.world).handleChesterDeath(this);
-      InventoryUtil.dropInventoryItems(this.world, this, this.inventory);
+      InventoryUtil.dropItems(this.world, this, this.inventory);
     }
 
     super.onDeath(source);
