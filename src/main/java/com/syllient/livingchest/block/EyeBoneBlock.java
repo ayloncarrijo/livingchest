@@ -1,5 +1,6 @@
 package com.syllient.livingchest.block;
 
+import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -7,7 +8,10 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -16,6 +20,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 public class EyeBoneBlock extends HorizontalBlock {
   private static class Shape {
@@ -39,6 +44,21 @@ public class EyeBoneBlock extends HorizontalBlock {
   public EyeBoneBlock() {
     super(AbstractBlock.Properties.of(Material.WOOD));
     this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+  }
+
+  @Override
+  public void setPlacedBy(final World world, final BlockPos pos, final BlockState state,
+      final LivingEntity placer, final ItemStack stack) {
+    final TileEntity tileEntity = world.getBlockEntity(pos);
+
+    if (tileEntity instanceof EyeBoneTile && placer instanceof PlayerEntity) {
+      if (!world.isClientSide) {
+        VirtualChesterSavedData.getServerInstance(world)
+            .handleEyeBonePlacement((PlayerEntity) placer, pos);
+      }
+
+      ((EyeBoneTile) tileEntity).setOwnerId(placer.getUUID());
+    }
   }
 
   @Override

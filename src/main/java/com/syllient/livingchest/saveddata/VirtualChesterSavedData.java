@@ -99,7 +99,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     chesterEntity.tame(player);
     chesterEntity.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 0.0F, 0.0F);
     chesterEntity.setYawRotations(player.yRot - 180.0F);
-    chesterEntity.setOldYawRotations(chesterEntity.yRot);
+    chesterEntity.setPrevYawRotations(chesterEntity.yRot);
     world.addFreshEntity(chesterEntity);
   }
 

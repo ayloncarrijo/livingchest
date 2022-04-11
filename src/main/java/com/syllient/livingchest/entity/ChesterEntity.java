@@ -5,6 +5,8 @@ import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
 import com.syllient.livingchest.entity.ai.pathfinding.FixedGroundPathNavigator;
+import com.syllient.livingchest.eventhandler.registry.BlockRegistry;
+import com.syllient.livingchest.eventhandler.registry.ItemRegistry;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
@@ -19,6 +21,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.IPacket;
@@ -116,7 +119,7 @@ public class ChesterEntity extends TameableEntity
   @Override
   public void readSpawnData(final PacketBuffer buffer) {
     this.setYawRotations(buffer.readFloat());
-    this.setOldYawRotations(this.yRot);
+    this.setPrevYawRotations(this.yRot);
   }
 
   @Override
@@ -141,7 +144,31 @@ public class ChesterEntity extends TameableEntity
     this.checkEyeBone();
   }
 
-  private void checkEyeBone() {}
+  private void checkEyeBone() {
+    if (this.eyeBone == null) {
+      this.setInSittingPose(false);
+
+      if (this.isTame() && this.tickCount % 60 == 0) {
+        final PlayerEntity owner = (PlayerEntity) this.getOwner();
+
+        final boolean shouldDespawn = owner == null || !(owner.containerMenu.getItems().stream()
+            .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
+
+        if (shouldDespawn) {
+          VirtualChesterSavedData.getServerInstance(this.level).despawnChester(this);
+        }
+      }
+    } else {
+      this.setInSittingPose(true);
+
+      final boolean isEyeBoneBlock =
+          this.level.getBlockState(this.eyeBone).getBlock().equals(BlockRegistry.EYE_BONE);
+
+      if (!isEyeBoneBlock) {
+        this.eyeBone = null;
+      }
+    }
+  }
 
   @Override
   public void die(final DamageSource source) {
@@ -235,7 +262,7 @@ public class ChesterEntity extends TameableEntity
     this.yBodyRot = yaw;
   }
 
-  public void setOldYawRotations(final float yaw) {
+  public void setPrevYawRotations(final float yaw) {
     this.yRotO = yaw;
     this.yHeadRotO = yaw;
     this.yBodyRotO = yaw;

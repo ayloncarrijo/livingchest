@@ -157,7 +157,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
         break;
       }
       default: {
-
+        return;
       }
     }
   }

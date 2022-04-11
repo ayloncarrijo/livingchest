@@ -52,7 +52,7 @@ public class FixedGroundPathNavigator extends GroundPathNavigator {
       }
     }
 
-    // === Fix 1.16 movement. Copied from 1.12.2 === //
+    // !== Fix 1.16 movement. Copied from 1.12.2 !== //
 
     this.doStuckDetection(vector3d);
   }
