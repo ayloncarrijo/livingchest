@@ -10,6 +10,7 @@ import com.syllient.livingchest.eventhandler.registry.ItemRegistry;
 import com.syllient.livingchest.eventhandler.registry.SoundRegistry;
 import com.syllient.livingchest.inventory.ChesterInventory;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
+import com.syllient.livingchest.util.InventoryUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -174,6 +175,7 @@ public class ChesterEntity extends TameableEntity
   public void die(final DamageSource source) {
     if (!this.level.isClientSide) {
       VirtualChesterSavedData.getServerInstance(this.level).handleChesterDeath(this);
+      InventoryUtil.dropItems(this.level, this, this.inventory);
     }
 
     super.die(source);
