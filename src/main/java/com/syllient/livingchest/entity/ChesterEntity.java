@@ -196,20 +196,20 @@ public class ChesterEntity extends TameableEntity
     return ActionResultType.PASS;
   }
 
-  public boolean isMoving() {
-    return this.entityData.get(IS_MOVING);
-  }
-
-  public void setIsMoving(final boolean value) {
-    this.entityData.set(IS_MOVING, value);
-  }
-
   public boolean isMouthOpen() {
     return this.entityData.get(IS_MOUTH_OPEN);
   }
 
   private void setIsMouthOpen(final boolean value) {
     this.entityData.set(IS_MOUTH_OPEN, value);
+  }
+
+  public boolean isMoving() {
+    return this.entityData.get(IS_MOVING);
+  }
+
+  public void setIsMoving(final boolean value) {
+    this.entityData.set(IS_MOVING, value);
   }
 
   public void openMouth() {
