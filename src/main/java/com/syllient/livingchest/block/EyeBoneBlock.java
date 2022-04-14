@@ -1,5 +1,6 @@
 package com.syllient.livingchest.block;
 
+import java.util.List;
 import com.syllient.livingchest.saveddata.VirtualChesterSavedData;
 import com.syllient.livingchest.tile.EyeBoneTile;
 import net.minecraft.block.AbstractBlock;
@@ -8,6 +9,7 @@ import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
@@ -19,6 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -62,13 +67,20 @@ public class EyeBoneBlock extends HorizontalBlock {
   }
 
   @Override
-  public BlockState getStateForPlacement(final BlockItemUseContext ctx) {
-    return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
+  public void appendHoverText(final ItemStack stack, final IBlockReader reader,
+      final List<ITextComponent> tooltip, final ITooltipFlag flag) {
+    tooltip.add(new StringTextComponent(TextFormatting.GRAY
+        + "To spawn/despawn your Chester, use the Eye Bone on a block while sneaking."));
   }
 
   @Override
   protected void createBlockStateDefinition(final Builder<Block, BlockState> builder) {
     builder.add(FACING);
+  }
+
+  @Override
+  public BlockState getStateForPlacement(final BlockItemUseContext ctx) {
+    return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
   }
 
   @Override
