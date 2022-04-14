@@ -51,9 +51,9 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
 
   @Override
   public void registerControllers(final AnimationData data) {
-    this.idleController.registerSoundListener(this::handleSoundKeyframe);
-    this.jumpController.registerSoundListener(this::handleSoundKeyframe);
-    this.openController.registerSoundListener(this::handleSoundKeyframe);
+    this.idleController.registerSoundListener(this::handleSoundKeyframes);
+    this.jumpController.registerSoundListener(this::handleSoundKeyframes);
+    this.openController.registerSoundListener(this::handleSoundKeyframes);
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
     data.addAnimationController(this.openController);
@@ -136,7 +136,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private void handleSoundKeyframe(final SoundKeyframeEvent<? extends IAnimatable> event) {
+  private void handleSoundKeyframes(final SoundKeyframeEvent<? extends IAnimatable> event) {
     switch (event.sound) {
       case "idle": {
         this.idleSoundTimes += 1;
