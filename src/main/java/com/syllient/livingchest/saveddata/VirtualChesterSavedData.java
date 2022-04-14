@@ -123,6 +123,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     if (chesterEntity != null) {
       final CompoundNBT additionalSaveData = new CompoundNBT();
+      chesterEntity.setEyeBone(null);
       chesterEntity.addAdditionalSaveData(additionalSaveData);
       virtualChester.setAdditionalSaveData(additionalSaveData);
       virtualChester.setIsDespawned();
@@ -135,9 +136,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
 
     if (player != null) {
       if (lastPos == null) {
-        player.sendMessage(
-            new StringTextComponent(
-                "The last know position of your Chester has not been saved. This could be a bug."),
+        player.sendMessage(new StringTextComponent(
+            "The last know position of your Chester has not been saved. This is probably a bug."),
             Util.NIL_UUID);
         return;
       }
