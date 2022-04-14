@@ -185,20 +185,20 @@ public class ChesterEntity extends EntityTameable
     return false;
   }
 
-  public boolean isMoving() {
-    return this.dataManager.get(IS_MOVING);
-  }
-
-  public void setIsMoving(final boolean value) {
-    this.dataManager.set(IS_MOVING, value);
-  }
-
   public boolean isMouthOpen() {
     return this.dataManager.get(IS_MOUTH_OPEN);
   }
 
   private void setIsMouthOpen(final boolean value) {
     this.dataManager.set(IS_MOUTH_OPEN, value);
+  }
+
+  public boolean isMoving() {
+    return this.dataManager.get(IS_MOVING);
+  }
+
+  public void setIsMoving(final boolean value) {
+    this.dataManager.set(IS_MOVING, value);
   }
 
   public void openMouth() {
