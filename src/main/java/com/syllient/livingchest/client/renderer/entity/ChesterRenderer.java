@@ -13,6 +13,7 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 public class ChesterRenderer extends GeoEntityRenderer<ChesterEntity> {
   public ChesterRenderer(final EntityRendererManager rendererManager) {
     super(rendererManager, new ChesterModel());
+    this.shadowRadius = 0.6F;
   }
 
   @Override
