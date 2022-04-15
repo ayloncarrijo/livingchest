@@ -27,7 +27,7 @@ public class EventHandler {
   public static void handleServerTick(final TickEvent.ServerTickEvent event) {
     if (event.phase == TickEvent.Phase.END) {
       VirtualChesterSavedData.getServerInstance(ServerLifecycleHooks.getCurrentServer().overworld())
-          .handleServerTick();
+          .tickServer();
     }
   }
 }

@@ -133,23 +133,25 @@ public class ChesterEntity extends TameableEntity
     super.tick();
 
     if (this.level.isClientSide) {
-      this.handleClientTick();
+      this.tickClient();
     } else {
-      this.handleServerTick();
+      this.tickServer();
     }
   }
 
-  private void handleClientTick() {}
+  private void tickClient() {}
 
-  private void handleServerTick() {
-    this.checkEyeBone();
+  private void tickServer() {
+    if (this.tickCount % 40 == 0) {
+      this.checkEyeBone();
+    }
   }
 
   private void checkEyeBone() {
     if (this.eyeBone == null) {
       this.setInSittingPose(false);
 
-      if (this.isTame() && this.tickCount % 60 == 0) {
+      if (this.isTame()) {
         final PlayerEntity owner = (PlayerEntity) this.getOwner();
 
         final boolean shouldDespawn = owner == null || !(owner.containerMenu.getItems().stream()
@@ -271,9 +273,8 @@ public class ChesterEntity extends TameableEntity
   }
 
   public int getDeathCooldown() {
-    // final int minutes = 10;
-    // return minutes * 20 * 60;
-    return 100; // TODO
+    final int minutes = 10;
+    return minutes * 20 * 60;
   }
 
   @Override

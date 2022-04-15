@@ -24,7 +24,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class VirtualChesterSavedData extends WorldSavedData {
-  private static final String ID = LivingChest.MOD_ID + "_" + "virtualchester";
+  private static final String ID = LivingChest.MOD_ID + "." + "virtualchester";
   private static final VirtualChesterSavedData INSTANCE = new VirtualChesterSavedData();
   private static final int TICK_DEAD_TIME_STEP = 600;
 
@@ -178,7 +178,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
     }
   }
 
-  public void handleServerTick() {
+  public void tickServer() {
     this.tickCount++;
 
     if (this.tickCount % TICK_DEAD_TIME_STEP == 0) {
