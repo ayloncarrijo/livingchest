@@ -26,7 +26,7 @@ public class EventHandler {
     if (event.phase == TickEvent.Phase.END) {
       VirtualChesterSavedData
           .getServerInstance(DimensionManager.getWorld(DimensionType.OVERWORLD.getId()))
-          .handleServerTick();
+          .tickServer();
     }
   }
 }

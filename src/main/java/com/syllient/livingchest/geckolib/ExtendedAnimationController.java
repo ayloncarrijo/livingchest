@@ -39,8 +39,7 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
       final HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection,
       final MolangParser parser, final boolean crashWhenCantFindBone) {
     this.hasJustFinishedAnimation =
-        !this.isAnimationStopped() ? adjustTick(tick) >= this.currentAnimation.animationLength
-            : false;
+        !this.isAnimationStopped() && adjustTick(tick) >= this.currentAnimation.animationLength;
 
     super.process(tick, event, modelRendererList, boneSnapshotCollection, parser,
         crashWhenCantFindBone);

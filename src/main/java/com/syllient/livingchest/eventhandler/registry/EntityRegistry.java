@@ -16,7 +16,7 @@ public class EntityRegistry {
   @SubscribeEvent
   public static void initialize(final RegistryEvent.Register<EntityEntry> event) {
     event.getRegistry().registerAll(createEntry("chester",
-        EntityEntryBuilder.create().entity(ChesterEntity.class).tracker(128, 2, false)));
+        EntityEntryBuilder.create().entity(ChesterEntity.class).tracker(128, 3, false)));
   }
 
   private static EntityEntry createEntry(final String name,

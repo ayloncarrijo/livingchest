@@ -75,7 +75,7 @@ public class ChesterEntity extends EntityTameable
   @Override
   protected void applyEntityAttributes() {
     super.applyEntityAttributes();
-    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D); // TODO
+    this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(450.0D);
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.37D);
   }
 
@@ -123,23 +123,25 @@ public class ChesterEntity extends EntityTameable
     super.onUpdate();
 
     if (this.world.isRemote) {
-      this.handleClientTick();
+      this.tickClient();
     } else {
-      this.handleServerTick();
+      this.tickServer();
     }
   }
 
-  private void handleClientTick() {}
+  private void tickClient() {}
 
-  private void handleServerTick() {
-    this.checkEyeBone();
+  private void tickServer() {
+    if (this.ticksExisted % 40 == 0) {
+      this.checkEyeBone();
+    }
   }
 
   private void checkEyeBone() {
     if (this.eyeBone == null) {
       this.setSitting(false);
 
-      if (this.isTamed() && this.ticksExisted % 60 == 0) {
+      if (this.isTamed()) {
         final EntityPlayer owner = (EntityPlayer) this.getOwner();
 
         final boolean shouldDespawn = owner == null || !(owner.inventoryContainer.getInventory()
@@ -253,10 +255,8 @@ public class ChesterEntity extends EntityTameable
   }
 
   public int getDeathCooldown() {
-    // TODO
-    // final int minutes = 10;
-    // return minutes * 20 * 60;
-    return 1200;
+    final int minutes = 10;
+    return minutes * 20 * 60;
   }
 
   @Override
