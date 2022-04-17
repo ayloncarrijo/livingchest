@@ -1,5 +1,6 @@
 package com.syllient.livingchest.entity;
 
+import java.util.stream.IntStream;
 import com.syllient.livingchest.animation.entity.ChesterAnimation;
 import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
@@ -30,6 +31,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -57,6 +59,7 @@ public class ChesterEntity extends TameableEntity
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
   private final ChesterAnimation animation = new ChesterAnimation(this);
   private BlockPos eyeBone;
+  public int innerDeathTime;
 
   public ChesterEntity(final EntityType<? extends ChesterEntity> type, final World world) {
     super(type, world);
@@ -184,6 +187,21 @@ public class ChesterEntity extends TameableEntity
   }
 
   @Override
+  protected void tickDeath() {
+    if (++this.innerDeathTime == 60) {
+      this.remove();
+
+      IntStream.range(0, 20).forEach((i) -> {
+        final double d0 = this.random.nextGaussian() * 0.02D;
+        final double d1 = this.random.nextGaussian() * 0.02D;
+        final double d2 = this.random.nextGaussian() * 0.02D;
+        this.level.addParticle(ParticleTypes.POOF, this.getRandomX(1.0D), this.getRandomY(),
+            this.getRandomZ(1.0D), d0, d1, d2);
+      });
+    }
+  }
+
+  @Override
   public ActionResultType interactAt(final PlayerEntity player, final Vector3d vector,
       final Hand hand) {
     if (this.level.isClientSide) {
@@ -273,8 +291,9 @@ public class ChesterEntity extends TameableEntity
   }
 
   public int getDeathCooldown() {
-    final int minutes = 10;
-    return minutes * 20 * 60;
+    // final int minutes = 10;
+    // return minutes * 20 * 60;
+    return 0; // TODO
   }
 
   @Override

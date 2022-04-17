@@ -28,7 +28,8 @@ public class EntityRegistry {
 
   @SubscribeEvent
   public static void initializeAttributes(final EntityAttributeCreationEvent event) {
-    event.put(CHESTER, MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 450.0D)
+    // TODO: MAX_HEALTH 450.0D
+    event.put(CHESTER, MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D)
         .add(Attributes.MOVEMENT_SPEED, 0.37D).build());
   }
 

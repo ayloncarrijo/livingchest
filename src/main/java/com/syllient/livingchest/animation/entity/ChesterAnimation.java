@@ -18,6 +18,8 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 public class ChesterAnimation extends Animation<ChesterEntity> {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
+    private static final String DEATH = "animation.chester.death";
+    private static final String IDLE_DEATH = "animation.chester.idle_death";
     private static final String INIT_JUMP = "animation.chester.init_jump";
     private static final String JUMP = "animation.chester.jump";
     private static final String STOP_JUMP = "animation.chester.stop_jump";
@@ -30,11 +32,13 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     private static final String IDLE = "idle_controller";
     private static final String JUMP = "jump_controller";
     private static final String OPEN = "open_controller";
+    private static final String DEATH = "death_controller";
   }
 
   private final ExtendedAnimationController<ChesterEntity> idleController;
   private final ExtendedAnimationController<ChesterEntity> jumpController;
   private final ExtendedAnimationController<ChesterEntity> openController;
+  private final ExtendedAnimationController<ChesterEntity> deathController;
   private int idleSoundTimes = 0;
   private int ticksIdling = 0;
   private boolean wasMouthOpen = false;
@@ -47,6 +51,8 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
         new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::handleJumpAnimation);
     this.openController =
         new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::handleOpenAnimation);
+    this.deathController =
+        new ExtendedAnimationController<>(chester, Controller.DEATH, 0, this::handleDeathAnimation);
   }
 
   @Override
@@ -57,6 +63,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
     data.addAnimationController(this.openController);
+    data.addAnimationController(this.deathController);
   }
 
   private void handleAnimationTick() {
@@ -78,7 +85,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   private PlayState handleIdleAnimation(final AnimationEvent<? extends IAnimatable> event) {
     this.handleAnimationTick();
 
-    if (this.ticksIdling < 5) {
+    if (this.animatable.isDeadOrDying() || this.ticksIdling < 5) {
       return PlayState.STOP;
     }
 
@@ -89,6 +96,10 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private PlayState handleJumpAnimation(final AnimationEvent<? extends IAnimatable> event) {
+    if (this.animatable.isDeadOrDying()) {
+      return PlayState.STOP;
+    }
+
     if (this.jumpController.isAnimationStopped(Animation.INIT_JUMP)) {
       this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.JUMP));
 
@@ -116,7 +127,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   }
 
   private PlayState handleOpenAnimation(final AnimationEvent<? extends IAnimatable> event) {
-    if (this.ticksIdling < 5) {
+    if (this.animatable.isDeadOrDying() || this.ticksIdling < 5) {
       return PlayState.STOP;
     }
 
@@ -131,6 +142,15 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
       this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.CLOSE_MOUTH));
 
       return PlayState.CONTINUE;
+    }
+
+    return PlayState.CONTINUE;
+  }
+
+  private PlayState handleDeathAnimation(final AnimationEvent<? extends IAnimatable> event) {
+    if (this.animatable.isDeadOrDying()) {
+      this.deathController.setAnimation(
+          new AnimationBuilder().addAnimation(Animation.DEATH).addAnimation(Animation.IDLE_DEATH));
     }
 
     return PlayState.CONTINUE;
