@@ -5,7 +5,7 @@ license="All rights reserved"
 [[mods]]
   modId="livingchest"
   displayName="Living Chest"
-  version="1.0.0.0"
+  version="1.0.0.1"
   description='''A mod that adds Chester (from Don't Starve) to Minecraft.'''
   displayURL="https://www.curseforge.com/minecraft/mc-mods/livingchest"
   updateJSONURL="https://raw.githubusercontent.com/ayloncarrijo/livingchest/master/update.json"
