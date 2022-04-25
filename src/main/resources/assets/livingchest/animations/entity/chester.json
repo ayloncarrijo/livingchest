@@ -1219,25 +1219,25 @@
 				},
 				"tongue": {
 					"scale": {
-						"0.2083": {
+						"0.1667": {
 							"vector": [1, 1, 0.625],
 							"easing": "easeOutCirc"
 						},
-						"0.4583": {
+						"0.4167": {
 							"vector": [1, 1, 1],
-							"easing": "easeOutQuad"
+							"easing": "easeOutCirc"
 						}
 					}
 				},
 				"tongue4": {
 					"rotation": {
-						"0.2083": {
+						"0.1667": {
 							"vector": [-20, 0, 0],
 							"easing": "easeOutCirc"
 						},
-						"0.4583": {
+						"0.4167": {
 							"vector": [0, 0, 0],
-							"easing": "easeOutQuad"
+							"easing": "easeOutCirc"
 						}
 					}
 				},

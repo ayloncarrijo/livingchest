@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.container.ChesterContainer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -43,7 +42,7 @@ public class ChesterGui extends ContainerScreen<ChesterContainer> {
   @SuppressWarnings("deprecation")
   protected void renderBg(final MatrixStack stack, final float partialTicks, final int mouseX,
       final int mouseY) {
-    Minecraft.getInstance().getTextureManager().bind(TEXTURE);
+    // Minecraft.getInstance().getTextureManager().bind(TEXTURE);
     RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     this.blit(stack, this.getGuiLeft(), this.getGuiTop(), 0, 0, this.imageWidth,
         this.container.rows * 18 + 17);

@@ -15,6 +15,7 @@ import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 public class ExtendedAnimationController<T extends IAnimatable> extends AnimationController<T> {
   private boolean hasJustFinishedAnimation = false;
+  public int ticksStopped = 0;
 
   public ExtendedAnimationController(final T animatable, final String name,
       final float transitionLengthTicks, final IAnimationPredicate<T> animationPredicate) {
@@ -43,6 +44,8 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
 
     super.process(tick, event, modelRendererList, boneSnapshotCollection, parser,
         crashWhenCantFindBone);
+
+    this.ticksStopped = this.isAnimationStopped() ? this.ticksStopped + 1 : 0;
   }
 
   public boolean isAnimationTransitioning() {

@@ -84,7 +84,8 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    if (!world.isEmptyBlock(pos.above())) {
+    if (!world.isEmptyBlock(pos.above()) || !world.isEmptyBlock(pos.above(2))
+        || !world.isEmptyBlock(pos.above(3))) {
       return;
     }
 

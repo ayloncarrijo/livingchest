@@ -25,14 +25,14 @@ public class EyeBoneBlockAnimation extends Animation<EyeBoneTile> {
 
   @Override
   public void registerControllers(final AnimationData data) {
-    final ExtendedAnimationController<EyeBoneTile> controller = new ExtendedAnimationController<>(
-        this.animatable, Controller.IDLE, 0, this::handleIdleAnimation);
+    final ExtendedAnimationController<EyeBoneTile> controller =
+        new ExtendedAnimationController<>(this.animatable, Controller.IDLE, 0, this::animate);
 
     controller.registerCustomInstructionListener(this::handleInstructionKeyframes);
     data.addAnimationController(controller);
   }
 
-  private PlayState handleIdleAnimation(final AnimationEvent<? extends IAnimatable> event) {
+  private PlayState animate(final AnimationEvent<? extends IAnimatable> event) {
     event.getController().setAnimation(new AnimationBuilder().addAnimation(Animation.IDLE, true));
     return PlayState.CONTINUE;
   }

@@ -18,8 +18,12 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 public class ChesterAnimation extends Animation<ChesterEntity> {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
+    private static final String SPAWN = "animation.chester.spawn";
     private static final String DEATH = "animation.chester.death";
     private static final String IDLE_DEATH = "animation.chester.idle_death";
+    private static final String INIT_SLEEP = "animation.chester.init_sleep";
+    private static final String SLEEP = "animation.chester.sleep";
+    private static final String STOP_SLEEP = "animation.chester.stop_sleep";
     private static final String INIT_JUMP = "animation.chester.init_jump";
     private static final String JUMP = "animation.chester.jump";
     private static final String STOP_JUMP = "animation.chester.stop_jump";
@@ -31,61 +35,64 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
   private static class Controller {
     private static final String IDLE = "idle_controller";
     private static final String JUMP = "jump_controller";
-    private static final String OPEN = "open_controller";
+    private static final String MOUTH = "mouth_controller";
+    private static final String SLEEP = "sleep_controller";
     private static final String DEATH = "death_controller";
+    private static final String SPAWN = "spawn_controller";
   }
 
   private final ExtendedAnimationController<ChesterEntity> idleController;
   private final ExtendedAnimationController<ChesterEntity> jumpController;
-  private final ExtendedAnimationController<ChesterEntity> openController;
+  private final ExtendedAnimationController<ChesterEntity> mouthController;
+  private final ExtendedAnimationController<ChesterEntity> sleepController;
   private final ExtendedAnimationController<ChesterEntity> deathController;
+  private final ExtendedAnimationController<ChesterEntity> spawnController;
   private int idleSoundTimes = 0;
-  private int ticksIdling = 0;
   private boolean wasMouthOpen = false;
 
   public ChesterAnimation(final ChesterEntity chester) {
     super(chester);
     this.idleController =
-        new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::handleIdleAnimation);
+        new ExtendedAnimationController<>(chester, Controller.IDLE, 0, this::animateIdle);
     this.jumpController =
-        new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::handleJumpAnimation);
-    this.openController =
-        new ExtendedAnimationController<>(chester, Controller.OPEN, 0, this::handleOpenAnimation);
+        new ExtendedAnimationController<>(chester, Controller.JUMP, 0, this::animateJump);
+    this.mouthController =
+        new ExtendedAnimationController<>(chester, Controller.MOUTH, 0, this::animateMouth);
+    this.sleepController =
+        new ExtendedAnimationController<>(chester, Controller.SLEEP, 0, this::animateSleep);
     this.deathController =
-        new ExtendedAnimationController<>(chester, Controller.DEATH, 0, this::handleDeathAnimation);
+        new ExtendedAnimationController<>(chester, Controller.DEATH, 0, this::animateDeath);
+    this.spawnController =
+        new ExtendedAnimationController<>(chester, Controller.SPAWN, 0, this::animateSpawn);
   }
 
   @Override
   public void registerControllers(final AnimationData data) {
     this.idleController.registerSoundListener(this::handleSoundKeyframes);
     this.jumpController.registerSoundListener(this::handleSoundKeyframes);
-    this.openController.registerSoundListener(this::handleSoundKeyframes);
+    this.mouthController.registerSoundListener(this::handleSoundKeyframes);
     data.addAnimationController(this.idleController);
     data.addAnimationController(this.jumpController);
-    data.addAnimationController(this.openController);
+    data.addAnimationController(this.mouthController);
+    data.addAnimationController(this.sleepController);
     data.addAnimationController(this.deathController);
+    data.addAnimationController(this.spawnController);
   }
 
-  private void handleAnimationTick() {
-    final boolean isIdling = this.jumpController.isAnimationStopped();
-
-    if (isIdling) {
-      this.ticksIdling += 1;
-    } else {
-      this.ticksIdling = 0;
-    }
-
-    if ((this.animatable.isMouthOpen() && !this.wasMouthOpen) || this.ticksIdling < 5) {
+  private void tick() {
+    if ((this.animatable.isMouthOpen() && !this.wasMouthOpen)
+        || this.jumpController.ticksStopped < 5) {
       this.idleSoundTimes = 0;
     }
 
     this.wasMouthOpen = this.animatable.isMouthOpen();
   }
 
-  private PlayState handleIdleAnimation(final AnimationEvent<? extends IAnimatable> event) {
-    this.handleAnimationTick();
+  private PlayState animateIdle(final AnimationEvent<? extends IAnimatable> event) {
+    this.tick();
 
-    if (this.animatable.isDeadOrDying() || this.ticksIdling < 5) {
+    if (!this.spawnController.isAnimationStopped() || !this.deathController.isAnimationStopped()
+        || this.sleepController.ticksStopped < 3 || this.jumpController.ticksStopped < 5) {
       return PlayState.STOP;
     }
 
@@ -95,8 +102,9 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private PlayState handleJumpAnimation(final AnimationEvent<? extends IAnimatable> event) {
-    if (this.animatable.isDeadOrDying()) {
+  private PlayState animateJump(final AnimationEvent<? extends IAnimatable> event) {
+    if (!this.spawnController.isAnimationStopped() || !this.deathController.isAnimationStopped()
+        || this.sleepController.ticksStopped < 3) {
       return PlayState.STOP;
     }
 
@@ -109,7 +117,7 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     final boolean isJumping = this.jumpController.isCurrentAnimation(Animation.JUMP);
 
     if (this.animatable.isMoving() && this.animatable.isOnGround()
-        && this.openController.isAnimationStopped()) {
+        && this.mouthController.isAnimationStopped()) {
       if (!isJumping) {
         this.jumpController.setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_JUMP));
       }
@@ -126,20 +134,21 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private PlayState handleOpenAnimation(final AnimationEvent<? extends IAnimatable> event) {
-    if (this.animatable.isDeadOrDying() || this.ticksIdling < 5) {
+  private PlayState animateMouth(final AnimationEvent<? extends IAnimatable> event) {
+    if (!this.spawnController.isAnimationStopped() || !this.deathController.isAnimationStopped()
+        || this.sleepController.ticksStopped < 3 || this.jumpController.ticksStopped < 5) {
       return PlayState.STOP;
     }
 
     if (this.animatable.isMouthOpen()) {
-      this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.OPEN_MOUTH)
+      this.mouthController.setAnimation(new AnimationBuilder().addAnimation(Animation.OPEN_MOUTH)
           .addAnimation(Animation.IDLE_MOUTH));
 
       return PlayState.CONTINUE;
     }
 
-    if (this.openController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
-      this.openController.setAnimation(new AnimationBuilder().addAnimation(Animation.CLOSE_MOUTH));
+    if (this.mouthController.isCurrentAnimation(Animation.IDLE_MOUTH)) {
+      this.mouthController.setAnimation(new AnimationBuilder().addAnimation(Animation.CLOSE_MOUTH));
 
       return PlayState.CONTINUE;
     }
@@ -147,10 +156,51 @@ public class ChesterAnimation extends Animation<ChesterEntity> {
     return PlayState.CONTINUE;
   }
 
-  private PlayState handleDeathAnimation(final AnimationEvent<? extends IAnimatable> event) {
+  private PlayState animateSleep(final AnimationEvent<? extends IAnimatable> event) {
+    if (!this.spawnController.isAnimationStopped() || !this.deathController.isAnimationStopped()
+        || this.jumpController.ticksStopped < 5) {
+      return PlayState.STOP;
+    }
+
+    if (this.sleepController.isAnimationStopped(Animation.INIT_SLEEP)) {
+      this.sleepController.setAnimation(new AnimationBuilder().addAnimation(Animation.SLEEP));
+
+      return PlayState.CONTINUE;
+    }
+
+    final boolean isSleeping = this.sleepController.isCurrentAnimation(Animation.SLEEP);
+
+    if (this.animatable.isInSittingPose() && !this.animatable.isMouthOpen()
+        && this.mouthController.isAnimationStopped()) {
+      if (!isSleeping) {
+        this.sleepController
+            .setAnimation(new AnimationBuilder().addAnimation(Animation.INIT_SLEEP));
+      }
+
+      return PlayState.CONTINUE;
+    }
+
+    if (isSleeping && this.sleepController.hasJustFinishedAnimation()) {
+      this.sleepController.setAnimation(new AnimationBuilder().addAnimation(Animation.STOP_SLEEP));
+
+      return PlayState.CONTINUE;
+    }
+
+    return PlayState.CONTINUE;
+  }
+
+  private PlayState animateDeath(final AnimationEvent<? extends IAnimatable> event) {
     if (this.animatable.isDeadOrDying()) {
       this.deathController.setAnimation(
           new AnimationBuilder().addAnimation(Animation.DEATH).addAnimation(Animation.IDLE_DEATH));
+    }
+
+    return PlayState.CONTINUE;
+  }
+
+  private PlayState animateSpawn(final AnimationEvent<? extends IAnimatable> event) {
+    if (this.animatable.isSpawning()) {
+      this.spawnController.setAnimation(new AnimationBuilder().addAnimation(Animation.SPAWN));
     }
 
     return PlayState.CONTINUE;

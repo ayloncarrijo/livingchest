@@ -310,6 +310,10 @@ public class ChesterEntity extends TameableEntity
     return this.animation.getFactory();
   }
 
+  public boolean isSpawning() {
+    return this.tickCount < 200;
+  }
+
   @Override
   public void registerControllers(final AnimationData data) {
     this.animation.registerControllers(data);
