@@ -1,7 +1,7 @@
 package com.syllient.livingchest.tile;
 
 import java.util.UUID;
-import com.syllient.livingchest.animation.block.EyeBoneBlockAnimation;
+import com.syllient.livingchest.animation.animator.block.EyeBoneBlockAnimator;
 import com.syllient.livingchest.eventhandler.registry.TileRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,8 +13,10 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class EyeBoneTile extends TileEntity implements IAnimatable {
-  private final EyeBoneBlockAnimation animation = new EyeBoneBlockAnimation(this);
+  private final EyeBoneBlockAnimator animator = new EyeBoneBlockAnimator(this);
+
   private UUID ownerId = null;
+
   public boolean isClosed = false;
 
   public EyeBoneTile() {
@@ -70,12 +72,12 @@ public class EyeBoneTile extends TileEntity implements IAnimatable {
 
   @Override
   public void registerControllers(final AnimationData data) {
-    this.animation.registerControllers(data);
+    this.animator.registerControllers(data);
   }
 
   @Override
   public AnimationFactory getFactory() {
-    return this.animation.getFactory();
+    return this.animator.getFactory();
   }
 
   class NbtKey {

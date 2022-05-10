@@ -13,9 +13,12 @@ public class ChesterMoveHelper extends MovementController {
 
   @Override
   public void tick() {
-    if (this.chester.isMouthOpen()) {
+    final int ticksUntilCanMove = this.chester.getTicksUntilCanMove();
+
+    if (ticksUntilCanMove > 0) {
       this.chester.setZza(0.0F);
       this.chester.setIsMoving(false);
+      this.chester.setTicksUntilCanMove(ticksUntilCanMove - 1, true);
       return;
     }
 

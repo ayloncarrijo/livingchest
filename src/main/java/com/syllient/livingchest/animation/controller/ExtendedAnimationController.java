@@ -1,4 +1,4 @@
-package com.syllient.livingchest.geckolib;
+package com.syllient.livingchest.animation.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,8 +14,8 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.shadowed.eliotlash.molang.MolangParser;
 
 public class ExtendedAnimationController<T extends IAnimatable> extends AnimationController<T> {
-  private boolean hasJustFinishedAnimation = false;
-  public int ticksStopped = 0;
+  private double animationTick;
+  private double currentTick;
 
   public ExtendedAnimationController(final T animatable, final String name,
       final float transitionLengthTicks, final IAnimationPredicate<T> animationPredicate) {
@@ -39,13 +39,19 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
       final List<IBone> modelRendererList,
       final HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection,
       final MolangParser parser, final boolean crashWhenCantFindBone) {
-    this.hasJustFinishedAnimation =
-        !this.isAnimationStopped() && adjustTick(tick) >= this.currentAnimation.animationLength;
+    this.animationTick = this.tickOffset;
+    this.currentTick = tick;
 
     super.process(tick, event, modelRendererList, boneSnapshotCollection, parser,
         crashWhenCantFindBone);
+  }
 
-    this.ticksStopped = this.isAnimationStopped() ? this.ticksStopped + 1 : 0;
+  public double getCurrentTick() {
+    return this.currentTick;
+  }
+
+  public void setCurrentTick(final double currentTick) {
+    this.currentTick = currentTick;
   }
 
   public boolean isAnimationTransitioning() {
@@ -81,7 +87,33 @@ public class ExtendedAnimationController<T extends IAnimatable> extends Animatio
         && this.getCurrentAnimation().animationName.equals(animationName);
   }
 
-  public boolean hasJustFinishedAnimation() {
-    return this.hasJustFinishedAnimation;
+  public boolean isAnimationFinished() {
+    if (this.isAnimationTransitioning()) {
+      return false;
+    }
+
+    final double pastTicks =
+        this.animationSpeed * Math.max(this.currentTick - this.animationTick, 0.0D);
+
+    return this.currentAnimation == null || this.isAnimationStopped()
+        || this.currentAnimation.animationLength <= pastTicks
+        || this.currentAnimation.animationLength == Double.MAX_VALUE;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (this.getClass() != obj.getClass()) {
+      return false;
+    }
+
+    return this.getName() == ((ExtendedAnimationController<?>) obj).getName();
   }
 }

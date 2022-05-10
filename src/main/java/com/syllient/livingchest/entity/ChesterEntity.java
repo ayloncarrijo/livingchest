@@ -1,7 +1,7 @@
 package com.syllient.livingchest.entity;
 
 import java.util.stream.IntStream;
-import com.syllient.livingchest.animation.entity.ChesterAnimation;
+import com.syllient.livingchest.animation.animator.entity.ChesterAnimator;
 import com.syllient.livingchest.container.ChesterContainer;
 import com.syllient.livingchest.entity.ai.ChesterSitAi;
 import com.syllient.livingchest.entity.ai.helper.ChesterMoveHelper;
@@ -53,13 +53,21 @@ public class ChesterEntity extends TameableEntity
     implements IAnimatable, IEntityAdditionalSpawnData, INamedContainerProvider {
   private static final DataParameter<Boolean> IS_MOUTH_OPEN =
       EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
+
   private static final DataParameter<Boolean> IS_MOVING =
       EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
 
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
-  private final ChesterAnimation animation = new ChesterAnimation(this);
+
+  private final ChesterAnimator animator = new ChesterAnimator(this);
+
   private BlockPos eyeBone;
-  public int innerDeathTime;
+
+  private int ticksDead;
+
+  private int ticksDespawning;
+
+  private int ticksUntilCanMove = 20; // To spawn animation
 
   public ChesterEntity(final EntityType<? extends ChesterEntity> type, final World world) {
     super(type, world);
@@ -145,6 +153,12 @@ public class ChesterEntity extends TameableEntity
   private void tickClient() {}
 
   private void tickServer() {
+    if (this.isInSittingPose()) {
+      this.setTicksUntilCanMove(45);
+    } else if (this.isMouthOpen() || this.isDespawning()) {
+      this.setTicksUntilCanMove(10);
+    }
+
     if (this.tickCount % 40 == 0) {
       this.checkEyeBone();
     }
@@ -188,7 +202,7 @@ public class ChesterEntity extends TameableEntity
 
   @Override
   protected void tickDeath() {
-    if (++this.innerDeathTime == 60) {
+    if (++this.ticksDead == 60) {
       this.remove();
 
       IntStream.range(0, 20).forEach((i) -> {
@@ -290,10 +304,30 @@ public class ChesterEntity extends TameableEntity
     this.yBodyRotO = yaw;
   }
 
+  public int getTicksUntilCanMove() {
+    return ticksUntilCanMove;
+  }
+
+  public void setTicksUntilCanMove(final int ticksUntilCanMove) {
+    if (ticksUntilCanMove < this.ticksUntilCanMove) {
+      return;
+    }
+
+    this.ticksUntilCanMove = ticksUntilCanMove;
+  }
+
+  public void setTicksUntilCanMove(final int ticksUntilCanMove, final boolean shouldForceUpdate) {
+    if (!shouldForceUpdate) {
+      return;
+    }
+
+    this.ticksUntilCanMove = ticksUntilCanMove;
+  }
+
   public int getDeathCooldown() {
     // final int minutes = 10;
     // return minutes * 20 * 60;
-    return 0; // TODO
+    return 0; // TODO: 10 minutes
   }
 
   @Override
@@ -305,18 +339,22 @@ public class ChesterEntity extends TameableEntity
     return this.inventory;
   }
 
-  @Override
-  public AnimationFactory getFactory() {
-    return this.animation.getFactory();
+  public boolean isSpawning() {
+    return this.tickCount < 20;
   }
 
-  public boolean isSpawning() {
-    return this.tickCount < 200;
+  public boolean isDespawning() {
+    return this.ticksDespawning > 0;
+  }
+
+  @Override
+  public AnimationFactory getFactory() {
+    return this.animator.getFactory();
   }
 
   @Override
   public void registerControllers(final AnimationData data) {
-    this.animation.registerControllers(data);
+    this.animator.registerControllers(data);
   }
 
   class NbtKey {
