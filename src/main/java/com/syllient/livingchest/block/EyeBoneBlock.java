@@ -47,7 +47,7 @@ public class EyeBoneBlock extends HorizontalBlock {
   }
 
   public EyeBoneBlock() {
-    super(AbstractBlock.Properties.of(Material.WOOD));
+    super(AbstractBlock.Properties.of(Material.WOOD).noOcclusion());
     this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
   }
 

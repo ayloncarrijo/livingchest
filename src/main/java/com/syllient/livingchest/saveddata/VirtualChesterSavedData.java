@@ -3,6 +3,7 @@ package com.syllient.livingchest.saveddata;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.PacketHandler;
 import com.syllient.livingchest.entity.ChesterEntity;
@@ -60,6 +61,17 @@ public class VirtualChesterSavedData extends WorldSavedData {
     return this.virtualChesterByPlayerId.computeIfAbsent(playerId, (key) -> new VirtualChester());
   }
 
+  public boolean isValidSpawnOrDespawnPos(final BlockPos pos, final World world) {
+    return world.getBlockState(pos).isSolidRender(world, pos)
+        && IntStream.range(1, 4).allMatch((index) -> world.isEmptyBlock(pos.above(index)));
+  }
+
+  public boolean isValidSpawnOrDespawnPos(final ChesterEntity chester) {
+    return chester.isOnGround() && this.isValidSpawnOrDespawnPos(
+        chester.getY() % 1 == 0 ? chester.blockPosition().below() : chester.blockPosition(),
+        chester.level);
+  }
+
   public void spawnChester(final PlayerEntity player, final BlockPos pos) {
     if (player.level.isClientSide) {
       return;
@@ -84,8 +96,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       return;
     }
 
-    if (!world.isEmptyBlock(pos.above()) || !world.isEmptyBlock(pos.above(2))
-        || !world.isEmptyBlock(pos.above(3))) {
+    if (!this.isValidSpawnOrDespawnPos(pos, world)) {
       return;
     }
 
@@ -123,6 +134,11 @@ public class VirtualChesterSavedData extends WorldSavedData {
         (ChesterEntity) world.getEntity(virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
+      if (chesterEntity.getTicksUntilCanMove() > 0
+          || !this.isValidSpawnOrDespawnPos(chesterEntity)) {
+        return;
+      }
+
       final CompoundNBT additionalSaveData = new CompoundNBT();
       chesterEntity.setEyeBone(null);
       chesterEntity.addAdditionalSaveData(additionalSaveData);

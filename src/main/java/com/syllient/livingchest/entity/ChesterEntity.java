@@ -67,7 +67,7 @@ public class ChesterEntity extends TameableEntity
 
   private int ticksDespawning;
 
-  private int ticksUntilCanMove = 20; // To spawn animation
+  private int ticksUntilCanMove = 25; // To spawn animation
 
   public ChesterEntity(final EntityType<? extends ChesterEntity> type, final World world) {
     super(type, world);
