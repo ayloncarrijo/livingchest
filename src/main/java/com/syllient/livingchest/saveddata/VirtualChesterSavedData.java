@@ -134,8 +134,15 @@ public class VirtualChesterSavedData extends WorldSavedData {
         (ChesterEntity) world.getEntity(virtualChester.getUniqueId());
 
     if (chesterEntity != null) {
-      if (chesterEntity.getTicksUntilCanMove() > 0
-          || !this.isValidSpawnOrDespawnPos(chesterEntity)) {
+      if (chesterEntity.getTicksUntilActionEnd() > 0) {
+        return;
+      }
+
+      if (!chesterEntity.isDespawning()) {
+        if (this.isValidSpawnOrDespawnPos(chesterEntity)) {
+          chesterEntity.setIsDespawning();
+        }
+
         return;
       }
 
@@ -145,6 +152,7 @@ public class VirtualChesterSavedData extends WorldSavedData {
       virtualChester.setAdditionalSaveData(additionalSaveData);
       virtualChester.setIsDespawned();
       chesterEntity.remove();
+
       return;
     }
 

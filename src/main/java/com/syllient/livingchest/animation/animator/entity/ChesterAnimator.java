@@ -19,7 +19,7 @@ public class ChesterAnimator extends Animator<ChesterEntity> {
   private static class Animation {
     private static final String IDLE = "animation.chester.idle";
     private static final String SPAWN = "animation.chester.spawn";
-    // private static final String DESPAWN = "animation.chester.despawn";
+    private static final String DESPAWN = "animation.chester.despawn";
     private static final String DEATH = "animation.chester.death";
     private static final String IDLE_DEATH = "animation.chester.idle_death";
     private static final String INIT_SLEEP = "animation.chester.init_sleep";
@@ -40,6 +40,7 @@ public class ChesterAnimator extends Animator<ChesterEntity> {
     private static final String SLEEP = "controller.sleep";
     private static final String DEATH = "controller.death";
     private static final String SPAWN = "controller.spawn";
+    private static final String DESPAWN = "controller.despawn";
   }
 
   private int idleSoundTimes = 0;
@@ -68,6 +69,11 @@ public class ChesterAnimator extends Animator<ChesterEntity> {
         new OrderedAnimationController<>(this, Controller.DEATH,
             (controller) -> this.animatable.isDeadOrDying(), (event) -> new AnimationBuilder()
                 .addAnimation(Animation.DEATH).addAnimation(Animation.IDLE_DEATH));
+
+    final OrderedAnimationController<ChesterEntity> despawnController =
+        new OrderedAnimationController<>(this, Controller.DESPAWN,
+            (controller) -> this.animatable.isDespawning(),
+            (event) -> new AnimationBuilder().addAnimation(Animation.DESPAWN));
 
     final OrderedAnimationController<ChesterEntity> spawnController =
         new OrderedAnimationController<>(this, Controller.SPAWN, (controller) -> {
@@ -116,6 +122,7 @@ public class ChesterAnimator extends Animator<ChesterEntity> {
             (event) -> new AnimationBuilder().addAnimation(Animation.IDLE));
 
     data.addAnimationController(deathController);
+    data.addAnimationController(despawnController);
     data.addAnimationController(spawnController);
     data.addAnimationController(mouthController);
     data.addAnimationController(sleepController);

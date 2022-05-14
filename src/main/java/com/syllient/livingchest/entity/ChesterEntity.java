@@ -57,17 +57,20 @@ public class ChesterEntity extends TameableEntity
   private static final DataParameter<Boolean> IS_MOVING =
       EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
 
+  private static final DataParameter<Boolean> IS_DESPAWNING =
+      EntityDataManager.defineId(ChesterEntity.class, DataSerializers.BOOLEAN);
+
   private final ChesterInventory inventory = new ChesterInventory(this, 27);
 
   private final ChesterAnimator animator = new ChesterAnimator(this);
 
   private BlockPos eyeBone;
 
+  private int ticksUntilActionEnd = 25; // To spawn animation
+
   private int ticksDead;
 
   private int ticksDespawning;
-
-  private int ticksUntilCanMove = 25; // To spawn animation
 
   public ChesterEntity(final EntityType<? extends ChesterEntity> type, final World world) {
     super(type, world);
@@ -86,6 +89,7 @@ public class ChesterEntity extends TameableEntity
     super.defineSynchedData();
     this.entityData.define(IS_MOUTH_OPEN, false);
     this.entityData.define(IS_MOVING, false);
+    this.entityData.define(IS_DESPAWNING, false);
   }
 
   @Override
@@ -153,10 +157,22 @@ public class ChesterEntity extends TameableEntity
   private void tickClient() {}
 
   private void tickServer() {
-    if (this.isInSittingPose()) {
-      this.setTicksUntilCanMove(45);
-    } else if (this.isMouthOpen() || this.isDespawning()) {
-      this.setTicksUntilCanMove(10);
+    if (this.ticksUntilActionEnd > 0) {
+      this.ticksUntilActionEnd--;
+    }
+
+    if (this.isDespawning()) {
+      if (++this.ticksDespawning >= 50) {
+        this.resetActionTicks();
+        this.despawn();
+        return;
+      }
+
+      this.setTicksUntilActionEnd(Integer.MAX_VALUE);
+    } else if (this.isInSittingPose()) {
+      this.setTicksUntilActionEnd(45);
+    } else if (this.isMouthOpen()) {
+      this.setTicksUntilActionEnd(10);
     }
 
     if (this.tickCount % 40 == 0) {
@@ -175,7 +191,7 @@ public class ChesterEntity extends TameableEntity
             .map(ItemStack::getItem).anyMatch(ItemRegistry.EYE_BONE::equals));
 
         if (shouldDespawn) {
-          VirtualChesterSavedData.getServerInstance(this.level).despawnChester(this);
+          this.despawn();
         }
       }
     } else {
@@ -230,6 +246,18 @@ public class ChesterEntity extends TameableEntity
     return ActionResultType.PASS;
   }
 
+  public boolean isDespawning() {
+    return this.entityData.get(IS_DESPAWNING);
+  }
+
+  public void setIsDespawning() {
+    this.setIsDespawning(true);
+  }
+
+  private void setIsDespawning(final boolean value) {
+    this.entityData.set(IS_DESPAWNING, value);
+  }
+
   public boolean isMouthOpen() {
     return this.entityData.get(IS_MOUTH_OPEN);
   }
@@ -258,6 +286,10 @@ public class ChesterEntity extends TameableEntity
     NetworkHooks.openGui((ServerPlayerEntity) player, this, (buf) -> {
       buf.writeInt(this.getId());
     });
+  }
+
+  private void despawn() {
+    VirtualChesterSavedData.getServerInstance(this.level).despawnChester(this);
   }
 
   @Override
@@ -304,24 +336,24 @@ public class ChesterEntity extends TameableEntity
     this.yBodyRotO = yaw;
   }
 
-  public int getTicksUntilCanMove() {
-    return ticksUntilCanMove;
+  public int getTicksUntilActionEnd() {
+    return this.ticksUntilActionEnd;
   }
 
-  public void setTicksUntilCanMove(final int ticksUntilCanMove) {
-    if (ticksUntilCanMove < this.ticksUntilCanMove) {
+  public void setTicksUntilActionEnd(final int ticks) {
+    if (ticks < this.ticksUntilActionEnd) {
       return;
     }
 
-    this.ticksUntilCanMove = ticksUntilCanMove;
+    this.ticksUntilActionEnd = ticks;
   }
 
-  public void setTicksUntilCanMove(final int ticksUntilCanMove, final boolean shouldForceUpdate) {
-    if (!shouldForceUpdate) {
-      return;
-    }
+  public void resetActionTicks() {
+    this.ticksUntilActionEnd = 0;
+  }
 
-    this.ticksUntilCanMove = ticksUntilCanMove;
+  public int getTicksDespawning() {
+    return this.ticksDespawning;
   }
 
   public int getDeathCooldown() {
@@ -337,14 +369,6 @@ public class ChesterEntity extends TameableEntity
 
   public ChesterInventory getInventory() {
     return this.inventory;
-  }
-
-  public boolean isSpawning() {
-    return this.tickCount < 20;
-  }
-
-  public boolean isDespawning() {
-    return this.ticksDespawning > 0;
   }
 
   @Override
