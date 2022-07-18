@@ -25,10 +25,6 @@ import software.bernie.geckolib3.GeckoLib;
 public class LivingChest {
   public static final String MOD_ID = "livingchest";
 
-  public LivingChest() {
-    GeckoLib.initialize();
-  }
-
   @SubscribeEvent
   public static void onCommonSetup(final FMLCommonSetupEvent event) {
     PacketHandler.initialize();
@@ -39,9 +35,13 @@ public class LivingChest {
     DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new SafeRunnable() {
       @Override
       public void run() {
+        GeckoLib.initialize();
+
         RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CHESTER,
             ChesterRenderer::new);
+
         ClientRegistry.bindTileEntityRenderer(TileRegistry.EYE_BONE, EyeBoneBlockRenderer::new);
+
         ScreenManager.register(ContainerRegistry.CHESTER, ChesterGui::new);
 
         event.enqueueWork(() -> {
