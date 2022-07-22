@@ -1,6 +1,7 @@
 package com.syllient.livingchest;
 
-import com.syllient.livingchest.network.message.SyncVirtualChesterMessage;
+import com.syllient.livingchest.network.message.ActionMessage;
+import com.syllient.livingchest.network.message.VirtualChesterMessage;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -15,8 +16,10 @@ public class PacketHandler {
   public static void initialize() {
     int id = 0;
 
-    INSTANCE.registerMessage(id++, SyncVirtualChesterMessage.class,
-        SyncVirtualChesterMessage::encode, SyncVirtualChesterMessage::decode,
-        SyncVirtualChesterMessage::handle);
+    INSTANCE.registerMessage(id++, VirtualChesterMessage.class, VirtualChesterMessage::encode,
+        VirtualChesterMessage::decode, VirtualChesterMessage::handle);
+
+    INSTANCE.registerMessage(id++, ActionMessage.class, ActionMessage::encode,
+        ActionMessage::decode, ActionMessage::handle);
   }
 }
