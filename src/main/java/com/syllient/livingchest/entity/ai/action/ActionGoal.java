@@ -13,26 +13,26 @@ public abstract class ActionGoal<T extends Entity & ActionControllerProvider<T>>
     this.entity = entity;
   }
 
-  public abstract boolean shouldRun();
+  public abstract boolean isAbleToRun();
 
-  public boolean shouldContinueToRun() {
-    return this.shouldRun();
+  public boolean isAbleToKeepRunning() {
+    return this.isAbleToRun();
   }
 
   @Override
   public boolean canUse() {
-    final boolean shouldRun = this.shouldRun();
+    final boolean isAbleToRun = this.isAbleToRun();
 
-    if (shouldRun && this.entity.getActionController().getAction() != null) {
+    if (isAbleToRun && this.entity.getActionController().getAction() != null) {
       this.entity.getActionController().markToStop();
     }
 
-    return shouldRun && this.entity.getActionController().canRun();
+    return isAbleToRun && this.entity.getActionController().isStopped();
   }
 
   @Override
   public boolean canContinueToUse() {
-    return this.shouldContinueToRun() && !this.entity.getActionController().shouldStop();
+    return this.isAbleToKeepRunning() && !this.entity.getActionController().shouldStop();
   }
 
   @Override

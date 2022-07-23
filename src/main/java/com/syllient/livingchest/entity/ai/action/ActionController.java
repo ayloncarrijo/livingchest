@@ -24,7 +24,7 @@ public class ActionController<T extends Entity & ActionControllerProvider<T>> {
     }
   }
 
-  public boolean canRun() {
+  public boolean isStopped() {
     return this.action == null && this.delay == 0;
   }
 

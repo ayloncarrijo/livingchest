@@ -13,13 +13,13 @@ import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 public class ActionMessage {
-  private final int actionId;
-
   private final int entityId;
 
+  private final int actionId;
+
   private ActionMessage(final int entityId, final int actionId) {
-    this.actionId = actionId;
     this.entityId = entityId;
+    this.actionId = actionId;
   }
 
   public static <T extends Entity & ActionControllerProvider<T>> ActionMessage create(
@@ -28,8 +28,8 @@ public class ActionMessage {
   }
 
   public static void encode(final ActionMessage message, final PacketBuffer buffer) {
-    buffer.writeInt(message.actionId);
     buffer.writeInt(message.entityId);
+    buffer.writeInt(message.actionId);
   }
 
   public static ActionMessage decode(final PacketBuffer buffer) {
