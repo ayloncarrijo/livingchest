@@ -5,8 +5,8 @@ import com.syllient.livingchest.world.entity.EntityTypes;
 import com.syllient.livingchest.world.item.Items;
 import com.syllient.livingchest.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -32,11 +32,13 @@ public class LivingChest {
   @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
   public static class Client {
     @SubscribeEvent
-    public static void initialize(final FMLClientSetupEvent event) {}
+    public static void initialize(final FMLClientSetupEvent event) {
+      registerRenderers();
+    }
 
-    @SubscribeEvent
-    public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-      event.registerEntityRenderer(EntityTypes.CHESTER.get(), ChesterRenderer::new);
+    public static void registerRenderers() {
+      RenderingRegistry.registerEntityRenderingHandler(EntityTypes.CHESTER.get(),
+          ChesterRenderer::new);
     }
   }
 

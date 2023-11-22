@@ -1,32 +1,32 @@
 package com.syllient.livingchest.world.entity.animal;
 
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class Chester extends TamableAnimal implements IAnimatable {
+public class Chester extends TameableEntity implements IAnimatable {
   private final AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
 
-  public Chester(final EntityType<? extends Chester> entityType, final Level level) {
+  public Chester(final EntityType<? extends Chester> entityType, final World level) {
     super(entityType, level);
   }
 
-  public static AttributeSupplier.Builder createAttributes() {
-    return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3D).add(Attributes.MAX_HEALTH,
-        8.0D);
+  public static AttributeModifierMap.MutableAttribute createAttributes() {
+    return MobEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.3D)
+        .add(Attributes.MAX_HEALTH, 8.0D);
   }
 
   @Override
-  public AgeableMob getBreedOffspring(final ServerLevel level, final AgeableMob mob) {
+  public AgeableEntity getBreedOffspring(final ServerWorld level, final AgeableEntity mob) {
     return null;
   }
 

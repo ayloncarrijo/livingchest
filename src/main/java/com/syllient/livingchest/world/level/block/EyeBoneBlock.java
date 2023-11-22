@@ -1,6 +1,6 @@
 package com.syllient.livingchest.world.level.block;
 
-import net.minecraft.world.level.block.Block;
+import net.minecraft.block.Block;
 
 public class EyeBoneBlock extends Block {
   public EyeBoneBlock(final Properties properties) {

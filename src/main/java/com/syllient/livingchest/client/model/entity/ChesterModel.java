@@ -2,7 +2,7 @@ package com.syllient.livingchest.client.model.entity;
 
 import com.syllient.livingchest.LivingChest;
 import com.syllient.livingchest.world.entity.animal.Chester;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ChesterModel extends AnimatedGeoModel<Chester> {
@@ -16,17 +16,17 @@ public class ChesterModel extends AnimatedGeoModel<Chester> {
       new ResourceLocation(LivingChest.MOD_ID, "textures/entity/chester/chester.png");
 
   @Override
-  public ResourceLocation getAnimationResource(final Chester animatable) {
+  public ResourceLocation getAnimationFileLocation(final Chester animatable) {
     return ANIMATION_LOCATION;
   }
 
   @Override
-  public ResourceLocation getModelResource(final Chester animatable) {
+  public ResourceLocation getModelLocation(final Chester animatable) {
     return MODEL_LOCATION;
   }
 
   @Override
-  public ResourceLocation getTextureResource(final Chester animatable) {
+  public ResourceLocation getTextureLocation(final Chester animatable) {
     return TEXTURE_LOCATION;
   }
 }
