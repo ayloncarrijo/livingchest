@@ -60,7 +60,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.19:${geckolib_version}")
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.18:${geckolib_version}")
 }
 
 import groovy.json.JsonOutput
