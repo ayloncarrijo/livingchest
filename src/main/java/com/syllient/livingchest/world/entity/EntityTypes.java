@@ -18,7 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(modid = LivingChest.MOD_ID, bus = Bus.MOD)
 public class EntityTypes {
   private static final DeferredRegister<EntityType<?>> REGISTRY =
-      DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, LivingChest.MOD_ID);
+      DeferredRegister.create(ForgeRegistries.ENTITIES, LivingChest.MOD_ID);
 
   public static final RegistryObject<EntityType<Chester>> CHESTER =
       register("chester", EntityType.Builder.of(Chester::new, MobCategory.CREATURE).sized(1F, 1F)
